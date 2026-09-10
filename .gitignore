@@ -1,0 +1,24 @@
+# Secrets — never commit (each app also has its own .gitignore covering this,
+# this is a defense-in-depth root-level net).
+.env
+.env.*
+!.env.example
+.greennode.json
+*.credentials.json
+
+# OS
+.DS_Store
+
+# Editor/local machine config
+.claude/settings.local.json
+
+# Dependencies / build output (nested .gitignore files also cover these
+# inside app/ and agent/, kept here too in case files land at root).
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+.expo/
+web-build/

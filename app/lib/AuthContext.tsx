@@ -1,0 +1,83 @@
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import type { Session } from '@supabase/supabase-js';
+import { supabase } from './supabaseClient';
+import { fetchMyProfile, signOut as signOutRequest } from './authData';
+import type { UserProgress } from '../data/types';
+
+// Nguồn "user hiện tại" DUY NHẤT cho toàn app — mọi màn trước đây đọc
+// mockUserProgress giờ đọc profile từ đây (useAuth()). Fetch 1 lần khi có
+// session, không fetch lại mỗi lần chuyển màn — gọi refreshProfile() sau khi
+// ghi dữ liệu thật (vd. sau khi hoàn thành role-play) để đồng bộ lại.
+
+interface AuthContextValue {
+  session: Session | null;
+  profile: UserProgress | null;
+  /** true trong lúc đang xác định có session hay không, hoặc đang tải profile lần đầu. */
+  loading: boolean;
+  refreshProfile: () => Promise<void>;
+  signOut: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProgress | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const loadProfile = useCallback(async () => {
+    try {
+      const p = await fetchMyProfile();
+      setProfile(p);
+    } catch {
+      // Chưa có profile (vd. đăng ký thành công nhưng trigger chưa chạy kịp)
+      // hoặc lỗi mạng — coi như chưa sẵn sàng, không chặn app crash.
+      setProfile(null);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!active) return;
+      setSession(data.session);
+      if (data.session) await loadProfile();
+      if (active) setLoading(false);
+    });
+
+    const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, newSession) => {
+      if (!active) return;
+      setSession(newSession);
+      if (newSession) {
+        setLoading(true);
+        await loadProfile();
+        if (active) setLoading(false);
+      } else {
+        setProfile(null);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      active = false;
+      subscription.subscription.unsubscribe();
+    };
+  }, [loadProfile]);
+
+  const signOut = useCallback(async () => {
+    await signOutRequest();
+  }, []);
+
+  return (
+    <AuthContext.Provider value={{ session, profile, loading, refreshProfile: loadProfile, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth(): AuthContextValue {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth phải được gọi bên trong AuthProvider');
+  return ctx;
+}

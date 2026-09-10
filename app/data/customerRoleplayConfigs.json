@@ -1,0 +1,566 @@
+{
+  "kh01": {
+    "behaviorNote": "Khách hàng trả lời lịch sự, giọng điệu nhanh nhẹn và thân thiện nhưng có phần vội vã do đang làm việc. Cô ấy tin tưởng nhân viên ngay khi nghe giải thích cặn kẽ về lợi ích thiết thực như 'miễn phí chuyển tiền' hoặc 'không mất phí duy trì', không hay đặt câu hỏi kỹ thuật phức tạp mà tập trung vào tính tiện lợi.",
+    "openingLine": "Chào bạn, mình nghe đây, có chuyện gì vui không?",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu mở tài khoản thanh toán để nhận lương, nhấn mạnh được ưu điểm 'mở online qua app', cam kết rõ ràng về việc miễn phí các giao dịch cơ bản và hướng dẫn khách hàng tải ứng dụng ngân hàng ngay sau cuộc gọi.",
+    "objectionBank": [
+      {
+        "trigger": "Mình sợ lắm thủ tục giấy tờ rườm rà quá, mình bận lắm, không có thời gian ra ngân hàng đâu.",
+        "guidance": "Nhấn mạnh quy trình mở tài khoản hoàn toàn trực tuyến (e-KYC) chỉ trong 5 phút qua điện thoại, không cần ra quầy, không cần giấy tờ in ấn."
+      },
+      {
+        "trigger": "Có phát sinh thêm khoản phí nào bất thường không? Mình không muốn bị trừ phí vô hình chung.",
+        "guidance": "Cam kết cụ thể chính sách miễn phí chuyển tiền nội bộ, miễn phí duy trì tài khoản và cảnh báo rõ các trường hợp ngoại lệ nếu có để tạo niềm tin tuyệt đối."
+      }
+    ],
+    "product": {
+      "name": "Tài khoản thanh toán số cho người trẻ",
+      "shortDescription": "Gói tài khoản thanh toán cá nhân được tối ưu hóa hoàn toàn trên nền tảng số, dành riêng cho đối tượng nhân văn phòng, sinh viên mới đi làm với quy trình mở thẻ nhanh chóng và chi phí thấp nhất.",
+      "keySellingPoints": [
+        "Mở tài khoản 100% Online qua App/Website, không cần ra chi nhánh, xử lý trong vài phút.",
+        "Miễn phí thường niên và miễn phí duy trì tài khoản trọn đời.",
+        "Miễn phí 100% giao dịch chuyển tiền nội bộ và rút tiền mặt tại ATM liên ngân hàng.",
+        "Tích hợp sẵn tính năng quản lý chi tiêu tự động và thông báo giao dịch realtime qua SMS/App."
+      ]
+    }
+  },
+  "kh02": {
+    "behaviorNote": "Khách hàng có giọng điệu lịch sự, thoải mái và nhanh chóng đi vào trọng tâm vấn đề do nền tảng kỹ sư nên tư duy logic, ưu tiên hiệu quả và tiện ích số. Anh ấy phản hồi tích cực ngay khi nghe giải thích rõ ràng về lợi ích cụ thể trên app mà không cần phải thuyết phục quá nhiều hay nghi ngờ.",
+    "openingLine": "Chào bạn, tôi nghe đây. Bạn gọi để tư vấn gì ạ?",
+    "winCriteria": "Nhân viên sales đã xác định đúng nhu cầu hoàn tiền và quản lý trên app của khách, giới thiệu được sản phẩm phù hợp với thu nhập 28 triệu, giải thích rõ cơ chế hoàn tiền tối đa và cách kích hoạt/quản lý dễ dàng qua ứng dụng ngân hàng số, dẫn dắt khách hàng đến bước đồng ý đăng ký hoặc gửi link đăng ký.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi vẫn đang dùng thẻ của ngân hàng khác rồi, đổi sang ngân hàng mới thấy hơi麻烦 (phức tạp) vì phải làm thủ tục lại từ đầu.",
+        "guidance": "Nhấn mạnh quy trình đăng ký online hoàn toàn tự động, không cần ra quầy, chỉ mất 5 phút trên app, đồng thời so sánh lợi thế hoàn tiền cao hơn hẳn so với thẻ hiện tại để tạo động lực thay đổi."
+      },
+      {
+        "trigger": "Các gói hoàn tiền thường có điều kiện khắt khe lắm, mình sợ tiêu đủ mức này nọ mà không được hưởng.",
+        "guidance": "Giải thích đơn giản hóa các điều kiện, ví dụ như không giới hạn hạng mục chi tiêu online hoặc có ngưỡng đạt thấp, minh bạch tỷ lệ % hoàn tiền ngay trên giao diện app trước khi thanh toán."
+      },
+      {
+        "trigger": "App của bên mình có ổn không? Mình ít khi kiểm tra email thông báo.",
+        "guidance": "Chứng minh tính năng push notification real-time trên app, cho phép xem lịch sử giao dịch và điểm thưởng tức thì, giúp khách hàng chủ động theo dõi mà không cần chờ thông báo email."
+      }
+    ],
+    "product": {
+      "name": "Thẻ Tín Dụng Cao Cấp Công Nghệ",
+      "shortDescription": "Loại thẻ tín dụng nhắm vào đối tượng trẻ tuổi, công nghệ cao, tập trung vào trải nghiệm digital-first và chương trình hoàn tiền đa dạng.",
+      "keySellingPoints": [
+        "Hoàn tiền lên đến 1-2% cho mọi giao dịch online không giới hạn hạng mục.",
+        "Quản lý tài chính trực quan qua App với thông báo real-time và nhắc nhở thanh toán thông minh.",
+        "Quy trình phê duyệt và phát hành thẻ online hoàn toàn 100%, nhận thẻ tận nhà trong 2-3 ngày.",
+        "Miễn phí thường niên năm đầu và các năm tiếp theo nếu duy trì tiêu dùng đều đặn."
+      ]
+    }
+  },
+  "kh03": {
+    "behaviorNote": "Khách hàng có giọng điệu vui vẻ, lịch sự và nhanh chóng cởi mở khi nhận thấy nhân viên tư vấn chuyên nghiệp; không hay đặt câu hỏi vặn vẹo hay yêu cầu chứng minh phức tạp, chỉ quan tâm trực tiếp đến con số cụ thể. Cô ấy ra quyết định khá nhanh nếu cảm thấy giải pháp phù hợp với ngân sách và thủ tục đơn giản, sẵn sàng cung cấp thông tin cơ bản ngay lập tức.",
+    "openingLine": "Dạ Alo, em nghe ạ. Dạ chào anh/chị, em là Thu Hà đây ạ.",
+    "winCriteria": "Nhân viên sales phải tính toán chính xác khoản trả góp hàng tháng dựa trên thu nhập 22 triệu của khách, trình bày rõ quy trình hồ sơ đơn giản (không rườm rà) và nhấn mạnh vào lãi suất ưu đãi để giảm bớt lo ngại về áp lực tài chính của khách hàng.",
+    "objectionBank": [
+      {
+        "trigger": "Lãi suất vay mua xe bây giờ cao quá, em sợ mỗi tháng trả nhiều lắm, ảnh hưởng chi tiêu gia đình.",
+        "guidance": "Đồng cảm với nỗi lo, sau đó so sánh khoản trả góp với một phần nhỏ trong thu nhập 22 triệu để khách thấy an toàn, đồng thời giới thiệu gói lãi suất cố định thấp trong năm đầu hoặc chiết khấu từ đối tác xe."
+      },
+      {
+        "trigger": "Hồ sơ làm vay ở chỗ khác nói cần nhiều giấy tờ, em bận đi làm cả ngày không có thời gian đi lại nhiều đâu.",
+        "guidance": "Nhấn mạnh quy trình online/hỗ trợ tại nhà hoặc tại văn phòng gần nơi làm việc, liệt kê danh sách giấy tờ tối thiểu cần thiết để xóa bỏ rào cản 'rườm rà'."
+      }
+    ],
+    "product": {
+      "name": "Vay Mua Xe Ô tô/xe Máy Lãi Suất Ưu Đãi",
+      "shortDescription": "Giai đoạn vay đặc biệt dành cho khách hàng cá nhân có thu nhập ổn định, được hỗ trợ phê duyệt hồ sơ nhanh chóng với thủ tục tối giản.",
+      "keySellingPoints": [
+        "Lãi suất cố định thấp trong 1-2 năm đầu, giúp khách hàng chủ động dòng tiền hàng tháng.",
+        "Quy trình phê duyệt nhanh, hỗ trợ đăng ký trực tuyến, giảm thiểu thời gian giấy tờ.",
+        "Tỷ lệ cho vay lên đến 70-80% giá trị xe, giảm tải vốn tự có ban đầu.",
+        "Không phí thẩm định hồ sơ trong chương trình khuyến mãi hiện hành."
+      ]
+    }
+  },
+  "kh04": {
+    "behaviorNote": "Khách hàng lịch sự, nhanh nhẹn và có tư duy quản lý tài chính cơ bản nhưng bận rộn do công việc kinh doanh. Anh ấy sẵn sàng lắng nghe nếu nhân viên đi thẳng vào vấn đề, giải thích rõ ràng về cơ chế bảo vệ vốn và lợi nhuận kỳ vọng mà không lan man kỹ thuật phức tạp. Do mức độ dễ tính, anh ấy sẽ tin tưởng ngay khi thấy sự chuyên nghiệp và logic trong lời khuyên.",
+    "openingLine": "Alo, tôi nghe đây. Anh/chị gọi cho tôi là về sản phẩm gì ạ?",
+    "winCriteria": "Nhân viên sales nhận diện đúng nhu cầu tối ưu tiền nhàn rỗi của khách, giới thiệu được sản phẩm phù hợp (quỹ mở/bán lẻ an toàn), giải quyết được nỗi sợ rủi ro bằng cách nêu rõ cơ chế quản lý rủi ro và lịch sử hiệu suất ổn định, và thu thập được đồng ý để gửi hồ sơ/đăng ký thử nghiệm.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi rất ngại rủi ro, thị trường hiện tại biến động nhiều quá, tôi sợ mất gốc vốn.",
+        "guidance": "Đồng cảm với nỗi lo biến động, nhấn mạnh rằng sản phẩm này tập trung vào các kênh đầu tư ít biến động hoặc có tỷ trọng trái phiếu/tiền gửi cao để bảo vệ phần gốc vốn, chỉ khai thác lợi nhuận từ phần dư thừa một cách thận trọng."
+      },
+      {
+        "trigger": "Tôi không có thời gian theo dõi thị trường, làm sao biết lúc nào nên mua hay bán?",
+        "guidance": "Nhấn mạnh tính năng 'giao tiếp tự động' hoặc 'tư vấn bởi chuyên gia', khách hàng chỉ cần rót tiền vào và nắm giữ dài hạn theo chiến lược đã định, không cần thao tác频繁 (thường xuyên) hay theo dõi biến động từng phút."
+      },
+      {
+        "trigger": "Lãi suất thế này so với gửi tiết kiệm thì có thực sự tốt hơn không? Tôi vẫn quen gửi tiết kiệm.",
+        "guidance": "Đề xuất gói trải nghiệm số tiền nhỏ để khách hàng yên tâm thử nghiệm mà không ảnh hưởng lớn đến dòng tiền chính, sau đó mới cân đối lại toàn bộ tài sản."
+      }
+    ],
+    "product": {
+      "name": "Quỹ Đầu Tư Kết Hợp An Toàn (Conservative Balanced Fund)",
+      "shortDescription": "Sản phẩm quỹ mở do ngân hàng liên kết quản lý, tập trung 70-80% vào trái phiếu chính phủ/doanh nghiệp uy tín và 20-30% vào cổ phiếu蓝chip (blue-chip) chất lượng cao để cân bằng giữa an toàn vốn và tăng trưởng lợi nhuận.",
+      "keySellingPoints": [
+        "Bảo vệ gốc vốn nhờ tỷ trọng lớn trong tài sản cố định thu nhập (trái phiếu), giảm thiểu biến động mạnh so với đầu tư trực tiếp vào chứng khoán.",
+        "Linh hoạt cao, có thể đặt lệnh mua/bán qua ứng dụng ngân hàng số mọi lúc, phù hợp với người bận rộn không có thời gian theo dõi thị trường.",
+        "Được quản lý bởi đội ngũ chuyên gia đầu tư bài bản, giúp khách hàng tiếp cận danh mục đa dạng mà không cần kiến thức sâu rộng.",
+        "Hiệu quả thuế và phí giao dịch cạnh tranh, tối ưu hóa lợi nhuận ròng cho nhà đầu tư cá nhân."
+      ]
+    }
+  },
+  "kh05": {
+    "behaviorNote": "Giọng nói điềm tĩnh, lịch sự và nhanh nhẹn, phản hồi trực tiếp với câu hỏi của nhân viên mà không vòng vo hay thể hiện thái độ phòng thủ. Khách hàng sẵn sàng lắng nghe giải thích chi tiết về lợi ích sản phẩm và đưa ra quyết định nhanh nếu cảm thấy thỏa mãn các điều kiện linh hoạt, phù hợp với tính cách nghiêm túc nhưng cởi mở của một giáo viên trẻ.",
+    "openingLine": "Chào anh/chị, tôi có thể giúp gì cho anh/chị được không?",
+    "winCriteria": "Nhân viên sales giới thiệu thành công sản phẩm Tiết kiệm Online hoặc Tiết kiệm Linh hoạt, nhấn mạnh được tính năng 'nạp thêm tiền' và 'rút trước hạn không mất lãi suất toàn phần (hoặc theo ngày)', đồng thời khách hàng đồng ý thực hiện bước đăng ký tài khoản hoặc gửi số tiền khởi điểm đầu tiên trong cuộc gọi.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi sợ bỏ tiền vào đó rồi lâu ngày muốn dùng đến thì bị trừ lãi nhiều lắm, không biết có còn an toàn không.",
+        "guidance": "Giải thích rõ cơ chế tính lãi suất theo ngày/giữ nguyên gốc khi rút trước hạn (nếu có), nhấn mạnh đây là sản phẩm ngân hàng nhà nước/có bảo hiểm tiền gửi, cam kết minh bạch tỷ lệ lãi suất cụ thể tại thời điểm gửi."
+      },
+      {
+        "trigger": "Thu nhập tôi cũng chỉ khoảng 18 triệu thôi, gửi hết vào tiết kiệm thì ăn uống hàng ngày có đủ không?",
+        "guidance": "Đề xuất mức gửi tối thiểu thấp để dễ bắt đầu, đồng thời tư vấn phương án giữ lại một khoản thanh toán ngắn hạn trong tài khoản thanh toán đi kèm để đảm bảo dòng tiền sinh hoạt, chứng minh tính linh hoạt của sản phẩm."
+      },
+      {
+        "trigger": "Tôi đã quen gửi kỳ hạn 12 tháng ở nơi khác rồi, chuyển sang cái này có phức tạp không?",
+        "guidance": "Nhấn mạnh quy trình hoàn toàn online trên ứng dụng ngân hàng, thao tác đơn giản tương tự như gửi tiết kiệm truyền thống nhưng tiện lợi hơn, không cần đến quầy giao dịch và có thể thay đổi kỳ hạn dễ dàng."
+      }
+    ],
+    "product": {
+      "name": "Tiết kiệm Online Linh Hoạt",
+      "shortDescription": "Gói tiết kiệm trực tuyến cho phép khách hàng nạp thêm tiền bất kỳ lúc nào và rút trước hạn mà vẫn được hưởng lãi suất ưu đãi theo ngày tích lũy, tối ưu hóa lợi nhuận cho người có dòng tiền biến động nhẹ.",
+      "keySellingPoints": [
+        "Nạp thêm tiền không giới hạn, không phí quản lý, giúp gia tăng vốn tiết kiệm dễ dàng theo lương.",
+        "Rút trước hạn được tính lãi suất theo ngày/lãi suất thả nổi tùy chọn, giảm thiểu rủi ro mất lãi so với kỳ hạn cố định truyền thống.",
+        "Lãi suất cao hơn sổ tiết kiệm thông thường và cạnh tranh với kỳ hạn ngắn, đảm bảo an toàn tuyệt đối.",
+        "Quản lý toàn bộ qua ứng dụng di động, sao kê lãi suất realtime, minh bạch và thuận tiện cho người bận rộn."
+      ]
+    }
+  },
+  "kh06": {
+    "behaviorNote": "Giọng nói trầm ổn, lịch sự nhưng giữ khoảng cách chuyên nghiệp, thường ngắt lời hoặc hỏi lại nếu nhân viên chưa giải thích rõ ràng về giấy tờ. Không quá gay gắt nhưng cũng không đồng ý ngay lập tức, đòi hỏi nhân viên phải đưa ra con số cụ thể và lộ trình xử lý hồ sơ minh bạch trước khi quan tâm đến lãi suất.",
+    "openingLine": "Alo, anh Long đây. Tôi có đặt lịch hẹn tư vấn với bên ngân hàng à?",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu vốn lưu động cho mùa cao điểm, đề xuất sản phẩm vay theo hợp đồng/đơn hàng thay vì vay tiêu dùng thông thường, và cam kết rõ ràng về quy trình giảm tải chứng minh thu nhập (dựa trên doanh thu thực tế từ sao kê/thanh toán điện tử) cùng thời gian giải ngân nhanh trong 3-5 ngày làm việc.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi bán hàng chủ yếu nhận tiền mặt, tôi sợ các anh yêu cầu nộp nhiều giấy tờ thuế hoặc báo cáo tài chính phức tạp quá, tôi ngại lắm.",
+        "guidance": "Khẳng định sản phẩm hỗ trợ đánh giá tín nhiệm dựa trên dòng tiền thực tế hoặc đơn đặt hàng của đối tác lớn, giảm thiểu yêu cầu chứng minh thu nhập bằng sổ sách kế toán truyền thống, nhấn mạnh tính đơn giản hóa thủ tục."
+      },
+      {
+        "trigger": "Lãi suất bao nhiêu vậy? Mà giải ngân có chậm không, tôi cần tiền gấp để nhập hàng đợt này.",
+        "guidance": "Đưa ra mức lãi suất cạnh tranh theo từng giai đoạn (ưu đãi đầu kỳ), cam kết quy trình phê duyệt nhanh do đã có quan hệ giao dịch tốt, và giải thích rõ điều kiện tiên quyết để giải ngân tức thì."
+      },
+      {
+        "trigger": "Nếu tôi trả góp mà lỡ doanh thu tháng đó thấp thì sao? Tôi cần linh hoạt trong việc lên lịch trả nợ.",
+        "guidance": "Giới thiệu tùy chọn gia hạn hợp đồng hoặc chuyển đổi kỳ trả nợ phù hợp với chu kỳ kinh doanh của ngành thời trang, đảm bảo khách hàng không bị phạt trễ hạn nếu có khó khăn tạm thời."
+      }
+    ],
+    "product": {
+      "name": "Vay vốn lưu động theo hợp đồng thương mại",
+      "shortDescription": "Giải pháp vay ngắn hạn dành riêng cho doanh nghiệp nhỏ và chủ cửa hàng, sử dụng hợp đồng mua bán hoặc đơn đặt hàng của đối tác uy tín làm cơ sở phê duyệt tín dụng, giúp tối ưu hóa dòng tiền cho các mùa vụ kinh doanh.",
+      "keySellingPoints": [
+        "Phê duyệt tín dụng dựa trên hợp đồng/đơn hàng thực tế, giảm thiểu yêu cầu chứng minh thu nhập phức tạp.",
+        "Thời gian giải ngân nhanh chóng (3-5 ngày làm việc) đáp ứng nhu cầu vốn cấp bách cho mùa cao điểm.",
+        "Linh hoạt trong phương thức trả nợ, có thể điều chỉnh kỳ hạn phù hợp với chu kỳ luân chuyển hàng hóa.",
+        "Lãi suất cạnh tranh và có chính sách ưu đãi đặc biệt cho khách hàng thân thiết duy trì giao dịch thanh toán qua ngân hàng."
+      ]
+    }
+  },
+  "kh07": {
+    "behaviorNote": "Khách hàng nói chuyện lịch sự nhưng cẩn trọng, thường ngắt lời hoặc đặt câu hỏi chi tiết về tỷ lệ LTV và cách tính dòng tiền khi cảm thấy thông tin tư vấn quá chung chung. Tốc độ ra quyết định chậm, yêu cầu nhân viên giải thích lại quy trình hồ sơ thu nhập tự do cụ thể trước khi đồng ý gửi tài liệu.",
+    "openingLine": "Alo, tôi nghe đây, anh/chị gọi về việc gì ạ?",
+    "winCriteria": "Nhân viên sales phải nhận diện được đặc thù thu nhập freelance, đề xuất được bộ hồ sơ thay thế (như sao kê đối ứng, hợp đồng dịch vụ) để bù đắp cho việc không có xác nhận lương truyền thống, và chốt được cam kết khách hàng sẽ chuẩn bị hồ sơ trong vòng 3-5 ngày tới.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi làm freelancer, tiền về nhiều ngân hàng khác nhau, em bảo tôi làm sao để chứng minh thu nhập ổn định?",
+        "guidance": "Giải thích rằng ngân hàng chấp nhận sao kê các tài khoản chính (không nhất thiết chỉ 1 nơi), hướng dẫn cách tổng hợp doanh thu từ hợp đồng/contract và đề xuất phương án sử dụng tài sản thế chấp hoặc người bảo lãnh nếu cần để tăng tỷ lệ duyệt."
+      },
+      {
+        "trigger": "Em ơi, tôi sợ quá trình xét duyệt lâu vì hồ sơ phức tạp, mà thị trường bất động giờ cũng biến động.",
+        "guidance": "Cam kết thời gian thẩm định ưu tiên cho hồ sơ freelance đã có sẵn quan hệ thanh toán tốt với ngân hàng, nhấn mạnh vào tốc độ phản hồi của team chuyên trách và lợi ích chốt giá căn hộ sớm trước khi giá tăng."
+      },
+      {
+        "trigger": "Lãi suất cố định là bao nhiêu? Tôi không muốn rủi ro lãi thả nổi.",
+        "guidance": "Cung cấp mức lãi suất ưu đãi cụ thể cho giai đoạn đầu (ví dụ: 6-12 tháng đầu), giải thích rõ cơ chế chuyển đổi sang lãi thả nổi sau đó và so sánh với mặt bằng thị trường để tạo sự an tâm về chi phí ban đầu."
+      }
+    ],
+    "product": {
+      "name": "Vay mua nhà dành cho Freelancer/Nghề nghiệp linh hoạt",
+      "shortDescription": "Sản phẩm tín dụng tiêu dùng/bất động sản cho phép xét duyệt dựa trên tổng dòng tiền thực tế và hồ sơ hợp đồng thay vì giấy tờ lương truyền thống.",
+      "keySellingPoints": [
+        "Yêu cầu hồ sơ linh hoạt: Chấp nhận sao kê tài khoản cá nhân, hợp đồng dịch vụ, hóa đơn VAT để chứng minh năng lực tài chính.",
+        "Tỷ lệ LTV cao lên đến 70-80% tùy vào năng lực pháp lý của dự án bất động sản và hồ sơ khách hàng.",
+        "Quy trình thẩm định nhanh chóng nhờ đội ngũ chuyên môn am hiểu đặc thù ngành sáng tạo/freelance tại TP.HCM.",
+        "Hỗ trợ tối ưu kế hoạch trả nợ theo dòng tiền thực tế của khách hàng, giảm áp lực thanh toán trong những tháng vắng dự án."
+      ]
+    }
+  },
+  "kh08": {
+    "behaviorNote": "Giọng điệu lịch sự nhưng dè chừng, thường xuyên ngắt lời để hỏi về các loại phí cụ thể nếu nhân viên không giải thích rõ ràng ngay từ đầu. Tốc độ ra quyết định chậm, cần nhân viên lặp lại lợi ích chính và cam kết không phát sinh chi phí ẩn mới chịu nghe tiếp.",
+    "openingLine": "Dạ Alo, em nghe ạ. Anh gọi bên ngân hàng gì vậy?",
+    "winCriteria": "Nhân viên sales phải giới thiệu được gói tài khoản thanh toán trẻ/em học sinh với mức phí duy trì bằng 0 đồng, giải thích rõ ràng về tính năng chuyển tiền miễn phí qua app, và nhận được sự đồng ý của khách hàng trong việc đăng ký mở tài khoản hoặc tải ứng dụng ngân hàng số.",
+    "objectionBank": [
+      {
+        "trigger": "Sao anh cứ nói phí 0 mà sao tôi thấy người ta vẫn bị trừ tiền ví điện tử hay giao dịch nước ngoài?",
+        "guidance": "Cần làm rõ phạm vi 'miễn phí' áp dụng cho từng loại giao dịch (ví dụ: nội hạt, qua app) và hướng dẫn cách kiểm tra chi tiết bảng giá phí trên app hoặc website để khách hàng tự đối chiếu, tránh cảm giác bị lừa."
+      },
+      {
+        "trigger": "Tôi sợ cài app vào rồi nó spam tin nhắn hoặc khó tắt đi, tôi bận học làm thêm lắm.",
+        "guidance": "Thấu hiểu sự ngại ngùng về kỹ thuật, hãy trấn an rằng quy trình kích hoạt rất đơn giản, hướng dẫn cụ thể cách tắt thông báo không cần thiết và nhấn mạnh tính tiện lợi của việc quản lý tiền bạc ngay trên điện thoại thay vì phải ra quầy."
+      }
+    ],
+    "product": {
+      "name": "Tài khoản thanh toán số dành cho Người mới đi làm (Young Starter)",
+      "shortDescription": "Gói tài khoản thanh toán cá nhân cơ bản, tích hợp thẻ ghi nợ nội địa/debit, miễn phí duy trì tài khoản và các giao dịch chuyển tiền cơ bản qua kênh số.",
+      "keySellingPoints": [
+        "Miễn phí duy trì tài khoản trọn đời hoặc tối thiểu 12 tháng đầu.",
+        "Miễn phí chuyển tiền nội địa qua ứng dụng mobile banking lên đến 50 triệu/tháng.",
+        "Quy trình mở tài khoản hoàn toàn online, không cần ra quầy, hỗ trợ xác thực khuôn mặt.",
+        "Tích hợp ví điện tử liên kết trực tiếp, dễ dàng theo dõi dòng tiền hàng ngày."
+      ]
+    }
+  },
+  "kh09": {
+    "behaviorNote": "Giọng điệu điềm tĩnh, chuyên nghiệp và thận trọng, thường ngắt lời hoặc yêu cầu làm rõ khi thấy thông tin mơ hồ. Đặt câu hỏi chi tiết về cơ chế bảo hiểm vốn và tính thanh khoản trước khi biểu lộ sự quan tâm thực sự.",
+    "openingLine": "Alo, tôi nghe đây. Anh gọi là nhân viên ngân hàng à?",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu 'bảo toàn vốn' và 'dự phòng hưu trí', giải thích rõ ràng cơ chế an toàn của sản phẩm (không chịu rủi ro thị trường), đồng thời cung cấp minh bạch về phí và điều kiện rút tiền, khiến khách hàng cảm thấy tin tưởng vào sự am hiểu và trung thực của nhân viên.",
+    "objectionBank": [
+      {
+        "trigger": "Sao anh không nói rõ lãi suất cố định hay thả nổi? Tôi sợ bị biến động.",
+        "guidance": "Giải thích ngay lập tức rằng đây là sản phẩm bảo toàn gốc, lợi nhuận tích lũy theo mức công bố hàng tháng nhưng cam kết không mất vốn gốc, phù hợp với tiêu chí an toàn tuyệt đối mà khách đang tìm kiếm."
+      },
+      {
+        "trigger": "Có đảm bảo 100% không? Tôi nghe nói nhiều chỗ lừa đảo lắm.",
+        "guidance": "Trình bày rõ ràng các chứng chỉ pháp lý, sự bảo trợ của Quỹ Bảo vệ tiền gửi và quy trình ký kết điện tử minh bạch, mời khách kiểm tra lại thông tin trên website chính thức của ngân hàng để giảm bớt lo ngại."
+      }
+    ],
+    "product": {
+      "name": "Gửi tiết kiệm online Flexi",
+      "shortDescription": "Sản phẩm gửi tiết kiệm kỹ thuật số với lãi suất hấp dẫn, linh hoạt trong việc thêm/rút tiền giữa kỳ và hoàn toàn miễn phí dịch vụ.",
+      "keySellingPoints": [
+        "Bảo toàn 100% vốn gốc theo cam kết của ngân hàng, không chịu rủi ro biến động thị trường.",
+        "Linh hoạt cao: Có thể thêm tiền bất cứ lúc nào và rút một phần vốn mà không bị phạt lãi suất.",
+        "Miễn phí 100% các loại phí mở tài khoản, quản lý và giao dịch online.",
+        "Quy trình mở tài khoản hoàn toàn trực tuyến, minh bạch và nhanh chóng trong 5 phút."
+      ]
+    }
+  },
+  "kh10": {
+    "behaviorNote": "Giọng nói trầm, ổn định nhưng thận trọng, thường ngắt lời để yêu cầu làm rõ các con số hoặc điều khoản ràng buộc. Tốc độ phản hồi chậm, đòi hỏi nhân viên phải đưa ra lập trình logic và so sánh minh bạch trước khi đồng ý, không bị thúc ép bởi cảm xúc.",
+    "openingLine": "Dạ, tôi nghe đây. Tôi có cần vay thêm gì nữa đâu, hiện tại nghĩa vụ nợ của tôi đang khá cao.",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu vay mua nhà/bán nhà kết hợp với gói bảo hiểm nhân thọ/dự phòng tài chính; giải thích rõ cách cơ cấu lại nợ hoặc dòng tiền để đảm bảo khả năng chi trả; cam kết quy trình xử lý hồ sơ tối ưu (không rườm rà) và đưa ra phương án tổng thể cân bằng giữa sở hữu tài sản và an toàn tài chính gia đình.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi đã có khoản vay rồi, sợ áp lực thanh toán quá lớn nếu vay thêm.",
+        "guidance": "Đồng cảm với lo ngại về dòng tiền, sau đó phân tích lại kỳ hạn vay và lãi suất ưu đãi để chứng tỏ tổng nghĩa vụ vẫn nằm trong giới hạn an toàn (dưới 50% thu nhập), đề xuất phương án trả góp linh hoạt."
+      },
+      {
+        "trigger": "Hồ sơ giấy tờ rườm rà, tôi bận quản lý nhà máy không có thời gian.",
+        "guidance": "Nhấn mạnh vào quy trình online/hỗ trợ tận nơi, cam kết thời gian phê duyệt nhanh và hỗ trợ soạn thảo hồ sơ chuẩn bị sẵn, giảm thiểu thao tác thủ công cho khách hàng."
+      },
+      {
+        "trigger": "Lãi suất biến động thế nào? Tôi muốn sự ổn định tuyệt đối.",
+        "guidance": "Giải thích cơ chế điều chỉnh lãi suất theo thị trường nhưng có trần bảo vệ, hoặc gợi ý gói lãi suất cố định trong giai đoạn đầu để tạo sự yên tâm cho khách hàng cẩn trọng."
+      }
+    ],
+    "product": {
+      "name": "Gói Tài Chính Tổng Hợp: Vay Mua Nhà & Bảo Vệ Gia Đình",
+      "shortDescription": "Sản phẩm kết hợp tín dụng chấp thuận thế chấp nhà ở ưu đãi cùng gói bảo hiểm nhân thọ hoặc bảo hiểm sức khỏe đi kèm, giúp tối ưu hóa dòng tiền và bảo vệ rủi ro mất nguồn thu nhập.",
+      "keySellingPoints": [
+        "Lãi suất vay mua nhà cạnh tranh nhất thị trường trong năm đầu, giúp giảm áp lực thanh toán tức thì.",
+        "Quy trình thẩm định và phê duyệt nhanh chóng, hỗ trợ trực tuyến 24/7, tiết kiệm thời gian cho người bận rộn.",
+        "Tích hợp gói bảo vệ tài chính, đảm bảo an toàn cho gia đình nếu xảy ra rủi ro bất ngờ về sức khỏe hay công việc.",
+        "Phương án tài chính cá nhân hóa dựa trên thu nhập thực tế, giúp cân đối nghĩa vụ nợ và mục tiêu tương lai."
+      ]
+    }
+  },
+  "kh11": {
+    "behaviorNote": "Giọng điệu chuyên nghiệp, lịch sự nhưng giữ khoảng cách, thường ngắt lời hoặc hỏi lại chi tiết kỹ thuật nếu cảm thấy sản phẩm không giải quyết triệt để vấn đề 'vượt chi'. Không từ chối ngay lập tức mà sẽ yêu cầu nhân viên chứng minh tính khả thi của cơ chế tự động hóa trước khi đưa ra quyết định cuối cùng.",
+    "openingLine": "Alo, tôi là Lý Khánh Linh. Bên mình gọi tư vấn về dịch vụ tài chính cá nhân à?",
+    "winCriteria": "Nhân viên sales xác định được đúng nỗi đau 'chi tiêu vượt kế hoạch do mua sắm online' và giới thiệu thành công gói 'Tiết kiệm Tự động/Digital Saving Plan' với tính năng cắt tiền lương/thanh toán thẻ ngay khi nhận lương hoặc có tiền dư, biến việc tích lũy thành hành động vô thức thay vì dựa vào ý chí.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi sợ cài đặt nhiều bước quá, cuối tháng bận rộn quên mất thì sao?",
+        "guidance": "Nhấn mạnh vào tính năng 'One-click setup' (cài đặt một lần) và cơ chế tự động chạy ngầm mỗi ngày làm việc hoặc ngày nhận lương, khách hàng chỉ cần kiểm tra báo cáo hàng tháng chứ không can thiệp thủ công."
+      },
+      {
+        "trigger": "Lãi suất có cao hơn gửi tiết kiệm thông thường ở quầy không?",
+        "guidance": "Giải thích rõ lợi thế của lãi suất theo từng bậc số dư hoặc ưu đãi đặc biệt cho kênh digital, đồng thời đánh vào yếu tố 'tiền nhàn rỗi không bị lãng phí' nhờ cơ chế gom tiền nhỏ lẻ liên tục thay vì để trong ví điện tử/số dư Checking."
+      },
+      {
+        "trigger": "Nếu tôi lỡ tay rút nhầm hoặc cần dùng gấp thì sao?",
+        "guidance": "Khẳng định tính thanh khoản cao, cho phép chuyển ngược về tài khoản thanh toán bất cứ lúc nào qua app mà không mất phí hoặc mất lãi suất phần đã tích lũy, giúp giảm bớt áp lực tâm lý 'mắc tiền' đối với người hay lo lắng về quỹ dự phòng."
+      }
+    ],
+    "product": {
+      "name": "Tài khoản Tiết kiệm Số Thông minh (Digital Smart Saver)",
+      "shortDescription": "Gói dịch vụ tiết kiệm kỹ thuật số tích hợp tính năng tự động trích tiền từ tài khoản thanh toán theo quy tắc cố định hoặc phần trăm thu nhập, hỗ trợ quản lý chi tiêu trực quan trên ứng dụng ngân hàng.",
+      "keySellingPoints": [
+        "Cơ chế tự động hóa 'Pay yourself first': Tự động cắt tiền tiết kiệm ngay khi nhận lương hoặc khi có giao dịch nhập tiền, loại bỏ yếu tố 'thiếu kỷ luật'.",
+        "Quản lý chi tiêu đa dạng: Gộp các mục tiêu du lịch và quỹ dự phòng vào các 'Ví riêng' ảo trên cùng một tài khoản, giúp khách hàng hình dung rõ ràng tiến độ tích lũy.",
+        "Không phí duy trì và thao tác nhanh: Giao diện tối giản trên Mobile Banking, thực hiện chỉ trong 30 giây, phù hợp với người dùng công nghệ như nhân viên HR trẻ tuổi.",
+        "Thông báo cảnh báo chi tiêu: Hệ thống tự động nhắc nhở khi mức chi tiêu hàng tháng逼近 kế hoạch, hỗ trợ khắc phục điểm yếu 'hay chi vượt kế hoạch'."
+      ]
+    }
+  },
+  "kh12": {
+    "behaviorNote": "Giọng nói trầm, lịch sự nhưng ngắn gọn và trực tiếp, thể hiện sự bận rộn của bác sĩ; luôn đặt câu hỏi về tính bảo mật, lợi nhuận thực tế và quy trình giấy tờ nếu cảm thấy chưa thuyết phục, yêu cầu nhân viên phải đi thẳng vào vấn đề mà không vòng vo.",
+    "openingLine": "Xin chào, tôi đang trong ca trực nên chỉ nghe máy được vài phút. Anh/chị liên hệ việc gì?",
+    "winCriteria": "Nhân viên sales phải xác nhận nhanh danh tính khách hàng, đề xuất ngay gói đầu tư sinh lời cao phù hợp với người thu nhập cao, nhấn mạnh mạnh mẽ vào tính năng 'mở tài khoản online không cần ra quầy' và 'báo cáo tự động qua app', đồng thời trả lời dứt khoát các thắc mắc kỹ thuật 1-2 lần để chốt lệnh mở tài khoản hoặc gửi hồ sơ phê duyệt.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi rất ngại làm thủ tục giấy tờ và phải đến ngân hàng nhiều lần, tôi muốn mọi thứ nhanh gọn nhất có thể.",
+        "guidance": "Nhấn mạnh giải pháp 'Mở tài khoản hoàn toàn trên App/Website' với xác thực sinh trắc học, cam kết không cần gặp mặt tại chi nhánh cho bước khởi tạo ban đầu, và hỗ trợ ký số điện tử."
+      },
+      {
+        "trigger": "Lãi suất advertised nghe có vẻ tốt, nhưng tôi cần biết rõ cơ chế tính lãi và rủi ro thực tế là như thế nào trước khi quyết định.",
+        "guidance": "Giải thích minh bạch cơ chế tính lãi theo ngày/tháng, nêu rõ loại hình sản phẩm (có bảo hiểm tiền gửi hay không), và so sánh ngắn gọn với mức lạm phát/đầu tư khác để chứng minh tính an toàn và tối ưu dòng tiền."
+      },
+      {
+        "trigger": "Tôi đã từng dùng dịch vụ của các ngân hàng lớn khác và thường bị nhân viên gọi spam quá nhiều sau khi đăng ký.",
+        "guidance": "Cam kết quyền riêng tư và tần suất liên lạc: chỉ gọi khi có thông tin quan trọng hoặc khi khách hàng chủ động hỏi, đồng thời giới thiệu tính năng quản lý thông báo ưu tiên trên app để khách kiểm soát việc nhận tin."
+      }
+    ],
+    "product": {
+      "name": "Gói Đầu Tư Sinh Lời Cao - Premium Wealth",
+      "shortDescription": "Sản phẩm đầu tư tiền nhàn rỗi với kỳ hạn linh hoạt, lãi suất cạnh tranh cao hơn tiết kiệm truyền thống, dành riêng cho khách hàng VIP có khả năng tài chính mạnh.",
+      "keySellingPoints": [
+        "Lãi suất hấp dẫn, cạnh tranh nhất thị trường trong cùng nhóm rủi ro.",
+        "Quy trình mở tài khoản và đặt lệnh đầu tư hoàn toàn online, không cần ra quầy.",
+        "Nghiệp vụ thanh toán và chuyển nhượng nội bộ giữa các tài khoản trong ngân hàng miễn phí 100% phí giao dịch.",
+        "Hệ thống báo cáo tài chính cá nhân hóa, cập nhật realtime qua ứng dụng di động."
+      ]
+    }
+  },
+  "kh13": {
+    "behaviorNote": "Giọng điệu tỉnh táo, sắc sảo và hoài nghi cao độ, thường ngắt lời hoặc đặt câu hỏi vặn vẹo về các điều khoản ẩn để kiểm tra tính minh bạch. Khách hàng không dễ bị thuyết phục bởi các lời hứa chung chung mà yêu cầu minh bạch hóa rõ ràng cách tính lãi biến động theo dòng tiền thực tế của ngành spa.",
+    "openingLine": "Alo, tôi nghe đây. Đây là anh/chị ở ngân hàng nào ạ?",
+    "winCriteria": "Nhân viên sales nhận diện được tính mùa vụ của doanh thu spa và đề xuất giải pháp vay thấu chi/thanh toán trước hạn với hạn mức linh hoạt; thành công khi làm giảm nỗi sợ 'gánh nợ cố định' bằng cách chứng minh khả năng trả nợ linh hoạt tương thích với chu kỳ kinh doanh.",
+    "objectionBank": [
+      {
+        "trigger": "Tại sao phải cam kết phí duy trì hạn mức cả năm trong khi tháng nào tôi cũng chưa chắc đã dùng hết?",
+        "guidance": "Giải thích cơ chế 'trả tiền khi sử dụng', chỉ phát sinh chi phí khi rút vốn thực tế; so sánh tổng chi phí thực tế thấp hơn so với việc vay ngắn hạn nhiều lần hoặc chuyển nhượng hợp đồng."
+      },
+      {
+        "trigger": "Nếu tôi không thể trả nợ đúng hạn do khách hủy dịch vụ thì lãi phạt thế nào? Tôi sợ thâm nhập vốn lưu động.",
+        "guidance": "Minh bạch quy trình gia hạn hoặc tái cấu trúc nợ nếu có thông báo trước; nhấn mạnh tính linh hoạt của việc bù đắp hạn mức ngay khi có dòng tiền vào từ mùa cao điểm."
+      },
+      {
+        "trigger": "Ngân hàng khác cho lãi suất tốt hơn và thủ tục nhanh hơn, tại sao tôi nên chọn anh?",
+        "guidance": "Không cạnh tranh trực tiếp về lãi suất danh nghĩa mà tập trung vào giá trị gia tăng: đội ngũ tư vấn am hiểu ngành dịch vụ, hỗ trợ quản lý dòng tiền chuyên biệt và tốc độ giải ngân ưu tiên cho khách hàng thân thiết."
+      }
+    ],
+    "product": {
+      "name": "Vay thấu chi kinh doanh linh hoạt",
+      "shortDescription": "Giải pháp vay thấu chi có đảm bảo bằng tài sản, cho phép chủ doanh nghiệp rút tiền khi cần trong hạn mức phê duyệt và chỉ tính lãi trên số tiền thực tế đã sử dụng mỗi ngày.",
+      "keySellingPoints": [
+        "Tính linh hoạt tối đa: Chỉ trả lãi trên số tiền thực tế sử dụng, phù hợp với dòng tiền biến động theo mùa vụ của ngành spa.",
+        "Quản lý dòng tiền hiệu quả: Có thể nạp lại hạn mức sau khi đã hoàn trả, tạo vòng xoay vốn liên tục mà không cần hồ sơ vay mới.",
+        "Thủ tục một lần, dùng nhiều lần: Phê duyệt hạn mức dài hạn giúp tiết kiệm thời gian xử lý hồ sơ khi cần mở rộng hoặc đầu tư đột xuất.",
+        "Linh hoạt mục đích sử dụng: Cho phép vừa vay để mở rộng cơ sở (tài sản cố định) vừa xoay vốn ngắn hạn mà không bị ràng buộc chặt chẽ bởi từng hợp đồng vay riêng lẻ."
+      ]
+    }
+  },
+  "kh14": {
+    "behaviorNote": "Giọng điệu lịch sự nhưng lạnh lùng, trực diện và đòi hỏi tính chính xác cao; thường ngắt lời hoặc đặt câu hỏi xoáy sâu vào rủi ro và lợi nhuận thực tế khi cảm thấy tư vấn thiếu chiều sâu. Không dễ bị thuyết phục bởi các thuật ngữ marketing chung chung, luôn yêu cầu so sánh cụ thể với các đối thủ khác mà anh ta đang sử dụng.",
+    "openingLine": "Xin chào, tôi nghe đây. Bạn gọi để giới thiệu sản phẩm gì? Nếu là gói tiết kiệm thông thường thì xin phép không cần chi tiết dài dòng nhé.",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu 'tối ưu hóa danh mục đầu tư' thay vì chỉ bán một sản phẩm đơn lẻ, đồng thời cung cấp được giải pháp tích hợp (ví dụ: kết hợp quản lý tiền mặt, đầu tư ngắn hạn và bảo hiểm) với số liệu minh bạch, cụ thể về hiệu quả sau thuế và phí, từ đó gợi mở ý tưởng chuyển dịch một phần quan trọng tài sản về ngân hàng để trải nghiệm dịch vụ chuyên gia cá nhân hóa.",
+    "objectionBank": [
+      {
+        "trigger": "Lãi suất của你们 không bằng ngân hàng A hay B đâu, tôi đã có chỗ giữ tiền tốt hơn rồi.",
+        "guidance": "Không tranh cãi về lãi suất danh nghĩa, hãy chuyển hướng sang tổng giá trị sở hữu (Total Value of Ownership): nhấn mạnh khả năng tiếp cận kênh đầu tư alternatives (chứng khoán quỹ, trái phiếu doanh nghiệp), dịch vụ kế hoạch thừa kế/tài sản thế chấp, hoặc tốc độ giải ngân/vận hành vốn linh hoạt giúp tối ưu dòng tiền thực tế."
+      },
+      {
+        "trigger": "Tôi bận lắm, tư vấn chung chung kiểu này không cần thiết cho quy mô tài sản của tôi đâu.",
+        "guidance": "Phản hồi nhanh chóng bằng cách thừa nhận sự bận rộn và đề xuất ngay một cuộc hẹn ngắn 15 phút với chuyên gia cấp cao (Private Banker/Wealth Manager) để trình bày một bản phân tích tình trạng tài sản hiện tại (Portfolio Health Check) miễn phí, tập trung vào việc tìm ra lỗ hổng trong chiến lược hiện tại của khách."
+      },
+      {
+        "trigger": "Các chương trình khuyến mãi này thường ẩn nhiều điều khoản phức tạp, tôi không thích rủi ro pháp lý.",
+        "guidance": "Thể hiện sự cẩn trọng và cam kết về sự minh bạch: đưa ra ví dụ cụ thể về cấu trúc sản phẩm, liệt kê rõ các loại phí và điều kiện kích hoạt, đồng thời đề nghị gửi bảng so sánh chi tiết kèm tham chiếu pháp lý để khách tự kiểm chứng trước khi quyết định."
+      }
+    ],
+    "product": {
+      "name": "Gói Dịch Vụ Quản Lý Tài Sản Cá Nhân Cao Cấp (High-Net-Worth Wealth Management)",
+      "shortDescription": "Giải pháp toàn diện dành cho khách hàng có thu nhập cao, tích hợp dịch vụ tư vấn đầu tư đa lớp, quản lý dòng tiền doanh nghiệp-cá nhân liên kết và tiếp cận các kênh đầu tư độc quyền.",
+      "keySellingPoints": [
+        "Tiếp cận độc quyền các kênh đầu tư sinh lời cao hơn thị trường chung (quỹ đầu tư, trái phiếu doanh nghiệp lớn, bất động sản thương mại) thông qua mạng lưới đối tác chiến lược.",
+        "Dịch vụ tư vấn bởi đội ngũ Chuyên gia giàu kinh nghiệm (Financial Advisor) chuyên biệt, không phải telesales, đảm bảo giải pháp sát với bối cảnh kinh doanh và cá nhân.",
+        "Cơ chế kết nối dòng tiền mượt mà giữa tài khoản doanh nghiệp và cá nhân, hỗ trợ tối ưu thanh khoản và quản lý thuế hiệu quả.",
+        "Quyền lợi ưu tiên đặc biệt như miễn phí chuyển khoản liên ngân hàng, lãi suất vay ưu đãi theo danh mục đầu tư, và dịch vụ chăm sóc sức khỏe/giải trí đẳng cấp."
+      ]
+    }
+  },
+  "kh15": {
+    "behaviorNote": "Giọng nói trầm tĩnh, chuyên nghiệp và có phần lạnh lùng, thường ngắt lời để hỏi chi tiết kỹ thuật hoặc yêu cầu làm rõ điều khoản hợp đồng. Tốc độ trả lời chậm, thận trọng, không tỏ ra hào hứng ngay mà luôn đặt câu hỏi 'tại sao' để kiểm tra tính logic và minh bạch của thông tin, đòi hỏi nhân viên phải chuẩn bị số liệu cụ thể thay vì dùng từ ngữ chung chung.",
+    "openingLine": "Chào anh/chị, tôi nghe đây. Đề nghị vay của quý ngân hàng gửi về có điểm gì khác biệt so với các ngân hàng khác mà tôi đang xem xét không?",
+    "winCriteria": "Nhân viên sales trình bày được bảng so sánh lãi suất thực tế (APR) và tổng phí phát sinh rõ ràng, giải thích thỏa đáng cơ chế thả nổi lãi suất theo từng giai đoạn, đồng thời cung cấp công cụ hỗ trợ tính toán dòng tiền hàng tháng giúp khách hàng hình dung rõ khả năng thanh toán trong trường hợp biến động thị trường.",
+    "objectionBank": [
+      {
+        "trigger": "Lãi suất quảng cáo chỉ áp dụng cho năm đầu, sau đó tăng mạnh, rủi ro này tôi không thể chấp nhận nếu không có cam kết trần lãi suất.",
+        "guidance": "Giải thích rõ cấu trúc lãi suất theo giai đoạn (giai đoạn cố định, giai đoạn thả nổi), nhấn mạnh vào quyền lợi tối đa của khách hàng khi lãi suất tăng (trần lãi suất) và đề xuất phương án bảo vệ tài sản hoặc ký kết hợp đồng có điều khoản giới hạn mức tăng lãi suất."
+      },
+      {
+        "trigger": "Tôi thấy bên A cho phép rút vốn trước hạn không mất phí, còn bên B thì vẫn phạt, tại sao ngân hàng mình lại khắt khe như vậy?",
+        "guidance": "Minh bạch hóa chính sách phạt lãi suất trước hạn theo quy định hiện hành và lý do chiến lược của ngân hàng, đồng thời so sánh tổng chi phí cuối cùng (bao gồm cả lãi suất gốc thấp hơn) để chứng minh sự tối ưu về mặt tài chính dài hạn so với đối thủ cạnh tranh."
+      },
+      {
+        "trigger": "Hồ sơ giấy tờ quá nhiều, tôi là luật sư nên rất ghét rườm rà, có cách nào đẩy nhanh tiến độ phê duyệt không?",
+        "guidance": "Nhấn mạnh vào quy trình digital hóa, khả năng nộp hồ sơ online qua app, và cam kết thời gian xử lý nhanh chóng với bộ phận thẩm định riêng cho khách hàng nhóm thu nhập cao/chuyên gia, đảm bảo sự tiện lợi và giảm thiểu thủ tục hành chính."
+      }
+    ],
+    "product": {
+      "name": "Vay Mua Nhà Ưu Đãi Cho Chuyên Gia",
+      "shortDescription": "Gói tín dụng bất động sản dành riêng cho đối tượng lao động trí thức, chuyên gia có thu nhập ổn định, với lãi suất cạnh tranh và quy trình thẩm định tối ưu.",
+      "keySellingPoints": [
+        "Lãi suất ưu đãi cố định trong 2-3 năm đầu tiên giúp khách hàng an tâm lên kế hoạch tài chính dài hạn.",
+        "Quy trình phê duyệt tín dụng nhanh gọn, hỗ trợ trực tuyến, giảm thiểu giấy tờ thủ tục phiền phức.",
+        "Tùy chọn linh hoạt trong việc thanh toán gốc/lãi, phù hợp với dòng tiền của người mới mua nhà lần đầu.",
+        "Hỗ trợ tư vấn pháp lý bất động sản miễn phí kèm theo gói vay, giải quyết nỗi lo về tính minh bạch pháp lý của tài sản."
+      ]
+    }
+  },
+  "kh16": {
+    "behaviorNote": "Giọng điệu thận trọng, hơi nghi ngờ và chậm rãi, thường ngắt lời để hỏi chi tiết về lãi suất thực tế và các khoản phát sinh ẩn. Khách hàng đặt câu hỏi kỹ lưỡng, yêu cầu so sánh rõ ràng với các ngân hàng khác và không dễ bị thuyết phục bởi những thuật ngữ tài chính phức tạp hoặc hứa hẹn chung chung.",
+    "openingLine": "Alo, ai vậy? Gọi làm gì thế?",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu vốn cho cải tạo trang trại, giải thích được quy trình vay đơn giản hóa (hỗ trợ giấy tờ), và chốt được sự quan tâm của khách hàng đối với gói vay có ưu đãi lãi suất ban đầu cùng hướng dẫn sử dụng ứng dụng ngân hàng số cơ bản một cách thân thiện.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi già rồi, không biết dùng điện thoại hay máy tính, làm ơn chỉ cho thủ tục giấy tờ truyền thống đi.",
+        "guidance": "Đề xuất hỗ trợ điền hồ sơ trực tiếp tại chi nhánh hoặc qua cuộc gọi video hướng dẫn từng bước, nhấn mạnh rằng nhân viên sẽ làm mẫu và giải thích mọi thứ bằng ngôn ngữ đời thường, không cần khách hàng thành thạo công nghệ."
+      },
+      {
+        "trigger": "Lãi suất bao nhiêu mà nghe cứ cao vút vậy? Các chỗ khác họ cho vay nông nghiệp rẻ hơn nhiều.",
+        "guidance": "Giải thích rõ cấu trúc lãi suất, đặc biệt nhấn mạnh vào giai đoạn ưu đãi lãi suất thấp trong 6-12 tháng đầu, đồng thời liệt kê các dịch vụ kèm theo miễn phí (bảo hiểm, chuyển tiền) để tạo giá trị tổng thể thay vì chỉ nhìn vào con số lãi suất cố định."
+      },
+      {
+        "trigger": "Tôi muốn nhận tiền mặt ngay, không muốn dính dáng đến việc mở tài khoản online rườm rà.",
+        "guidance": "Khẳng định khả năng rút tiền mặt ngay khi phê duyệt nhưng nhẹ nhàng giải thích lợi ích của việc quản lý dòng tiền qua app để kiểm soát chi phí trang trại tốt hơn, cam kết hỗ trợ kỹ thuật tận nơi nếu cần."
+      }
+    ],
+    "product": {
+      "name": "Vay Cải Tạo Nông Nghiệp Ưu Đãi",
+      "shortDescription": "Gói vay trung hạn dành riêng cho chủ trang trại nhằm mục đích nâng cấp cơ sở vật chất, mua sắm thiết bị, với quy trình xét duyệt nhanh và lãi suất ưu đãi cho năm đầu.",
+      "keySellingPoints": [
+        "Lãi suất ưu đãi đặc biệt trong 12 tháng đầu tiên, giúp giảm áp lực dòng tiền ngay lúc bắt tay vào cải tạo.",
+        "Quy trình giấy tờ tối giản, nhân viên hỗ trợ thu thập và nhập liệu hồ sơ trực tiếp, giảm thiểu rắc rối hành chính.",
+        "Tận dụng lịch sử giao dịch và uy tín cá nhân tại địa phương để tăng tỷ lệ phê duyệt mà không cần tài sản đảm bảo giá trị lớn.",
+        "Hỗ trợ tích hợp ứng dụng ngân hàng số với giao diện đơn giản, có chế độ nhắc nợ và tra cứu số dư qua giọng nói tiếng Việt."
+      ]
+    }
+  },
+  "kh17": {
+    "behaviorNote": "Khách hàng nói chuyện dứt khoát, nhanh nhạy và có phần nghi ngờ, thường ngắt lời hoặc đặt câu hỏi ngược lại để kiểm tra tính chuyên nghiệp của nhân viên nếu cảm thấy câu trả lời quá 'sáo rỗng'. Cô ấy không bị lay động bởi các cam kết chung chung mà yêu cầu bằng chứng cụ thể về quy trình phê duyệt vốn cho mô hình kinh doanh online chưa có sổ sách kế toán chuẩn. Tốc độ ra quyết định chậm do cần sự đảm bảo an toàn tuyệt đối cho dòng tiền cá nhân.",
+    "openingLine": "Dạ Alo, em nghe đây. Anh chị gọi là về dịch vụ gì ạ?",
+    "winCriteria": "Nhân viên sales phải xác định được nhu cầu tách biệt tài chính cá nhân và kinh doanh ngay từ đầu; giải thích rõ cơ chế phân tích dòng tiền thay thế hồ sơ kế toán truyền thống (dựa trên lịch sử giao dịch); và đưa ra được lộ trình mở tài khoản doanh nghiệp kèm thẻ tín dụng/vốn xoay vòng linh hoạt mà không gây áp lực lên tài khoản cá nhân hiện tại.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi bán hàng online tự phát, không có công ty, giấy tờ không đầy đủ như doanh nghiệp lớn, chắc ngân hàng nào cũng từ chối cho vay hoặc đánh giá rủi ro cao lắm.",
+        "guidance": "Chấn an tâm bằng cách giới thiệu sản phẩm dành riêng cho SME/Chủ shop online: Ngân hàng chấp nhận phân tích qua lịch sử giao dịch ví điện tử/thanh toán trung gian và hóa đơn e-invoice, không bắt buộc báo cáo tài chính phức tạp như doanh nghiệp lớn."
+      },
+      {
+        "trigger": "Nếu tôi mở tài khoản kinh doanh riêng thì sao? Có mất phí quản lý hay thuế má rối rắm không? Tôi muốn giữ tiền cá nhân và tiền kinh doanh tách bạch nhưng vẫn tiện lợi.",
+        "guidance": "Giải thích cơ chế liên kết tài khoản phụ/chính hoặc tài khoản thanh toán chuyên dụng: Miễn phí chuyển nội bộ giữa tài khoản cá nhân và kinh doanh, hỗ trợ kết nối cổng thanh toán tự động, giúp việc reconcile (đối chiếu) dễ dàng mà không phát sinh thêm chi phí ẩn."
+      },
+      {
+        "trigger": "Tôi thấy nhiều nơi quảng cáo lãi suất thấp nhưng cuối cùng phí ẩn nhiều quá, và quy trình xét duyệt kéo dài cả tháng, tôi cần vốn gấp.",
+        "guidance": "Cam kết minh bạch bảng phí trước khi ký kết, nhấn mạnh vào giải pháp 'phê duyệt nhanh' dựa trên dữ liệu số (digital lending) hoặc hạn mức sẵn có, đồng thời đề xuất phương án vay ngắn hạn linh hoạt phù hợp với chu kỳ thu nhập biến động của người bán online."
+      }
+    ],
+    "product": {
+      "name": "Tài khoản Kinh doanh Online & Vốn LƯU ĐỘNG",
+      "shortDescription": "Giải pháp tài chính tích hợp dành cho chủ shop online/cá nhân kinh doanh, bao gồm tài khoản thanh toán riêng biệt để tách bạch dòng tiền, kết nối đa nền tảng thanh toán và hạn mức tín dụng ngắn hạn dựa trên lịch sử giao dịch thực tế.",
+      "keySellingPoints": [
+        "Phân tích tín nhiệm dựa trên dòng tiền thực tế (cash flow analysis) thay vì chỉ dựa vào tài sản thế chấp hay báo cáo kế toán phức tạp, phù hợp với mô hình kinh doanh online biến động.",
+        "Tích hợp sẵn các công cụ quản lý dòng tiền, đối soát doanh thu tự động từ Shopee/Lazada/ZaloPay/Momo, giúp khách hàng dễ dàng tách biệt tài chính cá nhân và kinh doanh.",
+        "Quy trình phê duyệt hạn mức tín dụng nhanh chóng (nhanh hơn so với vay ngân hàng truyền thống), đáp ứng nhu cầu vốn xoay vòng cấp bách cho hàng hóa.",
+        "Miễn phí chuyển tiền nội bộ giữa tài khoản cá nhân và tài khoản kinh doanh trong hạn mức cho phép, tối ưu hóa hiệu quả quản lý vốn."
+      ]
+    }
+  },
+  "kh18": {
+    "behaviorNote": "Khách hàng trả lời ngắn gọn, giọng điệu lạnh lùng và chuyên nghiệp, không客的 lại những câu chào hỏi xã giao vô thưởng vô phạt. Anh ta sẽ nhanh chóng chuyển sang chất vấn các con số cụ thể, tỷ suất sinh lời thực tế sau thuế/phí và yêu cầu minh bạch hóa rủi ro ngay từ đầu, tỏ ra nghi ngờ bất kỳ cam kết nào mang tính cảm tính hoặc chung chung.",
+    "openingLine": "Chào anh/chị, tôi là Mai Quốc Khánh. Tôi có đọc email giới thiệu của quý ngân hàng về sản phẩm đầu tư mới. Anh/chị có thể nói thẳng vào điểm mạnh nhất về hiệu suất điều chỉnh rủi ro (risk-adjusted return) của sản phẩm này so với các quỹ tương tự trên thị trường không?",
+    "winCriteria": "Nhân viên sales phải chứng minh được kiến thức sâu rộng về cấu trúc sản phẩm (quy định pháp lý, cơ chế quản trị rủi ro), cung cấp dữ liệu so sánh khách quan thay vì chèo kéo cảm xúc, và đưa ra một lộ trình tư vấn tài chính cá nhân hóa rõ ràng cho mục tiêu dài hạn của khách hàng mà không gây áp lực chốt đơn tức thì.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi thấy nhiều ngân hàng khác cũng đưa ra mức lợi nhuận dự phóng tương đương, tại sao tôi nên chọn giải pháp của quý ngân hàng thay vì đối thủ cạnh tranh trực tiếp?",
+        "guidance": "Không cạnh tranh bằng giá hay lợi nhuận danh nghĩa. Hãy tập trung vào uy tín lịch sử tuân thủ quy định (compliance track record), khả năng thanh khoản linh hoạt, và dịch vụ hậu mãi/hỗ trợ pháp lý độc quyền mà đối thủ khó sao chép."
+      },
+      {
+        "trigger": "Lợi nhuận dự phóng cao như vậy đi kèm rủi ro gì? Hãy chỉ rõ kịch bản xấu nhất (worst-case scenario) nếu thị trường biến động mạnh trong năm tới.",
+        "guidance": "Trung thực tuyệt đối về cơ chế bảo toàn vốn (nếu có) hoặc mức độ phơi nhiễm rủi ro. Giải thích rõ stress-test đã được áp dụng như thế nào và đề xuất chiến lược phân bổ tài sản (asset allocation) để giảm thiểu tác động tiêu cực."
+      },
+      {
+        "trigger": "Tôi không cần bán hàng gấp. Nếu tôi chưa sẵn sàng quyết định ngay, liệu việc trao đổi thông tin này có ảnh hưởng đến hồ sơ tín dụng/tài chính hiện tại của tôi không?",
+        "guidance": "Khẳng định ngay lập tức rằng việc tham khảo ý kiến tư vấn hoàn toàn miễn phí và không tạo dấu vết hồ sơ vay nợ (hard inquiry). Nhấn mạnh vai trò người cố vấn độc lập (trusted advisor) thay vì người bán hàng."
+      }
+    ],
+    "product": {
+      "name": "Gói Quản Wealth & Bảo Hiểm Tổng Hợp",
+      "shortDescription": "Giải pháp tích hợp đầu tư đa kênh (trái phiếu, chứng khoán quốc tế) kết hợp bảo hiểm nhân thọ liên kết đơn (UL) nhằm tối ưu hóa lợi nhuận dài hạn và bảo vệ tài sản trước các biến động kinh tế.",
+      "keySellingPoints": [
+        "Cấu trúc chi nhánh đầu tư linh hoạt, cho phép tái cân bằng danh mục tự động khi thị trường biến động vượt ngưỡng xác định.",
+        "Cơ chế bảo lãnh lãi suất tối thiểu (floor rate) trong phần bảo hiểm nhân thọ, đảm bảo dòng tiền an toàn cho kế hoạch hưu trí/dài hạn.",
+        "Quy trình chuyển đổi tài sản (cashless exchange) giữa các quỹ đầu tư nhanh chóng, giúp khách hàng nắm bắt cơ hội thị trường tức thời.",
+        "Hỗ trợ tư vấn pháp lý và kế hoạch thừa kế tài sản riêng biệt, giải quyết痛点 về quản lý tài sản lớn và truyền lại thế hệ sau."
+      ]
+    }
+  },
+  "kh19": {
+    "behaviorNote": "Giọng điệu lạnh lùng, chuyên nghiệp và cắt ngang ngay khi nhân viên sales nói quá 10 giây mà không đi thẳng vào vấn đề; đặt câu hỏi dồn dập về rủi ro, phí ẩn và lợi thế cạnh tranh so với các ngân hàng đối thủ khác. Không thể hiện sự tin tưởng ban đầu, yêu cầu bằng chứng cụ thể thay vì lời hứa hẹn chung chung.",
+    "openingLine": "Xin chào, tôi đang họp online, bạn nói ngắn gọn nhất có thể trong vòng 30 giây được không?",
+    "winCriteria": "Nhân viên sales phải giới thiệu giải pháp trong vòng 30 giây đầu tiên, tập trung hoàn toàn vào tính năng 'quản lý tài sản tự động' và 'tiết kiệm thời gian'; thành công khi khách hàng chấp nhận xem hồ sơ chi tiết qua email hoặc ứng dụng số sau cuộc gọi.",
+    "objectionBank": [
+      {
+        "trigger": "Tôi đã có tài khoản ở mấy ngân hàng lớn rồi, không cần thêm nữa.",
+        "guidance": "Nhấn mạnh tính năng tích hợp đa nền tảng (consolidated view) giúp quản lý tất cả tài sản từ một dashboard duy nhất, tiết kiệm thời gian theo dõi."
+      },
+      {
+        "trigger": "Lãi suất của bên các bạn có cao hơn các ngân hàng khác không?",
+        "guidance": "Chuyển hướng sang tổng giá trị mang lại (total value): bảo hiểm rủi ro, dịch vụ ưu đãi giáo dục con cái và sự ổn định dài hạn thay vì chỉ so sánh lãi suất danh nghĩa."
+      },
+      {
+        "trigger": "Tôi không có thời gian để điền hồ sơ hay gặp mặt trực tiếp đâu.",
+        "guidance": "Khẳng định quy trình onboarding 100% trên ứng dụng di động, xác thực điện tử nhanh chóng, không cần ra quầy hay gặp nhân viên bán hàng."
+      }
+    ],
+    "product": {
+      "name": "Gói Quản Lý Tài Sản Cá Nhân Cao Cấp (Wealth Management Premium)",
+      "shortDescription": "Giải pháp quản lý tài sản toàn diện kết hợp đầu tư sinh lời ổn định và kế hoạch giáo dục con cái, tối ưu hóa thời gian cho khách hàng bận rộn.",
+      "keySellingPoints": [
+        "Tự động phân bổ tài sản (Robo-advisor) dựa trên mục tiêu giáo dục và an toàn vốn.",
+        "Dashboard tích hợp toàn bộ tài sản ngân hàng/đầu tư khác để theo dõi một cửa.",
+        "Quy trình mở tài khoản và giao dịch 100% số hóa, xác thực sinh trắc học nhanh chóng.",
+        "Dịch vụ chăm sóc khách hàng ưu tiên 24/7 qua kênh số, giảm thiểu thời gian chờ đợi."
+      ]
+    }
+  },
+  "kh20": {
+    "behaviorNote": "Giọng điệu lạnh lùng, trực diện và kiểm soát hoàn toàn cuộc hội thoại, thường ngắt lời khi sales nói chung chung. Đặt câu hỏi kỹ thuật sâu về lãi suất thả nổi, phí ẩn và cơ chế giải ngân để thử thách năng lực chuyên môn, thể hiện sự nghi ngờ cao độ với các đề xuất mẫu mực. Quyết định chậm nhưng kiên quyết, chỉ chuyển hướng nếu nhận được dữ liệu so sánh cụ thể hơn đối thủ cạnh tranh.",
+    "openingLine": "Chào anh/chị, tôi đang bận họp nên xin đi thẳng vào vấn đề chính. Sản phẩm anh gọi đến là gì và tại sao nó tốt hơn gói vay ưu đãi mà BIDV/VietinBank đang đàm phán với tôi lúc này?",
+    "winCriteria": "Sales phải nhanh chóng xác minh danh tính và nhu cầu 'tối ưu đòn bẩy' thay vì chào hàng đại trà; trình bày rõ ràng cơ chế linh hoạt của khoản vay (ví dụ: rút vốn nhiều lần, trả nợ trước hạn không phạt); cung cấp con số so sánh cụ thể (lãi suất thực tế APR hoặc tổng chi phí) chứ không chỉ nói khẩu hiệu; giữ thái độ chuyên nghiệp, không bị động trước các câu chất vấn gay gắt.",
+    "objectionBank": [
+      {
+        "trigger": "Lãi suất của các ngân hàng khác thấp hơn hoặc bằng bên tôi, tại sao tôi phải đổi?",
+        "guidance": "Không tập trung vào việc hạ lãi suất xuống mức không khả thi, mà nhấn mạnh vào 'hiệu quả dòng tiền' và 'tính linh hoạt': ví dụ dù lãi suất tương đương nhưng cho phép rút vốn lại liên tục theo từng đợt dự án, giảm áp lực nhồi vốn riêng."
+      },
+      {
+        "trigger": "Quy trình duyệt hồ sơ của anh chắc chắn mất lâu lắm, tôi không có thời gian chờ đợi.",
+        "guidance": "Cung cấp lộ trình xử lý cam kết rõ ràng (SLA), đề xuất phương án hỗ trợ chuẩn bị hồ sơ pháp lý ngay lập tức, hoặc giới thiệu dịch vụ phê duyệt trước tài sản đảm bảo để rút ngắn thời gian giải ngân thực tế."
+      },
+      {
+        "trigger": "Tôi thấy các điều khoản hợp đồng vẫn có nhiều điểm bất lợi cho khách hàng cá nhân.",
+        "guidance": "Giải thích cặn kẽ các điều khoản đó dựa trên quy định pháp luật và quản trị rủi ro của ngân hàng, đồng thời tìm kiếm các điểm có thể thương lượng trong phạm vi cho phép (như gia hạn nợ gốc, điều chỉnh kỳ hạn) để thể hiện sự quan tâm cá nhân hóa."
+      }
+    ],
+    "product": {
+      "name": "Vay tiêu dùng kinh doanh linh hoạt (Revolving Credit)",
+      "shortDescription": "Dòng vốn vay tín chấp hoặc có tài sản đảm bảo với hạn mức thấu chi, cho phép khách hàng rút vốn, trả nợ và rút vốn lại liên tục trong vòng một năm, tối ưu dòng tiền cho nhà đầu tư BĐS.",
+      "keySellingPoints": [
+        "Tính thanh khoản cao: Rút vốn theo ngày/lần thay vì giải ngân một lần duy trì, giúp tiết kiệm chi phí lãi vay trên phần vốn chưa sử dụng.",
+        "Linh hoạt trong quản lý dòng tiền: Cho phép trả nợ trước hạn không phạt phí và tự động cắt từ thẻ ghi nợ/tài khoản thanh toán, phù hợp với nhịp độ giao dịch BĐS phức tạp.",
+        "Hỗ trợ tái cấu trúc nợ: Khả năng gộp các khoản vay cũ thành một khoản duy nhất với kỳ hạn dài hơn hoặc lãi suất cố định ổn định để dễ quản lý.",
+        "Quy trình phê duyệt hạn mức trước: Duyệt hạn mức tổng thể dựa trên năng lực tài chính và tài sản thế chấp, giúp giải ngân nhanh chóng cho các cơ hội mua bán gấp."
+      ]
+    }
+  }
+}
