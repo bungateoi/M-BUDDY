@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import {
   PersonalAnalysisHeader,
-  Card,
   SkillRadarChart,
   KnowledgeTopicRow,
   PracticeRecommendationRow,
   BuddySuggestionBubble,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
 } from '../components';
 import { buildSkillInsightSummary, buildPracticeRecommendations, buildKnowledgeTopics } from '../data';
 import type { PracticeHistoryEntry } from '../data/types';
@@ -49,7 +49,7 @@ export function PersonalAnalysisScreen() {
       <PersonalAnalysisHeader streakDays={user.currentStreak} onBack={() => navigate('home')} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <Card style={styles.radarCard}>
+        <View style={[styles.card, styles.radarCard]}>
           <Text style={styles.radarTitle}>Năng lực hiện tại</Text>
           <View style={styles.radarBody}>
             <SkillRadarChart skills={user.skills} centerLabel={{ value: user.overallSkillScore, caption: 'Tổng điểm' }} />
@@ -58,9 +58,9 @@ export function PersonalAnalysisScreen() {
           <View style={styles.insightBox}>
             <Text style={styles.insightText}>{buildSkillInsightSummary(user.skills)}</Text>
           </View>
-        </Card>
+        </View>
 
-        <Card style={styles.topicsCard}>
+        <View style={[styles.card, styles.topicsCard]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionIcon}>📚</Text>
             <Text style={styles.sectionTitle}>Kiến thức theo chủ đề</Text>
@@ -70,7 +70,7 @@ export function PersonalAnalysisScreen() {
               <KnowledgeTopicRow key={topic.id} icon={topic.icon} label={topic.label} value={topic.value} />
             ))}
           </View>
-        </Card>
+        </View>
 
         <View style={styles.recommendCard}>
           <BuddySuggestionBubble
@@ -99,7 +99,7 @@ export function PersonalAnalysisScreen() {
         </View>
       </ScrollView>
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="home"
         onPressItem={(key) => {
           if (key === 'map') navigate('map');
@@ -114,29 +114,30 @@ export function PersonalAnalysisScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.white },
-  scroll: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: spacing.xl, paddingTop: spacing.sm, paddingBottom: spacing.xxl, gap: spacing.md },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  scroll: { flex: 1, backgroundColor: colors2.black },
+  content: { paddingHorizontal: spacing2.md, paddingTop: spacing2.xs, paddingBottom: spacing2.xl, gap: spacing2.md },
 
-  radarCard: { alignItems: 'stretch', gap: spacing.sm, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
-  radarTitle: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.textPrimary, textAlign: 'center' },
+  card: { backgroundColor: colors2.cardOptionIdle, borderRadius: radii2.card },
+  radarCard: { alignItems: 'stretch', gap: spacing2.xs, paddingHorizontal: spacing2.md, paddingVertical: spacing2.md },
+  radarTitle: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white, textAlign: 'center' },
   radarBody: { alignItems: 'center' },
-  insightBox: { backgroundColor: colors.primaryLight, borderRadius: 16, padding: spacing.md, marginTop: spacing.xs },
-  insightText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textPrimary, lineHeight: 19 },
+  insightBox: { backgroundColor: colors2.black, borderRadius: 16, padding: spacing2.md, marginTop: spacing2.xxs },
+  insightText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white, lineHeight: 19 },
 
-  topicsCard: { gap: spacing.md, paddingHorizontal: spacing.lg, paddingVertical: spacing.lg },
+  topicsCard: { gap: spacing2.md, paddingHorizontal: spacing2.md, paddingVertical: spacing2.md },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sectionIcon: { fontSize: 16 },
-  sectionTitle: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.textPrimary },
-  topicsList: { gap: spacing.md },
+  sectionTitle: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
+  topicsList: { gap: spacing2.md },
 
-  recommendCard: { backgroundColor: colors.primaryLight, borderRadius: 20, padding: spacing.md, gap: spacing.md },
-  recommendList: { gap: spacing.sm },
+  recommendCard: { backgroundColor: colors2.cardOptionIdle, borderRadius: radii2.card, padding: spacing2.md, gap: spacing2.md },
+  recommendList: { gap: spacing2.xs },
   recommendEmptyText: {
-    fontFamily: fontFamily.semiBold,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 12.5,
-    color: colors.textMuted,
+    color: colors2.whiteMuted,
     textAlign: 'center',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing2.xs,
   },
 });

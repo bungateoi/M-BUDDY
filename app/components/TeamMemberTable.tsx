@@ -2,7 +2,7 @@ import { forwardRef } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SCORE_CRITERIA_META } from '../data';
 import type { TeamMember } from '../data/types';
-import { colors, fontFamily, spacing } from './theme';
+import { colors2, fontFamily2, spacing2 } from './theme';
 
 const NAME_COL_WIDTH = 132;
 const CRITERION_COL_WIDTH = 68;
@@ -10,7 +10,7 @@ const AVG_COL_WIDTH = 64;
 const HEADER_HEIGHT = 56;
 const ROW_HEIGHT = 54;
 
-const RANK_BADGE_COLOR: Record<number, string> = { 1: colors.primary, 2: '#A8B2BD', 3: '#C97A3D' };
+const RANK_BADGE_COLOR: Record<number, string> = { 1: colors2.orange, 2: '#A8B2BD', 3: '#C97A3D' };
 
 export interface TeamTableRow {
   member: TeamMember;
@@ -114,9 +114,9 @@ export function TeamMemberTableBody({
 }
 
 const styles = StyleSheet.create({
-  headerRow: { flexDirection: 'row', backgroundColor: colors.primaryLight, borderBottomWidth: 1, borderBottomColor: '#F1DCC9' },
-  headerNameCell: { height: HEADER_HEIGHT, justifyContent: 'center', backgroundColor: colors.primaryLight },
-  headerCellText: { fontFamily: fontFamily.extraBold, fontSize: 10.5, color: colors.textPrimary, textAlign: 'center' },
+  headerRow: { flexDirection: 'row', backgroundColor: colors2.black },
+  headerNameCell: { height: HEADER_HEIGHT, justifyContent: 'center', backgroundColor: colors2.black },
+  headerCellText: { fontFamily: fontFamily2.semiBold, fontSize: 10.5, color: colors2.white, textAlign: 'center' },
   bodyRow: { flexDirection: 'row' },
   dataRowLine: { flexDirection: 'row', height: ROW_HEIGHT },
 
@@ -126,12 +126,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing2.xs,
     borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    borderBottomColor: colors2.black,
     borderRightWidth: 1,
-    borderRightColor: '#F1E7E0',
-    backgroundColor: colors.white,
+    borderRightColor: colors2.black,
+    backgroundColor: colors2.cardOptionIdle,
   },
   rankBadge: {
     width: 20,
@@ -140,10 +140,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  rankBadgeDefault: { backgroundColor: colors.background },
-  rankBadgeText: { fontFamily: fontFamily.extraBold, fontSize: 10.5, color: colors.white },
-  rankBadgeTextDefault: { color: colors.textMuted },
-  memberName: { flex: 1, fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.textPrimary },
+  rankBadgeDefault: { backgroundColor: colors2.black },
+  rankBadgeText: { fontFamily: fontFamily2.semiBold, fontSize: 10.5, color: colors2.white },
+  rankBadgeTextDefault: { color: colors2.whiteMuted },
+  memberName: { flex: 1, fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
 
   criterionHeaderCell: {
     width: CRITERION_COL_WIDTH,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 4,
     borderRightWidth: 1,
-    borderRightColor: '#F1DCC9',
+    borderRightColor: colors2.cardOptionIdle,
   },
   avgHeaderCell: {
     width: AVG_COL_WIDTH,
@@ -166,21 +166,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    borderBottomColor: colors2.black,
     borderRightWidth: 1,
-    borderRightColor: '#F1E7E0',
+    borderRightColor: colors2.black,
   },
-  scoreText: { fontFamily: fontFamily.bold, fontSize: 14.5, color: colors.textPrimary },
+  scoreText: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
   avgCell: {
     width: AVG_COL_WIDTH,
     alignItems: 'center',
     justifyContent: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
-    backgroundColor: colors.primaryLight,
+    borderBottomColor: colors2.black,
+    backgroundColor: colors2.black,
   },
-  avgText: { fontFamily: fontFamily.extraBold, fontSize: 15, color: colors.primary },
+  avgText: { fontFamily: fontFamily2.semiBold, fontSize: 15, color: colors2.orange },
 
-  emptyWrap: { alignItems: 'center', justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.white },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textMuted },
+  emptyWrap: { alignItems: 'center', justifyContent: 'center', padding: spacing2.md, backgroundColor: colors2.cardOptionIdle },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.whiteMuted },
 });

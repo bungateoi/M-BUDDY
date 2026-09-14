@@ -1,9 +1,9 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { StyleSheet, Text, View } from 'react-native';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { RoleplayInsightTip } from '../data/types';
 
-const studyingMascot = require('../assets/mascot-studying.png');
-
+// Figma mới (node-id=76-3940) bỏ hẳn icon mascot ở tiêu đề — chỉ còn chữ
+// "M-BUDDY Insight" trên nền thẻ đen, khác bản cũ (icon + "✨ M-BUDDY Insight").
 export function ResultInsightCard({
   summary,
   tips,
@@ -13,10 +13,7 @@ export function ResultInsightCard({
 }) {
   return (
     <View style={styles.card}>
-      <View style={styles.headerRow}>
-        <Image source={studyingMascot} style={styles.mascot} resizeMode="contain" />
-        <Text style={styles.title}>✨ M-BUDDY Insight</Text>
-      </View>
+      <Text style={styles.title}>M-BUDDY Insight</Text>
 
       <Text style={styles.summary}>{summary}</Text>
 
@@ -34,17 +31,17 @@ export function ResultInsightCard({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radii.xl,
-    padding: spacing.lg,
-    gap: spacing.sm,
+    backgroundColor: colors2.black,
+    borderWidth: 1,
+    borderColor: colors2.cardOutline,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    gap: spacing2.md,
   },
-  headerRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  mascot: { width: 40, height: 48 },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 15, color: colors.textPrimary },
-  summary: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textPrimary, lineHeight: 19 },
-  tips: { gap: spacing.sm, marginTop: 2 },
-  tipRow: { flexDirection: 'row', gap: 8 },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.white },
+  summary: { fontFamily: fontFamily2.regular, fontSize: 14, lineHeight: 20, color: colors2.white },
+  tips: { gap: spacing2.sm },
+  tipRow: { flexDirection: 'row', gap: spacing2.xs },
   tipIcon: { fontSize: 14 },
-  tipText: { flex: 1, fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textPrimary, lineHeight: 18 },
+  tipText: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 14, lineHeight: 20, color: colors2.white },
 });

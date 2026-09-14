@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, primaryGradient, radii, spacing } from '../components';
+import { colors2, fontFamily2, radii2, spacing2 } from '../components';
 import { signIn } from '../lib/authData';
 
 const mascotSource = require('../assets/mascot-border.png');
@@ -37,7 +36,7 @@ export function LoginScreen() {
   };
 
   return (
-    <LinearGradient colors={primaryGradient.colors} start={primaryGradient.start} end={primaryGradient.end} style={styles.gradient}>
+    <View style={styles.gradient}>
       <SafeAreaView style={styles.safe}>
         <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.header}>
@@ -56,14 +55,14 @@ export function LoginScreen() {
                   value={email}
                   onChangeText={setEmail}
                   placeholder="you@msb.com.vn"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={colors2.whiteMuted}
                   autoCapitalize="none"
                   keyboardType="email-address"
                   style={styles.input}
                 />
                 {email.length > 0 && (
                   <Pressable onPress={() => setEmail('')} hitSlop={8}>
-                    <Ionicons name="close-circle" size={18} color={colors.textMuted} />
+                    <Ionicons name="close-circle" size={18} color={colors2.whiteMuted} />
                   </Pressable>
                 )}
               </View>
@@ -76,12 +75,12 @@ export function LoginScreen() {
                   value={password}
                   onChangeText={setPassword}
                   placeholder="Nhập mật khẩu"
-                  placeholderTextColor={colors.textMuted}
+                  placeholderTextColor={colors2.whiteMuted}
                   secureTextEntry={!showPassword}
                   style={styles.input}
                 />
                 <Pressable onPress={() => setShowPassword((s) => !s)} hitSlop={8}>
-                  <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={19} color={colors.textMuted} />
+                  <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={19} color={colors2.whiteMuted} />
                 </Pressable>
               </View>
             </View>
@@ -89,52 +88,50 @@ export function LoginScreen() {
             {errorText && <Text style={styles.errorText}>{errorText}</Text>}
 
             <Pressable onPress={handleSubmit} disabled={submitting} style={[styles.loginButton, submitting && styles.loginButtonDisabled]}>
-              {submitting ? <ActivityIndicator color={colors.white} /> : <Text style={styles.loginButtonText}>Đăng nhập</Text>}
+              {submitting ? <ActivityIndicator color={colors2.white} /> : <Text style={styles.loginButtonText}>Đăng nhập</Text>}
             </Pressable>
           </View>
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  gradient: { flex: 1 },
+  gradient: { flex: 1, backgroundColor: colors2.orange },
   safe: { flex: 1 },
-  flex: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing.xl },
-  header: { alignItems: 'center', paddingBottom: spacing.xl, gap: spacing.sm },
+  flex: { flex: 1, justifyContent: 'center', paddingHorizontal: spacing2.md },
+  header: { alignItems: 'center', paddingBottom: spacing2.md, gap: spacing2.xs },
   mascot: { width: 128, height: 128 },
-  wordmark: { fontFamily: fontFamily.black, fontSize: 30, color: colors.white, letterSpacing: 1 },
+  wordmark: { fontFamily: fontFamily2.semiBold, fontSize: 30, color: colors2.white, letterSpacing: 1 },
   card: {
-    backgroundColor: colors.background,
-    borderRadius: radii.xl,
-    padding: spacing.xl,
-    gap: spacing.lg,
+    backgroundColor: colors2.black,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    gap: spacing2.md,
   },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 17, color: colors.textPrimary, textAlign: 'center' },
-  subtitle: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted, textAlign: 'center', marginTop: -spacing.sm },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 17, color: colors2.white, textAlign: 'center' },
+  subtitle: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted, textAlign: 'center', marginTop: -spacing2.xs },
   field: { gap: 6 },
-  label: { fontFamily: fontFamily.bold, fontSize: 12.5, color: colors.textPrimary },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
   inputWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.md,
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    paddingHorizontal: spacing.md,
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 12,
   },
-  input: { flex: 1, fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textPrimary, padding: 0 },
-  errorText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.error },
+  input: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 14, color: colors2.white, padding: 0 },
+  errorText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.red500 },
   loginButton: {
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
     alignItems: 'center',
-    marginTop: spacing.sm,
+    marginTop: spacing2.xs,
   },
   loginButtonDisabled: { opacity: 0.7 },
-  loginButtonText: { fontFamily: fontFamily.extraBold, fontSize: 15, color: colors.white },
+  loginButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 15, color: colors2.white },
 });

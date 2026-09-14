@@ -1,5 +1,5 @@
 import { ActivityIndicator, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, fontFamily, radii, spacing, webPhoneFrameMaxWidth } from './theme';
+import { colors2, fontFamily2, radii2, spacing2, webPhoneFrameMaxWidth } from './theme';
 
 /** Modal xác nhận 2 nút (Huỷ / Xác nhận) — dùng trước 1 thao tác chậm/khó
  * hoàn tác, vd "Quản trị hành trình & tri thức" xác nhận trước khi sinh lại
@@ -36,7 +36,7 @@ export function ConfirmModal({
               <Text style={styles.cancelText}>{cancelLabel}</Text>
             </Pressable>
             <Pressable style={[styles.btn, styles.confirmBtn]} onPress={onConfirm} disabled={loading}>
-              {loading ? <ActivityIndicator color={colors.white} /> : <Text style={styles.confirmText}>{confirmLabel}</Text>}
+              {loading ? <ActivityIndicator color={colors2.white} /> : <Text style={styles.confirmText}>{confirmLabel}</Text>}
             </Pressable>
           </View>
         </View>
@@ -46,22 +46,22 @@ export function ConfirmModal({
 }
 
 const styles = StyleSheet.create({
-  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: spacing.xl },
+  backdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'center', alignItems: 'center', padding: spacing2.md },
   backdropDismiss: { ...StyleSheet.absoluteFill },
   card: {
     width: '100%',
-    maxWidth: Math.min(340, webPhoneFrameMaxWidth - spacing.xl * 2),
-    backgroundColor: colors.white,
-    borderRadius: radii.xl,
-    padding: spacing.xl,
-    gap: spacing.sm,
+    maxWidth: Math.min(340, webPhoneFrameMaxWidth - spacing2.md * 2),
+    backgroundColor: colors2.black,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    gap: spacing2.xs,
   },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
-  message: { fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textMuted, lineHeight: 19 },
-  row: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
-  btn: { flex: 1, borderRadius: radii.pill, paddingVertical: 12, alignItems: 'center' },
-  cancelBtn: { backgroundColor: colors.background },
-  cancelText: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.textPrimary },
-  confirmBtn: { backgroundColor: colors.primary },
-  confirmText: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.white },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
+  message: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.whiteMuted, lineHeight: 19 },
+  row: { flexDirection: 'row', gap: spacing2.xs, marginTop: spacing2.md },
+  btn: { flex: 1, borderRadius: radii2.pill, paddingVertical: 12, alignItems: 'center' },
+  cancelBtn: { backgroundColor: colors2.cardOptionIdle },
+  cancelText: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  confirmBtn: { backgroundColor: colors2.orange },
+  confirmText: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
 });

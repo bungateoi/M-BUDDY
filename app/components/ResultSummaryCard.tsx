@@ -1,68 +1,81 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Card } from './Card';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { Image, ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ChevronRightIcon } from './icons2';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
-const celebrateMascot = require('../assets/mascot-celebrate.png');
+const cardBg = require('../assets/v2/home2/streak-card-bg.png');
+const victoryMascot = require('../assets/v2/result2/victory-mascot.png');
 
 export function ResultSummaryCard({
   totalScore,
   maxTotalScore,
-  ratingLabel,
   summary,
+  onPressHistory,
 }: {
   totalScore: number;
   maxTotalScore: number;
-  ratingLabel: string;
+  /** Không còn dùng ratingLabel riêng (bản Figma mới bỏ badge xếp loại ở
+   * card này) — vẫn hiện ở ResultCriterionRow#isTotal cho hàng tổng, nhưng
+   * card tổng quan này giờ chỉ còn số điểm to + mô tả. */
   summary: string;
+  onPressHistory?: () => void;
 }) {
   return (
-    <Card style={styles.card}>
-      <Image source={celebrateMascot} style={styles.mascot} resizeMode="contain" />
+    // "Sticker shadow" trắng đặc 4px, không blur — giống hệt StreakCard ở Home.
+    <View style={styles.shadowWrap}>
+      <ImageBackground source={cardBg} style={styles.card} imageStyle={styles.cardImage} resizeMode="cover">
+        <View style={[StyleSheet.absoluteFill, styles.overlay]} />
 
-      <View style={styles.textCol}>
-        <Text style={styles.label}>Tổng điểm</Text>
-        <View style={styles.scoreRow}>
-          <Text style={styles.score}>{totalScore}</Text>
-          <Text style={styles.maxScore}>/{maxTotalScore}</Text>
+        <View style={styles.row}>
+          <Image source={victoryMascot} style={styles.mascot} resizeMode="contain" />
+          <View style={styles.textCol}>
+            <Text style={styles.label}>Tổng điểm</Text>
+            <View style={styles.scoreRow}>
+              <Text style={styles.score}>{totalScore}</Text>
+              <Text style={styles.maxScore}>/{maxTotalScore}</Text>
+            </View>
+          </View>
         </View>
-        <View style={styles.ratingBadge}>
-          <Text style={styles.ratingText}>{ratingLabel}</Text>
-        </View>
+
         <Text style={styles.summary}>{summary}</Text>
-      </View>
 
-      <View style={styles.medalCircle}>
-        <Ionicons name="ribbon" size={32} color={colors.primary} />
-      </View>
-    </Card>
+        <Pressable style={styles.historyCard} onPress={onPressHistory}>
+          <Text style={styles.historyLabel}>Lịch sử hội thoại</Text>
+          <ChevronRightIcon size={24} />
+        </Pressable>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.lg },
-  mascot: { width: 58, height: 70 },
-  textCol: { flex: 1, gap: 4 },
-  label: { fontFamily: fontFamily.bold, fontSize: 13, color: colors.textMuted },
+  shadowWrap: { backgroundColor: colors2.white, borderRadius: radii2.card, paddingBottom: 4 },
+  card: {
+    borderRadius: radii2.card,
+    borderWidth: 1,
+    borderColor: colors2.white,
+    overflow: 'hidden',
+    padding: spacing2.md,
+    gap: spacing2.md,
+  },
+  cardImage: { borderRadius: radii2.card },
+  // Lớp phủ tối rgba(34,34,34,0.8) — đậm hơn StreakCard ở Home (0.64) vì nền
+  // ảnh ở đây chỉ là điểm nhấn góc, chữ cần nổi rõ hơn.
+  overlay: { backgroundColor: 'rgba(34,34,34,0.8)' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing2.md },
+  mascot: { width: 100, height: 77 },
+  textCol: { flex: 1, gap: spacing2.xs },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 12, lineHeight: 16, color: colors2.white },
   scoreRow: { flexDirection: 'row', alignItems: 'baseline' },
-  score: { fontFamily: fontFamily.black, fontSize: 34, color: colors.primary },
-  maxScore: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textMuted },
-  ratingBadge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    marginTop: 2,
-  },
-  ratingText: { color: colors.white, fontFamily: fontFamily.extraBold, fontSize: 11.5 },
-  summary: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted, lineHeight: 16, marginTop: 2 },
-  medalCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.primaryLight,
+  score: { fontFamily: fontFamily2.displaySpeed, fontSize: 48, lineHeight: 48, color: colors2.orange },
+  maxScore: { fontFamily: fontFamily2.displaySpeed, fontSize: 24, lineHeight: 24, color: colors2.white },
+  summary: { fontFamily: fontFamily2.regular, fontSize: 14, lineHeight: 20, color: colors2.white },
+  historyCard: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: spacing2.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
   },
+  historyLabel: { flex: 1, fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.white },
 });

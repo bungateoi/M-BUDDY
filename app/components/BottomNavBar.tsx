@@ -1,17 +1,22 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily } from './theme';
+import { NavIcon, type NavIconName } from './icons2';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
-const ITEMS = [
-  { key: 'home', label: 'Home', icon: 'home-outline' },
-  { key: 'map', label: 'Map', icon: 'map-outline' },
-  { key: 'practice', label: 'Practice', icon: 'headset-outline' },
-  { key: 'xephang', label: 'Xếp hạng', icon: 'trophy-outline' },
-  { key: 'ontap', label: 'Ôn Tập', icon: 'book-outline' },
-  { key: 'toi', label: 'Tôi', icon: 'person-outline' },
-] as const;
+const VISIBLE_ITEMS: { key: 'home' | 'map' | 'practice' | 'xephang' | 'ontap'; label: string; icon: NavIconName }[] = [
+  { key: 'home', label: 'Trang chủ', icon: 'home' },
+  { key: 'map', label: 'Bản đồ', icon: 'map' },
+  { key: 'practice', label: 'Luyện tập', icon: 'practice' },
+  { key: 'xephang', label: 'Xếp hạng', icon: 'leaderboard' },
+  { key: 'ontap', label: 'Ôn tập', icon: 'review' },
+];
 
-export type BottomNavKey = (typeof ITEMS)[number]['key'];
+// "Tôi" KHÔNG hiện trên thanh menu (đúng Figma — chỉ 5 mục): màn Tôi giờ
+// vào bằng cách bấm avatar ở HomeHeader, không qua thanh menu dưới nữa.
+// Vẫn giữ "toi" trong type BottomNavKey vì rất nhiều màn khác (Profile,
+// Admin, TeamManagement, ContentManagement, PersonaEdit, ProductEdit...)
+// đang dùng active="toi" hoặc onPressItem kiểm tra key==='toi' để điều
+// hướng sang Profile — xoá khỏi type sẽ làm vỡ toàn bộ các màn đó.
+export type BottomNavKey = (typeof VISIBLE_ITEMS)[number]['key'] | 'toi';
 
 export function BottomNavBar({
   active = 'home',
@@ -21,31 +26,44 @@ export function BottomNavBar({
   onPressItem?: (key: BottomNavKey) => void;
 }) {
   return (
-    <View style={styles.bar}>
-      {ITEMS.map((item) => {
-        const isActive = item.key === active;
-        const iconName = isActive ? (item.icon.replace('-outline', '') as any) : item.icon;
-        return (
-          <Pressable key={item.key} style={styles.item} onPress={() => onPressItem?.(item.key)}>
-            <Ionicons name={iconName} size={22} color={isActive ? colors.primary : colors.textMuted} />
-            <Text style={[styles.label, isActive && styles.labelActive]}>{item.label}</Text>
-          </Pressable>
-        );
-      })}
+    <View style={styles.wrap}>
+      <View style={styles.bar}>
+        {VISIBLE_ITEMS.map((item) => {
+          const isActive = item.key === active;
+          const color = isActive ? colors2.white : colors2.whiteMuted;
+          return (
+            <Pressable key={item.key} style={styles.item} onPress={() => onPressItem?.(item.key)}>
+              <NavIcon name={item.icon} size={24} color={color} />
+              <Text style={[styles.label, isActive && styles.labelActive]}>{item.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      <View style={styles.homeIndicatorArea}>
+        <View style={styles.homeIndicator} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrap: {
+    backgroundColor: colors2.blueDark,
+    borderTopWidth: 2,
+    borderTopColor: colors2.navBorder,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
+    overflow: 'hidden',
+  },
   bar: {
     flexDirection: 'row',
-    backgroundColor: colors.white,
-    paddingTop: 10,
-    paddingBottom: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#F1E7E0',
+    gap: spacing2.md,
+    paddingTop: spacing2.xs,
+    paddingHorizontal: spacing2.md,
   },
-  item: { flex: 1, alignItems: 'center', gap: 3 },
-  label: { fontFamily: fontFamily.semiBold, fontSize: 10, color: colors.textMuted },
-  labelActive: { color: colors.primary, fontFamily: fontFamily.bold },
+  item: { flex: 1, alignItems: 'center', gap: 5, paddingBottom: 4 },
+  label: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.whiteMuted, textAlign: 'center' },
+  labelActive: { color: colors2.white },
+  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
+  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
 });

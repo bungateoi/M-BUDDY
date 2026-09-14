@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomNavBar, ConfirmModal, QuizHeader, colors, fontFamily, radii, spacing } from '../components';
+import { HomeBottomNavBar, ConfirmModal, QuizHeader, colors2, fontFamily2, radii2, spacing2 } from '../components';
 import { personas, products } from '../data';
 import type { PersonaCriteria } from '../data/types';
 import { savePersona } from '../lib/contentData';
@@ -123,11 +123,11 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.field}>
           <Text style={styles.label}>Tên chặng</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="Nội trợ tiết kiệm" placeholderTextColor={colors.textMuted} style={styles.input} />
+          <TextInput value={name} onChangeText={setName} placeholder="Nội trợ tiết kiệm" placeholderTextColor={colors2.whiteMuted} style={styles.input} />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>Số sao (độ khó, 1-5)</Text>
-          <TextInput value={starRating} onChangeText={setStarRating} keyboardType="number-pad" placeholderTextColor={colors.textMuted} style={styles.input} />
+          <TextInput value={starRating} onChangeText={setStarRating} keyboardType="number-pad" placeholderTextColor={colors2.whiteMuted} style={styles.input} />
         </View>
 
         {CRITERIA_FIELDS.map((f) => (
@@ -136,7 +136,7 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
             <TextInput
               value={criteria[f.key]}
               onChangeText={(text) => setCriteriaField(f.key, text)}
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors2.whiteMuted}
               style={[styles.input, styles.multiline]}
               multiline
             />
@@ -145,15 +145,15 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Cách phản ứng trong role-play</Text>
-          <TextInput value={behaviorNote} onChangeText={setBehaviorNote} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={behaviorNote} onChangeText={setBehaviorNote} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>Chiến thuật chung nên dùng</Text>
-          <TextInput value={generalTactic} onChangeText={setGeneralTactic} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={generalTactic} onChangeText={setGeneralTactic} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>"Chiến thắng" của nhân viên sales</Text>
-          <TextInput value={winCondition} onChangeText={setWinCondition} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={winCondition} onChangeText={setWinCondition} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
 
         <View style={styles.field}>
@@ -172,7 +172,7 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
 
         <View style={styles.field}>
           <Pressable style={styles.checkRow} onPress={() => setIsHidden((v) => !v)}>
-            <Ionicons name={isHidden ? 'checkbox' : 'square-outline'} size={20} color={colors.primary} />
+            <Ionicons name={isHidden ? 'checkbox' : 'square-outline'} size={20} color={colors2.orange} />
             <Text style={styles.checkLabel}>Ẩn chặng này khỏi màn Map</Text>
           </Pressable>
         </View>
@@ -199,7 +199,7 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
         </Pressable>
       </ScrollView>
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -223,37 +223,33 @@ export function PersonaEditScreen({ personaId }: { personaId?: string }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, gap: spacing.lg, paddingBottom: spacing.xxl },
-  field: { gap: spacing.sm },
-  label: { fontFamily: fontFamily.bold, fontSize: 13, color: colors.textPrimary },
-  helperText: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  content: { padding: spacing2.md, gap: spacing2.lg, paddingBottom: spacing2.xl },
+  field: { gap: spacing2.xs },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
+  helperText: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted },
   input: {
-    backgroundColor: colors.white,
-    borderRadius: radii.md,
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    paddingHorizontal: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 12,
-    fontFamily: fontFamily.semiBold,
+    fontFamily: fontFamily2.regular,
     fontSize: 14,
-    color: colors.textPrimary,
+    color: colors2.white,
   },
   multiline: { minHeight: 56, textAlignVertical: 'top' },
-  checkRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  checkLabel: { fontFamily: fontFamily.semiBold, fontSize: 13.5, color: colors.textPrimary },
-  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  checkRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
+  checkLabel: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing2.xs },
   chip: {
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 8,
-    backgroundColor: colors.white,
+    backgroundColor: colors2.cardOptionIdle,
   },
-  chipChecked: { backgroundColor: colors.primaryLight, borderColor: colors.primary },
-  chipText: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textPrimary },
-  chipTextChecked: { color: colors.primary, fontFamily: fontFamily.extraBold },
-  saveBtn: { backgroundColor: colors.primary, borderRadius: radii.pill, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
-  saveBtnText: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.white },
+  chipChecked: { backgroundColor: colors2.orange },
+  chipText: { fontFamily: fontFamily2.semiBold, fontSize: 12, color: colors2.white },
+  chipTextChecked: { color: colors2.white, fontFamily: fontFamily2.semiBold },
+  saveBtn: { backgroundColor: colors2.orange, borderRadius: radii2.pill, paddingVertical: spacing2.md, alignItems: 'center', marginTop: spacing2.xs },
+  saveBtnText: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
 });

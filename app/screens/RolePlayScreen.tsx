@@ -1,21 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import * as Speech from 'expo-speech';
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 import {
-  RolePlayHeader,
+  QuizTopBar,
   CountdownRing,
   RolePlayCustomerAvatar,
   RolePlayControls,
   RolePlayTipCard,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  primaryGradient,
-  spacing,
+  colors2,
+  fontFamily2,
+  spacing2,
 } from '../components';
+import { PhoneCallIcon } from '../components/icons2';
 import {
   getLevelById,
   getPersonaById,
@@ -85,7 +82,6 @@ interface RoleplaySetup {
   titleLine: string;
   tip: string;
   resultParams: NavigationParams;
-  bottomNavActive: 'map' | 'practice';
   /** Khớp key trong voiceProfiles.RATE_BY_PERSONA_ID nếu có (persona cố định
    * trong Map) — nếu không, dùng voiceDifficultyFallback để suy tốc độ nói. */
   voicePersonaKey: string;
@@ -106,7 +102,6 @@ function buildMapSetup(levelId: string): RoleplaySetup | undefined {
     titleLine: `Chặng ${level.chapterNumber} • Level ${getPositionInChapter(level.id)}`,
     tip: level.sampleFlow[0],
     resultParams: { levelId },
-    bottomNavActive: 'map',
     voicePersonaKey: persona.id,
   };
 }
@@ -144,7 +139,6 @@ function buildGeneratedSetup(g: GeneratedCustomerPersona): RoleplaySetup {
     titleLine: 'Luyện tập',
     tip: `Khách kỳ vọng: ${g.expectations}`,
     resultParams: { generatedCustomer: g },
-    bottomNavActive: 'practice',
     voicePersonaKey: `generated-${g.name}`,
     voiceDifficultyFallback: g.difficulty,
   };
@@ -174,7 +168,6 @@ function buildPracticeSetup(customerId: string): RoleplaySetup | undefined {
     titleLine: 'Luyện tập',
     tip: `Khách kỳ vọng: ${profile.expectations}`,
     resultParams: { practiceCustomerId: customerId },
-    bottomNavActive: 'practice',
     // Không khớp bất kỳ persona.id cố định nào trong voiceProfiles.ts —
     // luôn rơi vào nhánh fallback theo độ khó, xem getVoiceProfile.
     voicePersonaKey: `practice-${profile.id}`,
@@ -596,13 +589,7 @@ export function RolePlayScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <RolePlayHeader
-        titleLine={setup.titleLine}
-        objective={`Chốt ${setup.product.name.toLowerCase()}`}
-        streakDays={authProfile.currentStreak}
-        hasUnreadNotification={authProfile.hasUnreadNotification}
-        onBack={() => navigate('home')}
-      />
+      <QuizTopBar title={setup.product.name} subtitle={setup.titleLine} onClose={() => navigate('home')} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.timerRow}>
@@ -615,7 +602,6 @@ export function RolePlayScreen({
             name={setup.customer.name}
             personaLabel={setup.persona.name}
             statusText={STATUS_TEXT[phase]}
-            statusIcon={phase === 'recording' ? 'mic' : phase === 'speaking' ? 'volume-high' : 'mic-outline'}
           />
         </View>
 
@@ -627,14 +613,9 @@ export function RolePlayScreen({
 
         {awaitingTapToStart ? (
           <Pressable onPress={startCallOnWeb} style={styles.startCallWrap}>
-            <LinearGradient
-              colors={primaryGradient.colors}
-              start={primaryGradient.start}
-              end={primaryGradient.end}
-              style={styles.startCallBtn}
-            >
-              <Ionicons name="call" size={30} color={colors.white} />
-            </LinearGradient>
+            <View style={styles.startCallBtn}>
+              <PhoneCallIcon size={30} />
+            </View>
             <Text style={styles.startCallText}>Chạm để bắt đầu cuộc gọi</Text>
             <Text style={styles.startCallHint}>Cần chạm 1 lần để điện thoại phát được tiếng khách</Text>
           </Pressable>
@@ -653,61 +634,51 @@ export function RolePlayScreen({
         {showTip && <RolePlayTipCard tip={setup.tip} />}
       </ScrollView>
 
-      <BottomNavBar
-        active={setup.bottomNavActive}
-        onPressItem={(key) => {
-          if (key === 'home') navigate('home');
-          if (key === 'map') navigate('map');
-          if (key === 'practice') navigate('practice');
-          if (key === 'xephang') navigate('leaderboard');
-          if (key === 'ontap') navigate('practiceHistory');
-          if (key === 'toi') navigate('profile');
-        }}
-      />
+      <View style={styles.homeIndicatorArea}>
+        <View style={styles.homeIndicator} />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.black },
   scroll: { flex: 1 },
   content: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xxl,
+    paddingHorizontal: spacing2.md,
+    paddingBottom: spacing2.xl,
+    gap: spacing2.xl,
   },
   timerRow: { alignItems: 'flex-end' },
   centerArea: { alignItems: 'center' },
   errorBanner: {
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors2.red800,
     borderRadius: 12,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: spacing2.sm,
+    paddingHorizontal: spacing2.md,
   },
-  errorText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.error, textAlign: 'center' },
-  startCallWrap: { alignItems: 'center', gap: spacing.sm },
+  errorText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.red500, textAlign: 'center' },
+  startCallWrap: { alignItems: 'center', gap: spacing2.sm },
   startCallBtn: {
     width: 76,
     height: 76,
     borderRadius: 38,
+    backgroundColor: colors2.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#C4460F',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
   },
-  startCallText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.textPrimary },
-  startCallHint: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textMuted, textAlign: 'center' },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg, padding: spacing.xl },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textMuted },
+  startCallText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
+  startCallHint: { fontFamily: fontFamily2.regular, fontSize: 12, color: colors2.whiteMuted, textAlign: 'center' },
+  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
+  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing2.lg, padding: spacing2.xl },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   emptyButton: {
     borderRadius: 999,
     borderWidth: 1.5,
-    borderColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    borderColor: colors2.white,
+    paddingHorizontal: spacing2.lg,
+    paddingVertical: spacing2.sm,
   },
-  emptyButtonText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.primary },
+  emptyButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
 });

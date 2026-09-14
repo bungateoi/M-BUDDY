@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { cardShadow, colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function TeamManagementHeader({
   subtitle,
@@ -17,7 +17,7 @@ export function TeamManagementHeader({
     <View style={styles.wrap}>
       <View style={styles.topRow}>
         <Pressable onPress={onBack} hitSlop={8} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={20} color={colors2.white} />
         </Pressable>
         <View style={styles.textCol}>
           <Text style={styles.title} numberOfLines={1}>
@@ -30,9 +30,9 @@ export function TeamManagementHeader({
       </View>
 
       <Pressable onPress={onPressDateRange} style={styles.dateRangePill}>
-        <Ionicons name="calendar-outline" size={14} color={colors.primary} />
+        <Ionicons name="calendar-outline" size={14} color={colors2.orange} />
         <Text style={styles.dateRangeText}>{dateRangeLabel}</Text>
-        <Ionicons name="chevron-down" size={14} color={colors.primary} />
+        <Ionicons name="chevron-down" size={14} color={colors2.orange} />
       </Pressable>
     </View>
   );
@@ -43,34 +43,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    backgroundColor: colors.background,
+    gap: spacing2.xs,
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.xs,
+    paddingBottom: spacing2.md,
+    backgroundColor: colors2.black,
   },
-  topRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
+  topRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs, flex: 1 },
   backBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.white,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
-    ...cardShadow,
   },
   textCol: { flex: 1, gap: 1 },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 16.5, color: colors.textPrimary },
-  subtitle: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 16.5, color: colors2.white },
+  subtitle: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted },
   dateRangePill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     borderWidth: 1.5,
-    borderColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
+    borderColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.xs,
     paddingVertical: 7,
   },
-  dateRangeText: { fontFamily: fontFamily.bold, fontSize: 10.5, color: colors.primary },
+  dateRangeText: { fontFamily: fontFamily2.semiBold, fontSize: 10.5, color: colors2.orange },
 });

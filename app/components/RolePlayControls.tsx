@@ -1,7 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { cardShadow, colors, fontFamily, primaryGradient, spacing } from './theme';
+import { LightbulbIcon, KeyboardVoiceIcon, PhoneCallIcon } from './icons2';
+import { colors2, fontFamily2, spacing2 } from './theme';
+
+const BUTTON_SIZE = 80;
 
 export function RolePlayControls({
   isRecording,
@@ -15,7 +16,8 @@ export function RolePlayControls({
   isRecording: boolean;
   micLabel: string;
   micDisabled?: boolean;
-  /** true khi "Mẹo cho bạn" đang hiện — đổi màu nút Gợi ý để phản ánh trạng thái bật/tắt. */
+  /** true khi "Mẹo cho bạn" đang hiện — Figma không thiết kế riêng trạng thái
+   * này, viền vàng khi bật là suy luận hợp lý theo màu nhấn sẵn có của app. */
   hintActive?: boolean;
   /** Bấm-để-bật/tắt (không phải giữ) — 1 lần bấm bắt đầu ghi âm, bấm lại để dừng. */
   onMicPress?: () => void;
@@ -26,26 +28,23 @@ export function RolePlayControls({
     <View style={styles.row}>
       <Pressable onPress={onPressHint} style={styles.item}>
         <View style={[styles.sideBtn, hintActive && styles.sideBtnActive]}>
-          <Ionicons name="bulb-outline" size={22} color={hintActive ? colors.white : colors.warning} />
+          <LightbulbIcon size={48} />
         </View>
         <Text style={styles.label}>Gợi ý</Text>
       </Pressable>
 
       <Pressable onPress={onMicPress} disabled={micDisabled} style={styles.item}>
-        <LinearGradient
-          colors={primaryGradient.colors}
-          start={primaryGradient.start}
-          end={primaryGradient.end}
-          style={[styles.micBtn, isRecording && styles.micBtnRecording, micDisabled && styles.micBtnDisabled]}
-        >
-          <Ionicons name={isRecording ? 'mic' : 'mic-outline'} size={30} color={colors.white} />
-        </LinearGradient>
-        <Text style={[styles.label, styles.micLabel]}>{micLabel}</Text>
+        <View style={[styles.micBtn, isRecording && styles.micBtnRecording, micDisabled && styles.micBtnDisabled]}>
+          <KeyboardVoiceIcon size={48} />
+        </View>
+        <Text style={styles.label}>{micLabel}</Text>
       </Pressable>
 
       <Pressable onPress={onPressEnd} style={styles.item}>
-        <View style={[styles.sideBtn, styles.endBtn]}>
-          <Ionicons name="call" size={20} color={colors.white} style={styles.endIcon} />
+        <View style={styles.endBtn}>
+          <View style={styles.endIconWrap}>
+            <PhoneCallIcon size={48} />
+          </View>
         </View>
         <Text style={styles.label}>Kết thúc</Text>
       </Pressable>
@@ -54,34 +53,35 @@ export function RolePlayControls({
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', gap: spacing.xxl },
-  item: { alignItems: 'center', gap: spacing.xs },
+  row: { flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', gap: spacing2.xl },
+  item: { alignItems: 'center', gap: spacing2.xs, width: BUTTON_SIZE },
   sideBtn: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: colors.white,
+    width: BUTTON_SIZE,
+    height: BUTTON_SIZE,
+    borderRadius: BUTTON_SIZE / 2,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
-    ...cardShadow,
   },
-  sideBtnActive: { backgroundColor: colors.warning },
-  endBtn: { backgroundColor: colors.error },
-  endIcon: { transform: [{ rotate: '135deg' }] },
+  sideBtnActive: { borderWidth: 2, borderColor: colors2.yellow },
   micBtn: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+    width: BUTTON_SIZE,
+    height: BUTTON_SIZE,
+    borderRadius: BUTTON_SIZE / 2,
+    backgroundColor: colors2.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#C4460F',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
   },
-  micBtnRecording: { shadowOpacity: 0.55, shadowRadius: 22 },
+  micBtnRecording: { borderWidth: 2, borderColor: colors2.white },
   micBtnDisabled: { opacity: 0.5 },
-  label: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textMuted, textAlign: 'center' },
-  micLabel: { maxWidth: 92 },
+  endBtn: {
+    width: BUTTON_SIZE,
+    height: BUTTON_SIZE,
+    borderRadius: BUTTON_SIZE / 2,
+    backgroundColor: colors2.red500,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  endIconWrap: { transform: [{ rotate: '135deg' }] },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 12, lineHeight: 16, color: colors2.white, textAlign: 'center' },
 });

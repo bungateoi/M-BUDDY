@@ -1,12 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Card } from './Card';
 import { SkillRadarChart } from './SkillRadarChart';
-import { colors, fontFamily, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { SkillScore } from '../data/types';
 
 export function TeamSkillGapCard({ skills }: { skills: SkillScore[] }) {
   return (
-    <Card style={styles.card}>
+    <View style={styles.card}>
       <View style={styles.header}>
         <Text style={styles.icon}>📊</Text>
         <Text style={styles.title}>Knowledge & Skill Gaps của team</Text>
@@ -15,14 +14,20 @@ export function TeamSkillGapCard({ skills }: { skills: SkillScore[] }) {
       <View style={styles.body}>
         <SkillRadarChart skills={skills} />
       </View>
-    </Card>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { gap: spacing.xs, paddingHorizontal: spacing.lg, paddingVertical: spacing.md },
+  card: {
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    gap: spacing2.xs,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.md,
+  },
   header: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   icon: { fontSize: 16 },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.textPrimary },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
   body: { alignItems: 'center' },
 });

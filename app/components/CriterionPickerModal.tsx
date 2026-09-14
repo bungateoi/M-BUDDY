@@ -1,6 +1,6 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing, webPhoneFrameMaxWidth } from './theme';
+import { colors2, fontFamily2, radii2, spacing2, webPhoneFrameMaxWidth } from './theme';
 import type { PersonaBuilderField } from '../data/personaBuilderOptions';
 import type { PersonaFieldAnswer } from '../data/types';
 
@@ -82,7 +82,7 @@ function FieldPicker({
               value={answer.custom.trim()}
               onChangeText={(text) => onChange({ selected: field.selectionType === 'single' ? [] : answer.selected, custom: text })}
               placeholder="Nhập nội dung..."
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors2.whiteMuted}
               style={styles.customInput}
               multiline
             />
@@ -116,7 +116,7 @@ export function CriterionPickerModal({
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>{title}</Text>
             <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-              <Ionicons name="close" size={20} color={colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors2.white} />
             </Pressable>
           </View>
           <ScrollView style={styles.sheetScroll} contentContainerStyle={styles.sheetContent} showsVerticalScrollIndicator={false}>
@@ -148,66 +148,61 @@ const styles = StyleSheet.create({
   sheet: {
     width: '100%',
     maxWidth: webPhoneFrameMaxWidth,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radii.xl,
-    borderTopRightRadius: radii.xl,
+    backgroundColor: colors2.black,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
     maxHeight: '82%',
-    paddingBottom: spacing.lg,
+    paddingBottom: spacing2.lg,
   },
   sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.lg,
+    paddingBottom: spacing2.md,
   },
-  sheetTitle: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
+  sheetTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
   closeBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.background,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sheetScroll: { paddingHorizontal: spacing.xl },
-  sheetContent: { paddingTop: spacing.md, paddingBottom: spacing.md, gap: spacing.lg },
-  fieldWrap: { gap: spacing.sm },
-  fieldLabel: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.primary },
+  sheetScroll: { paddingHorizontal: spacing2.md },
+  sheetContent: { paddingTop: spacing2.md, paddingBottom: spacing2.md, gap: spacing2.lg },
+  fieldWrap: { gap: spacing2.xs },
+  fieldLabel: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.orange },
   group: { gap: 6 },
-  groupHeading: { fontFamily: fontFamily.bold, fontSize: 11.5, color: colors.textMuted, marginTop: 4 },
+  groupHeading: { fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.whiteMuted, marginTop: 4 },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: {
-    borderRadius: radii.pill,
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    backgroundColor: colors.background,
-    paddingHorizontal: spacing.md,
+    borderRadius: radii2.pill,
+    backgroundColor: colors2.cardOptionIdle,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 8,
   },
-  chipSelected: { backgroundColor: colors.primary, borderColor: colors.primary },
-  chipText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textPrimary },
-  chipTextSelected: { color: colors.white, fontFamily: fontFamily.bold },
+  chipSelected: { backgroundColor: colors2.orange },
+  chipText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  chipTextSelected: { color: colors2.white, fontFamily: fontFamily2.semiBold },
   customInput: {
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    borderRadius: radii.md,
-    padding: spacing.sm,
-    fontFamily: fontFamily.semiBold,
+    borderRadius: radii2.card,
+    backgroundColor: colors2.cardOptionIdle,
+    padding: spacing2.xs,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 13,
-    color: colors.textPrimary,
+    color: colors2.white,
     minHeight: 40,
   },
   doneButton: {
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.sm,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
+    marginHorizontal: spacing2.md,
+    marginTop: spacing2.xs,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
     alignItems: 'center',
   },
-  doneButtonText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.white },
+  doneButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
 });

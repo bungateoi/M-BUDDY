@@ -1,49 +1,48 @@
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, primaryGradient, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
-const illustrationSource = require('../assets/hosoKH.png');
+const mascotSource = require('../assets/v2/practice2/mascot2.png');
 
+// Nền cam của cả màn (PracticeScreen.tsx) đã lộ trực tiếp qua banner này —
+// khác bản cũ (thẻ xanh đậm riêng) — nên bản thân banner giờ trong suốt,
+// chỉ còn chữ + nút + mascot. Mascot ghim tuyệt đối, TRÀN XUỐNG dưới banner
+// (cao hơn khối text) — khớp đúng Figma (node-id=67-883): "Box" danh sách
+// bên dưới render SAU nên tự phủ lên phần mascot tràn ra đó, không cần
+// overflow/zIndex thủ công.
 export function PracticeCreateBanner({ onPress }: { onPress?: () => void }) {
   return (
-    <LinearGradient colors={primaryGradient.colors} start={primaryGradient.start} end={primaryGradient.end} style={styles.banner}>
+    <View style={styles.banner}>
       <View style={styles.textCol}>
         <Text style={styles.title}>Tạo khách hàng của bạn</Text>
-        <Text style={styles.desc}>Xây dựng chân dung khách hàng theo nhu cầu để luyện tập role-play</Text>
-        <Pressable onPress={onPress} style={styles.button}>
-          <Text style={styles.buttonText}>Tạo ngay</Text>
-          <Ionicons name="arrow-forward" size={14} color={colors.primary} />
-        </Pressable>
+        <Text style={styles.desc}>Xây dựng chân dung khách hàng theo nhu cầu để luyện tập Role-Play.</Text>
       </View>
-      <Image source={illustrationSource} style={styles.illustration} resizeMode="contain" />
-    </LinearGradient>
+
+      <Pressable onPress={onPress} style={styles.ctaShadow}>
+        <View style={styles.cta}>
+          <Text style={styles.ctaText}>Luyện tập</Text>
+        </View>
+      </Pressable>
+
+      <Image source={mascotSource} style={styles.mascot} resizeMode="contain" />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  banner: {
-    flexDirection: 'row',
+  banner: { gap: spacing2.md, paddingHorizontal: spacing2.md },
+  textCol: { gap: spacing2.xxs, width: 218 },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 18, lineHeight: 28, color: colors2.white },
+  desc: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.white },
+  // "Sticker shadow" — xem DailyChallengeCard.tsx cho giải thích kỹ thuật.
+  ctaShadow: { alignSelf: 'flex-start', backgroundColor: colors2.shadowOrange, borderRadius: radii2.button, paddingBottom: 6 },
+  cta: {
+    backgroundColor: colors2.yellow,
     alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: radii.xl,
-    padding: spacing.lg,
-    gap: spacing.md,
+    justifyContent: 'center',
+    borderRadius: radii2.button,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.xs,
   },
-  textCol: { flex: 1, flexShrink: 1, gap: 4 },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 16.5, color: colors.white },
-  desc: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: 'rgba(255,255,255,0.9)', lineHeight: 15.5 },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    alignSelf: 'flex-start',
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 8,
-    marginTop: 4,
-  },
-  buttonText: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.primary },
-  illustration: { width: 104, height: 75, flexShrink: 0 },
+  ctaText: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.black },
+  mascot: { position: 'absolute', top: 4, right: -23, width: 177, height: 177 },
 });

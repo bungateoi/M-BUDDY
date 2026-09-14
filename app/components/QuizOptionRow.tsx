@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { CancelCircleFillIcon, CheckCircleFillIcon } from './icons2';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { QuizOptionId } from '../data/types';
 
 export type QuizOptionVisualState = 'idle' | 'correct' | 'wrong';
@@ -31,11 +31,11 @@ export function QuizOptionRow({
           state === 'wrong' && styles.badgeWrong,
         ]}
       >
-        <Text style={[styles.badgeText, state !== 'idle' && styles.badgeTextActive]}>{id}</Text>
+        <Text style={styles.badgeText}>{id}</Text>
       </View>
       <Text style={styles.text}>{text}</Text>
-      {state === 'correct' && <Ionicons name="checkmark-circle" size={20} color={colors.success} />}
-      {state === 'wrong' && <Ionicons name="close-circle" size={20} color={colors.error} />}
+      {state === 'correct' && <CheckCircleFillIcon size={16} />}
+      {state === 'wrong' && <CancelCircleFillIcon size={16} />}
     </Pressable>
   );
 }
@@ -44,28 +44,23 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    borderWidth: 1.5,
-    borderColor: '#EEE3D9',
-    borderRadius: radii.lg,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    backgroundColor: colors.white,
+    gap: spacing2.xs,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    backgroundColor: colors2.cardOptionIdle,
   },
-  rowCorrect: { borderColor: colors.success, backgroundColor: colors.successLight },
-  rowWrong: { borderColor: colors.error, backgroundColor: colors.errorLight },
+  rowCorrect: { backgroundColor: colors2.green800 },
+  rowWrong: { backgroundColor: colors2.red800 },
   badge: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    borderWidth: 1.5,
-    borderColor: '#EEE3D9',
+    width: 32,
+    height: 32,
+    borderRadius: radii2.pill,
+    backgroundColor: colors2.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeCorrect: { backgroundColor: colors.success, borderColor: colors.success },
-  badgeWrong: { backgroundColor: colors.error, borderColor: colors.error },
-  badgeText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.textMuted },
-  badgeTextActive: { color: colors.white },
-  text: { flex: 1, fontFamily: fontFamily.bold, fontSize: 14, color: colors.textPrimary },
+  badgeCorrect: { backgroundColor: colors2.green500 },
+  badgeWrong: { backgroundColor: colors2.red500 },
+  badgeText: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white, textAlign: 'center' },
+  text: { flex: 1, fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
 });

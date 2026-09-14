@@ -2,14 +2,16 @@ import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useFonts } from 'expo-font';
 import {
-  useFonts,
   Nunito_400Regular,
   Nunito_600SemiBold,
   Nunito_700Bold,
   Nunito_800ExtraBold,
   Nunito_900Black,
 } from '@expo-google-fonts/nunito';
+import { Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
+import { DarumadropOne_400Regular } from '@expo-google-fonts/darumadrop-one';
 import { webPhoneFrameMaxWidth } from './components/theme';
 import { NavigationProvider, useAppNavigation } from './navigation/NavigationContext';
 import { AuthProvider, useAuth } from './lib/AuthContext';
@@ -198,6 +200,12 @@ export default function App() {
     Nunito_700Bold,
     Nunito_800ExtraBold,
     Nunito_900Black,
+    Inter_400Regular,
+    Inter_600SemiBold,
+    DarumadropOne_400Regular,
+    // Font trả phí, không lấy từ Google Fonts — file .ttf do người dùng cung
+    // cấp trực tiếp (đã license), đặt tại app/assets/fonts/.
+    'A4Speed-Bold': require('./assets/fonts/A4Speed-Bold.ttf'),
   });
 
   if (!fontsLoaded) {

@@ -1,15 +1,6 @@
 import { useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import {
-  QuizHeader,
-  QuizProgressBar,
-  QuizQuestionCard,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  spacing,
-} from '../components';
-import type { QuizSegmentState } from '../components/QuizProgressBar';
+import { QuizTopBar, QuizProgressBar, QuizQuestionCard, QuizBottomSheet, colors2, fontFamily2, spacing2 } from '../components';
 import { getLevelById, getPersonaById, getProductById, getPositionInChapter, getQuizByLevelId } from '../data';
 import type { QuizOptionId } from '../data/types';
 import { useAuth } from '../lib/AuthContext';
@@ -42,17 +33,8 @@ export function QuizScreen({ levelId = '2.3' }: { levelId?: string }) {
   const currentQuestion = questions[currentIndex];
   const selectedOptionId = answers[currentQuestion.id];
   const isLastQuestion = currentIndex === questions.length - 1;
-
-  let correctCount = 0;
-  for (let i = 0; i < currentIndex; i++) {
-    if (answers[questions[i].id] === questions[i].correctOptionId) correctCount++;
-  }
-
-  const segments: QuizSegmentState[] = questions.map((q, i) => {
-    if (i < currentIndex) return answers[q.id] === q.correctOptionId ? 'correct' : 'wrong';
-    if (i === currentIndex) return 'current';
-    return 'upcoming';
-  });
+  const answered = selectedOptionId != null;
+  const isCorrect = answered && selectedOptionId === currentQuestion.correctOptionId;
 
   const handleSelectOption = (optionId: QuizOptionId) => {
     if (selectedOptionId != null) return;
@@ -69,69 +51,58 @@ export function QuizScreen({ levelId = '2.3' }: { levelId?: string }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <QuizHeader
-        title="Ôn tập nhanh"
-        subtitle={`Chặng ${level.chapterNumber} • Level ${getPositionInChapter(level.id)} • ${product.shortName ?? product.name}`}
-        streakDays={profile.currentStreak}
-        onBack={() => navigate('home')}
+      <QuizTopBar
+        title={product.name}
+        subtitle={`Chặng ${level.chapterNumber} • Level ${getPositionInChapter(level.id)}`}
+        onClose={() => navigate('home')}
       />
 
+      <QuizProgressBar total={questions.length} current={currentIndex} />
+
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <QuizProgressBar segments={segments} />
-
-        <Text style={styles.counter}>
-          Câu {currentIndex + 1}/{questions.length}
-          {currentIndex > 0 && (
-            <Text style={styles.counterCorrect}>
-              {'  •  ✓ '}
-              {correctCount}/{currentIndex} đúng
-            </Text>
-          )}
-        </Text>
-
         <QuizQuestionCard
           question={currentQuestion}
+          currentIndex={currentIndex}
+          totalQuestions={questions.length}
           selectedOptionId={selectedOptionId}
           onSelectOption={handleSelectOption}
-          onPressNext={handleNext}
-          isLastQuestion={isLastQuestion}
         />
       </ScrollView>
 
-      <BottomNavBar
-        active="map"
-        onPressItem={(key) => {
-          if (key === 'home') navigate('home');
-          if (key === 'map') navigate('map');
-          if (key === 'practice') navigate('practice');
-          if (key === 'xephang') navigate('leaderboard');
-          if (key === 'ontap') navigate('practiceHistory');
-          if (key === 'toi') navigate('profile');
-        }}
-      />
+      {answered ? (
+        <QuizBottomSheet
+          isCorrect={isCorrect}
+          explanation={currentQuestion.explanation}
+          buttonLabel={isLastQuestion ? 'Gặp Khách hàng' : 'Câu tiếp theo'}
+          onPressNext={handleNext}
+        />
+      ) : (
+        <View style={styles.homeIndicatorArea}>
+          <View style={styles.homeIndicator} />
+        </View>
+      )}
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.white },
-  scroll: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.orange },
+  scroll: { flex: 1 },
   content: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.xxl,
-    gap: spacing.md,
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.md,
+    paddingBottom: spacing2.lg,
   },
-  counter: { fontFamily: fontFamily.bold, fontSize: 13, color: colors.textMuted },
-  counterCorrect: { color: colors.success },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl, gap: spacing.lg },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textMuted },
+  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
+  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing2.xl, gap: spacing2.lg },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   emptyBackButton: {
     borderRadius: 999,
     borderWidth: 1.5,
-    borderColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    borderColor: colors2.white,
+    paddingHorizontal: spacing2.lg,
+    paddingVertical: spacing2.sm,
   },
-  emptyBackButtonText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.primary },
+  emptyBackButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
 });

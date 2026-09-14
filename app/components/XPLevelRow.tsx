@@ -1,66 +1,39 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { cardShadow, colors, fontFamily, primaryGradient, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2 } from './theme';
+import { StarFillIcon, AwardIcon } from './icons2';
 
 function formatXp(xp: number) {
   return xp.toLocaleString('vi-VN');
 }
 
-export function XPLevelRow({
-  xp,
-  level,
-  levelProgress,
-}: {
-  xp: number;
-  level: number;
-  levelProgress: number;
-}) {
+// Thiết kế mới (Figma Homepage) chỉ hiện 2 pill XP/Level, không có thanh
+// tiến độ — `levelProgress` vẫn nhận để không đổi props HomeHeader truyền
+// xuống, nhưng không còn render ra UI (xem HomeHeader.tsx).
+export function XPLevelRow({ xp, level }: { xp: number; level: number; levelProgress?: number }) {
   return (
     <View style={styles.row}>
-      <View style={[styles.card, styles.xpCard]}>
-        <Ionicons name="star" size={17} color={colors.warning} />
+      <View style={styles.pill}>
+        <StarFillIcon size={16} />
         <Text style={styles.text}>{formatXp(xp)} XP</Text>
       </View>
-      <View style={[styles.card, styles.levelCard]}>
-        <View style={styles.levelHeader}>
-          <Ionicons name="ribbon" size={17} color={colors.primary} />
-          <Text style={styles.text}>Lv. {level}</Text>
-        </View>
-        <View style={styles.track}>
-          <LinearGradient
-            colors={primaryGradient.colors}
-            start={primaryGradient.start}
-            end={primaryGradient.end}
-            style={[styles.fill, { width: `${Math.round(levelProgress * 100)}%` }]}
-          />
-        </View>
+      <View style={styles.pill}>
+        <AwardIcon size={16} />
+        <Text style={styles.text}>Level {level}</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: spacing.sm },
-  card: {
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    ...cardShadow,
+  row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  pill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors2.black,
+    borderRadius: radii2.pill,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
-  xpCard: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  levelCard: { flex: 1, gap: 6, justifyContent: 'center' },
-  levelHeader: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  text: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.textPrimary },
-  track: {
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: colors.chipTrack,
-    overflow: 'hidden',
-  },
-  fill: {
-    height: '100%',
-    borderRadius: 3,
-  },
+  text: { fontFamily: fontFamily2.displaySpeed, fontSize: 14, lineHeight: 20, color: colors2.white },
 });

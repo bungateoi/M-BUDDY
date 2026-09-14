@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function ProfileStatCard({
   icon,
@@ -33,9 +33,9 @@ export function ProfileStatCard({
 }
 
 const styles = StyleSheet.create({
-  card: { flex: 1, borderRadius: radii.lg, padding: spacing.sm, gap: 2 },
+  card: { flex: 1, borderRadius: radii2.card, padding: spacing2.xs, gap: 2 },
   icon: { fontSize: 15, marginBottom: 2 },
-  label: { fontFamily: fontFamily.bold, fontSize: 10.5, color: '#6B6558' },
-  value: { fontFamily: fontFamily.extraBold, fontSize: 15 },
-  sublabel: { fontFamily: fontFamily.semiBold, fontSize: 9, color: '#8A8577' },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 10.5, color: colors2.whiteMuted },
+  value: { fontFamily: fontFamily2.semiBold, fontSize: 15 },
+  sublabel: { fontFamily: fontFamily2.regular, fontSize: 9, color: colors2.whiteMuted },
 });

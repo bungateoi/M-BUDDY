@@ -6,11 +6,11 @@ import {
   PersonaBuilderRow,
   CriterionPickerModal,
   CUSTOM_CHIP_LABEL,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  radii,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
 } from '../components';
 import { personaBuilderCriteria } from '../data/personaBuilderOptions';
 import { callGeneratePersona } from '../lib/ai';
@@ -113,17 +113,17 @@ export function CreateCustomerScreen() {
 
         <Pressable onPress={handleSubmit} disabled={isSubmitting} style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}>
           {isSubmitting ? (
-            <ActivityIndicator color={colors.white} />
+            <ActivityIndicator color={colors2.white} />
           ) : (
             <>
               <Text style={styles.submitButtonText}>Tạo chân dung khách hàng</Text>
-              <Ionicons name="arrow-forward" size={17} color={colors.white} />
+              <Ionicons name="arrow-forward" size={17} color={colors2.white} />
             </>
           )}
         </Pressable>
       </ScrollView>
 
-      <BottomNavBar active="practice" onPressItem={(key) => {
+      <HomeBottomNavBar active="practice" onPressItem={(key) => {
         if (key === 'home') navigate('home');
         if (key === 'practice') navigate('practice');
         if (key === 'xephang') navigate('leaderboard');
@@ -146,26 +146,26 @@ export function CreateCustomerScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, gap: spacing.md, paddingBottom: spacing.xxl },
-  rows: { gap: spacing.sm },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  content: { padding: spacing2.md, gap: spacing2.md, paddingBottom: spacing2.xl },
+  rows: { gap: spacing2.xs },
   tipCard: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radii.lg,
-    padding: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
     gap: 2,
   },
-  tipTitle: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.primary },
-  tipText: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted, lineHeight: 16 },
+  tipTitle: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.orange },
+  tipText: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted, lineHeight: 16 },
   submitButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
   },
   submitButtonDisabled: { opacity: 0.7 },
-  submitButtonText: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.white },
+  submitButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
 });

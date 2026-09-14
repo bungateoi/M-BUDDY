@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing, webPhoneFrameMaxWidth } from './theme';
+import { colors2, fontFamily2, radii2, spacing2, webPhoneFrameMaxWidth } from './theme';
 
 const WEEKDAY_LABELS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 const MONTH_LABELS = [
@@ -96,7 +96,7 @@ export function DateRangeCalendarModal({
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>Chọn khoảng thời gian</Text>
             <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-              <Ionicons name="close" size={20} color={colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors2.white} />
             </Pressable>
           </View>
 
@@ -106,13 +106,13 @@ export function DateRangeCalendarModal({
 
           <View style={styles.monthNav}>
             <Pressable onPress={() => shiftMonth(-1)} hitSlop={8} style={styles.monthNavBtn}>
-              <Ionicons name="chevron-back" size={18} color={colors.primary} />
+              <Ionicons name="chevron-back" size={18} color={colors2.orange} />
             </Pressable>
             <Text style={styles.monthLabel}>
               {MONTH_LABELS[visibleMonth.getMonth()]}, {visibleMonth.getFullYear()}
             </Text>
             <Pressable onPress={() => shiftMonth(1)} hitSlop={8} style={styles.monthNavBtn}>
-              <Ionicons name="chevron-forward" size={18} color={colors.primary} />
+              <Ionicons name="chevron-forward" size={18} color={colors2.orange} />
             </Pressable>
           </View>
 
@@ -173,76 +173,76 @@ const styles = StyleSheet.create({
   sheet: {
     width: '100%',
     maxWidth: webPhoneFrameMaxWidth,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radii.xl,
-    borderTopRightRadius: radii.xl,
-    paddingHorizontal: spacing.lg,
-    paddingBottom: spacing.lg,
+    backgroundColor: colors2.black,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
+    paddingHorizontal: spacing2.lg,
+    paddingBottom: spacing2.lg,
   },
   sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.sm,
+    paddingTop: spacing2.lg,
+    paddingBottom: spacing2.xs,
   },
-  sheetTitle: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
+  sheetTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
   closeBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.background,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
   },
   rangeSummary: {
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 13.5,
-    color: colors.primary,
+    color: colors2.orange,
     textAlign: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: spacing2.xs,
   },
   monthNav: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: spacing.lg,
-    marginBottom: spacing.sm,
+    gap: spacing2.lg,
+    marginBottom: spacing2.xs,
   },
   monthNavBtn: {
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: colors.background,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  monthLabel: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.textPrimary, minWidth: 130, textAlign: 'center' },
+  monthLabel: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white, minWidth: 130, textAlign: 'center' },
   calendarWrap: { alignItems: 'center' },
   weekdayRow: { flexDirection: 'row' },
   weekdayLabel: {
     width: CELL_SIZE,
     textAlign: 'center',
-    fontFamily: fontFamily.bold,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 11.5,
-    color: colors.textMuted,
+    color: colors2.whiteMuted,
     marginBottom: 4,
   },
   weekRow: { flexDirection: 'row' },
   dayCell: { width: CELL_SIZE, height: CELL_SIZE, alignItems: 'center', justifyContent: 'center' },
-  dayCellInRange: { backgroundColor: colors.primaryLight },
-  dayCellEdge: { backgroundColor: colors.primaryLight },
+  dayCellInRange: { backgroundColor: colors2.cardOptionIdle },
+  dayCellEdge: { backgroundColor: colors2.cardOptionIdle },
   dayCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  dayCircleSelected: { backgroundColor: colors.primary },
-  dayText: { fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textPrimary },
-  dayTextSelected: { fontFamily: fontFamily.extraBold, color: colors.white },
-  dayTextToday: { fontFamily: fontFamily.extraBold, color: colors.primary },
+  dayCircleSelected: { backgroundColor: colors2.orange },
+  dayText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
+  dayTextSelected: { fontFamily: fontFamily2.semiBold, color: colors2.white },
+  dayTextToday: { fontFamily: fontFamily2.semiBold, color: colors2.orange },
   doneButton: {
-    marginTop: spacing.md,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
+    marginTop: spacing2.md,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
     alignItems: 'center',
   },
-  doneButtonText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.white },
+  doneButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
 });
