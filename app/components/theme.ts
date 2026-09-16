@@ -107,6 +107,7 @@ export const colors2 = {
   green500: '#12B76A', // global/green/500 — vòng tròn đáp án đúng
   green800: '#07492A', // global/green/800 — nền đáp án đúng
   red500: '#F04438', // global/red/500 — vòng tròn đáp án sai
+  red600: '#C0362D', // global/red/600 — chữ nút "Đăng xuất" (Tôi, node-id=118-12753)
   red800: '#601B16', // global/red/800 — nền đáp án đã chọn sai
   overlayDark: 'rgba(0,0,0,0.25)', // lớp phủ tối sau modal "Lịch sử hội thoại" (node-id=76-5140)
 } as const;
@@ -121,13 +122,12 @@ export const orangeGradient2 = {
 export const fontFamily2 = {
   regular: 'Inter_400Regular', // 12/Regular, ...
   semiBold: 'Inter_600SemiBold', // 14/Semi, 16/Semi, 18/Semi
-  // Darumadrop — vẫn dùng cho số/điểm nổi bật ở Map/Xếp hạng (MapLevelRow,
-  // LeaderboardSection, BadgeTierCard), CHƯA đổi theo "displaySpeed" vì 2 màn
-  // đó chưa được yêu cầu redesign lại theo Figma mới.
-  display: 'DarumadropOne_400Regular',
   // Font "A4 SPEED" (file .ttf do người dùng cung cấp, đã license — xem
-  // app/assets/fonts/) — CHỈ dùng cho số/điểm nổi bật ở màn Home
-  // (node-id=58-317: streak, XP, Level, % kỹ năng), theo đúng Figma mới.
+  // app/assets/fonts/) — dùng cho số/điểm nổi bật xuyên suốt app (Home, Map,
+  // Xếp hạng: MapLevelRow, LeaderboardSection, BadgeTierCard...). Trước đây
+  // Map/Xếp hạng còn dùng Darumadrop One (font cũ, chưa redesign) — đã đổi
+  // hết sang A4 Speed để đồng bộ 1 font duy nhất cho số nổi bật toàn app.
+  display: 'A4Speed-Bold',
   displaySpeed: 'A4Speed-Bold',
 } as const;
 

@@ -22,33 +22,43 @@ endpoint, cấu hình ở bước `/agentbase-llm` sau khi spec này được du
 ```json
 {
   "persona": {
-    "id": "nv-van-phong-tre",
-    "name": "Nhân viên văn phòng trẻ",
+    "id": "noi-tro-tiet-kiem",
+    "name": "Bác Lan, nội trợ tiết kiệm",
     "criteria": {
-      "age": "24–32 tuổi",
-      "occupation": "Nhân viên văn phòng",
-      "incomeLevel": "Thu nhập ổn định",
-      "needs": "Quản lý chi tiêu thông minh, tiện lợi...",
-      "painPoints": "Không có nhiều thời gian...",
-      "expectations": "Ngắn gọn, đúng trọng tâm...",
-      "barriers": "Đã quen dùng ví điện tử/thẻ ngân hàng khác..."
+      "age": "52 tuổi",
+      "occupation": "Nội trợ, chồng hưu trí",
+      "incomeLevel": "Chồng hưu ~6–7 triệu/tháng, có 150–250 triệu nhàn rỗi",
+      "needs": "Gửi tiết kiệm an toàn, sinh lời ổn định...",
+      "painPoints": "Sợ rủi ro mất tiền; không rành công nghệ...",
+      "expectations": "Giải thích rõ ràng, chậm rãi, đơn giản...",
+      "barriers": "Cần người thân/quen giới thiệu mới yên tâm..."
     },
-    "behaviorNote": "Hỏi nhanh, đi thẳng vào lợi ích cụ thể...",
-    "generalTactic": "Đi thẳng vào lợi ích, dùng số liệu cụ thể..."
+    "behaviorNote": "Dễ tính, ít phản bác gay gắt, hay hỏi lại nhiều lần...",
+    "generalTactic": "Nói chậm, ví dụ đời thường, trấn an an toàn trước...",
+    "selfAddress": "bác",
+    "sellerAddress": "cháu",
+    "speakingStyle": "Chậm, hay ngập ngừng, đứt quãng giữa câu...",
+    "patienceNote": "Rất cao. Loại 1: 4–5 lần liên tiếp không đáp ứng → tủi thân...",
+    "closingSignal": "Chủ động hỏi \"thế giờ làm thế nào hả cháu\"...",
+    "financialData": "Chồng hưu ~6–7 triệu/tháng, có 150–250 triệu nhàn rỗi...",
+    "hiddenData": "Số tiền cụ thể: lộ khi hỏi \"Bác định để dành khoảng bao nhiêu ạ?\"...",
+    "contrastExample": "✅ \"Dạ khoản này an toàn ạ...\" / ❌ \"An toàn mà bác.\""
   },
   "product": {
-    "id": "vay-tieu-dung",
-    "name": "Vay tiêu dùng",
-    "shortDescription": "Vay tín chấp phục vụ nhu cầu tiêu dùng cá nhân...",
-    "keySellingPoints": ["Giải ngân nhanh, không cần thế chấp", "..."]
+    "id": "tiet-kiem-ong-vang",
+    "name": "Tiết kiệm Ong Vàng",
+    "shortDescription": "Giải pháp tiết kiệm gửi góp linh hoạt...",
+    "keySellingPoints": ["Kỳ hạn linh hoạt 3–36 tháng", "..."],
+    "knowledgeBase": "Trích đoạn kiến thức sản phẩm ĐẦY ĐỦ (nguồn MSB_Product_Knowledge_Base.md) — dùng để đối chiếu số liệu/điều kiện khi khách hỏi, tránh AI bịa số ngoài phạm vi."
   },
   "level": {
-    "id": "2.3",
-    "openingLine": "Mình chưa cần vay gì cả, lương đủ sống mà.",
+    "id": "1.1",
+    "openingLine": "Alo? Ai đấy ạ?",
     "objectionBank": [
-      { "trigger": "Mở sẵn có ảnh hưởng gì đến điểm tín dụng không?", "guidance": "Trả lời trung thực, ngắn gọn..." }
+      { "trigger": "Thế so với chỗ bác đang gửi thì có hơn không cháu?", "guidance": "So sánh cụ thể với lãi suất tại quầy..." }
     ],
-    "winCriteria": "Khách đồng ý mở hạn mức dự phòng dù hiện tại chưa dùng đến."
+    "winCriteria": "Bác chủ động hỏi cách làm và Sale chốt ngay...",
+    "trainingScript": "Kịch bản phân nhánh ĐẦY ĐỦ (nguồn Kich_ban_training.md): bối cảnh + các mốc thời gian + nhánh phản ứng theo cách Sale xử lý + điều kiện WIN/LOSE — ngữ cảnh CHÍNH để AI phản ứng đúng, không phải lời thoại đọc lại nguyên văn."
   },
   "roleplayDurationSec": 150,
   "secondsElapsed": 42,
@@ -56,7 +66,8 @@ endpoint, cấu hình ở bước `/agentbase-llm` sau khi spec này được du
     { "role": "customer", "text": "Mình chưa cần vay gì cả, lương đủ sống mà." },
     { "role": "seller", "text": "Dạ em hiểu, đây không phải khoản vay phải dùng ngay ạ..." }
   ],
-  "sellerUtterance": "Anh/chị có thể mở sẵn hạn mức để dùng khi cần gấp, không mất phí nếu không dùng đến."
+  "sellerUtterance": "Anh/chị có thể mở sẵn hạn mức để dùng khi cần gấp, không mất phí nếu không dùng đến.",
+  "globalRules": "Nguyên văn v2_docs/Rule_chung.md mục A (quy tắc chung áp dụng mọi persona: xưng hô cố định, không tự tiết lộ dữ liệu ẩn, A19 bắt buộc giới thiệu bản thân...) — xem app/data/rules.ts#GLOBAL_ROLEPLAY_RULES."
 }
 ```
 
@@ -65,8 +76,26 @@ endpoint, cấu hình ở bước `/agentbase-llm` sau khi spec này được du
   gửi nguyên `Persona`/`Product` đầy đủ như `starRating`, `isBossChapter`…
   nếu backend không dùng tới). Cắt gọn để giảm token, nhưng field name
   phải khớp `app/data/types.ts`.
+- `persona.selfAddress`/`sellerAddress`/`speakingStyle`/`patienceNote`/
+  `closingSignal`/`financialData`/`hiddenData`/`contrastExample` —
+  **[CẬP NHẬT — v2 content]** optional, nguồn `v2_docs/Persona_5_nhan_vat.md`
+  + `Rule_chung.md` mục B. Thiếu field nào thì backend fallback hợp lý
+  (vd `selfAddress`/`sellerAddress` mặc định "tôi"/"bạn") — không bắt buộc
+  cho persona sinh bởi AI (`/generate-persona`) hay hồ sơ Practice cũ.
+- `product.knowledgeBase` — **[CẬP NHẬT — v2 content]** optional, trích đoạn
+  đầy đủ từ `MSB_Product_Knowledge_Base.md`, dùng làm ngữ cảnh grounding cho
+  cả role-play (khách không tự mâu thuẫn số liệu) và chấm điểm
+  (`knowledge_score`).
 - `level` — dùng để inject "Mục tiêu"/objection bank thật của level vào
   prompt, đúng gợi ý trong `roleplay-scenarios.md` mục "Cách dùng khi build".
+- `level.trainingScript` — **[CẬP NHẬT — v2 content]** optional, kịch bản
+  phân nhánh đầy đủ nguồn `Kich_ban_training.md` — ngữ cảnh CHÍNH để AI biết
+  phản ứng theo cách Sale xử lý, không phải "đọc lại nguyên văn"; số
+  level/chặng không còn cố định 5 (chặng 4 chỉ có 3 level, các chặng khác 4).
+- `globalRules` — **[MỚI — v2 content]** optional, nguyên văn mục A của
+  `Rule_chung.md` — quy tắc áp dụng chung mọi persona (xem
+  `app/data/rules.ts`). App luôn gửi field này cho luồng role-play theo Map;
+  các luồng khác (generated persona, Practice) có thể bỏ trống.
 - `history` — các lượt **trước đó**, chưa gồm `sellerUtterance` mới nhất.
 - `sellerUtterance` — câu vừa nói của nhân viên sales, tách riêng khỏi
   `history` cho rõ ràng. **[CONFIRMED]** Đây là 1 thay đổi so với
@@ -108,17 +137,20 @@ endpoint, cấu hình ở bước `/agentbase-llm` sau khi spec này được du
     "keySellingPoints": ["Giải ngân nhanh, không cần thế chấp", "..."],
     "objectionBank": [
       { "question": "Lãi suất vay tiêu dùng thường cao lắm.", "sampleAnswer": "Mức lãi suất cụ thể phụ thuộc hồ sơ..." }
-    ]
+    ],
+    "knowledgeBase": "(tuỳ chọn) trích đoạn kiến thức sản phẩm đầy đủ — xem mục 1."
   },
   "transcript": [
     { "role": "customer", "text": "Mình chưa cần vay gì cả, lương đủ sống mà." },
     { "role": "seller", "text": "..." }
   ],
-  "rubric": "(tuỳ chọn) string tự do — mô tả 6 tiêu chí, thay thế phần rubric mặc định trong prompt. Không có thì dùng DEFAULT_SCORING_RUBRIC trong main.py (khớp sales-skill-scoring-rubric.md §5). Không đổi 6 field điểm/schema output — chỉ đổi PHẦN MÔ TẢ tiêu chí gửi cho LLM."
+  "rubric": "(tuỳ chọn) string tự do — mô tả 6 tiêu chí, thay thế phần rubric mặc định trong prompt. Không có thì dùng DEFAULT_SCORING_RUBRIC trong main.py (khớp sales-skill-scoring-rubric.md §5). Không đổi 6 field điểm/schema output — chỉ đổi PHẦN MÔ TẢ tiêu chí gửi cho LLM.",
+  "globalRules": "(tuỳ chọn) nguyên văn Rule_chung.md mục A — dùng để chấm tiêu chí độc lập A19 (bắt buộc giới thiệu bản thân) vào communication_score, xem app/data/rules.ts.",
+  "level": "(tuỳ chọn) Level đầy đủ hoặc rút gọn — dùng level.trainingScript (nếu có) để đối chiếu đúng nhánh WIN/LOSE của tình huống khi chấm insight_discovery_score/closing_score."
 }
 ```
 
-Khớp `ScoringAIParams` hiện có trong `app/lib/ai.ts` — không đổi (`rubric` là field mở rộng optional, không có trong `ScoringAIParams`, app có thể bỏ qua nếu không cần).
+Khớp `ScoringAIParams` hiện có trong `app/lib/ai.ts` (`rubric`/`globalRules`/`level` đều optional, app có thể bỏ qua nếu không cần — **[CẬP NHẬT — v2 content]** `globalRules`/`level` là field mới, xem mục 1).
 
 ### Output — khớp CHÍNH XÁC `ScoringResult` đã định nghĩa sẵn trong `app/lib/ai.ts`
 

@@ -23,20 +23,33 @@ export interface RoleplayTurn {
 // Product/Level (dùng cho role-play trong Map) có nhiều field hơn nên vẫn
 // gán được thẳng vào đây — không cần đổi gì ở RolePlayScreen/MapScreen.
 // Cho phép cả nguồn khác (vd. hồ sơ khách hàng thật ở màn Practice) tự
-// build persona/product/level "tối giản" mà không phải bịa field thừa.
+// build persona/product/level "tối giản" mà không phải bịa field thừa. Các
+// field mới (selfAddress/speakingStyle/...) đều optional — persona sinh bởi
+// AI (generate-persona) hoặc hồ sơ Practice cũ không có vẫn hợp lệ, backend
+// tự fallback (xem agent/main.py).
 export interface RoleplayPersonaInput {
   name: string;
   criteria: PersonaCriteria;
   behaviorNote: string;
+  selfAddress?: string;
+  sellerAddress?: string;
+  speakingStyle?: string;
+  patienceNote?: string;
+  closingSignal?: string;
+  financialData?: string;
+  hiddenData?: string;
+  contrastExample?: string;
 }
 export interface RoleplayProductInput {
   name: string;
   shortDescription: string;
   keySellingPoints?: string[];
+  knowledgeBase?: string;
 }
 export interface RoleplayLevelInput {
   winCriteria: string;
   objectionBank: LevelObjection[];
+  trainingScript?: string;
 }
 
 export interface RoleplayAIParams {
@@ -49,6 +62,10 @@ export interface RoleplayAIParams {
   history: RoleplayTurn[];
   /** Câu nhân viên sales vừa nói (đã chuyển từ giọng nói sang chữ). Rỗng ('') cho lượt mở đầu cuộc gọi. */
   sellerUtterance: string;
+  /** Quy tắc chung áp dụng cho MỌI persona — nguồn: data/rules.ts
+   * (v2_docs/Rule_chung.md mục A). Optional để không phá vỡ các luồng
+   * role-play khác (generated/practice) chưa truyền field này. */
+  globalRules?: string;
 }
 
 export interface RoleplayAIResult {
@@ -87,6 +104,13 @@ export interface ScoringResult {
 export interface ScoringAIParams {
   product: RoleplayProductInput | Product;
   transcript: RoleplayTurn[];
+  /** Quy tắc chung — dùng để chấm tiêu chí độc lập "giới thiệu bản thân"
+   * (Rule_chung.md mục A19) và các tiêu chí khác không gắn riêng 1 sản
+   * phẩm. Optional, xem RoleplayAIParams.globalRules. */
+  globalRules?: string;
+  /** Level đang chấm — dùng trainingScript (nếu có) để đối chiếu đúng tiêu
+   * chí WIN/LOSE cụ thể của tình huống này khi chấm closing_score. Optional. */
+  level?: RoleplayLevelInput | Level;
 }
 
 function getBackendUrl(): string {
@@ -112,6 +136,7 @@ export async function callRoleplayAI(params: RoleplayAIParams): Promise<Roleplay
       secondsElapsed: params.secondsElapsed,
       history: params.history,
       sellerUtterance: params.sellerUtterance,
+      globalRules: params.globalRules,
     }),
   });
 
@@ -144,6 +169,8 @@ export async function callScoringAI(params: ScoringAIParams): Promise<ScoringRes
     body: JSON.stringify({
       product: params.product,
       transcript: params.transcript,
+      globalRules: params.globalRules,
+      level: params.level,
     }),
   });
 

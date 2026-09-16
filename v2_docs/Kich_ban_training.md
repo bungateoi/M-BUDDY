@@ -482,6 +482,7 @@
 - Minh bạch xuyên suốt, nhắc đúng bối cảnh cũ: Bà xin tài liệu. → **WIN**
 - Không nhắc bối cảnh cũ, mập mờ điều khoản: Bà phản ứng gắt. → **LOSE**
 
+
 ---
 
 ## KHÁCH 5 — ÔNG VIỆT (★★★★★) — xưng "anh", gọi Sale "em"

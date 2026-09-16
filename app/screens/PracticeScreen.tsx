@@ -28,7 +28,7 @@ export function PracticeScreen() {
     : undefined;
 
   const startPractice = (customerId: string) => {
-    navigate('roleplay', { practiceCustomerId: customerId });
+    navigate('roleplay', { practiceCustomerId: customerId, backTo: 'practice' });
   };
 
   if (selectedCustomer) {

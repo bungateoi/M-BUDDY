@@ -3,6 +3,7 @@ export { products, replaceProducts } from './products';
 export { personas, replacePersonas } from './personas';
 export { levels, replaceLevels } from './levels';
 export { mockDailyChallenge } from './userProgress';
+export { GLOBAL_ROLEPLAY_RULES } from './rules';
 export { quizzesByLevelId, replaceQuizzes } from './quizzes';
 export { roleplayCustomersByLevelId } from './roleplayCustomers';
 export { roleplayAvatarSources, getRoleplayAvatarSource } from './roleplayAvatars';

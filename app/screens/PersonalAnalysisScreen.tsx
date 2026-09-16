@@ -91,7 +91,7 @@ export function PersonalAnalysisScreen() {
                   icon={item.icon}
                   title={item.title}
                   subtitle={item.subtitle}
-                  onPressRetry={() => navigate('quiz', { levelId: item.levelId })}
+                  onPressRetry={() => navigate('quiz', { levelId: item.levelId, backTo: 'personalAnalysis' })}
                 />
               ))
             )}

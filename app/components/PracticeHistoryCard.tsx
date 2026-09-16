@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { buildSkillScoresFromRaw } from '../data/scoreCriteriaMeta';
 import type { PracticeHistoryEntry } from '../data/types';
 import { colors2, fontFamily2, radii2, spacing2 } from './theme';
@@ -71,6 +71,30 @@ export function PracticeHistoryCard({ entry, onPress }: { entry: PracticeHistory
   );
 }
 
+// Thẻ tạm cho 1 buổi vừa kết thúc, đang chấm điểm NGẦM (xem lib/scoringJobs.ts)
+// — hiện ở đầu danh sách Ôn tập cho tới khi job xong (chuyển thành
+// PracticeHistoryCard thật sau khi Supabase có bản ghi, xem
+// PracticeHistoryScreen.tsx). Dùng lại đúng bố cục headerRow của
+// PracticeHistoryCard, chỉ thay điểm số + skill box bằng spinner + trạng thái.
+export function PendingHistoryCard({ titleLine, subtitleLine }: { titleLine: string; subtitleLine: string }) {
+  return (
+    <View style={styles.card}>
+      <View style={styles.headerRow}>
+        <View style={styles.headerText}>
+          <Text style={styles.titleLine} numberOfLines={1}>
+            {titleLine}
+          </Text>
+          <Text style={styles.subtitleLine} numberOfLines={1}>
+            {subtitleLine}
+          </Text>
+          <Text style={styles.pendingStatusText}>Đang đánh giá...</Text>
+        </View>
+        <ActivityIndicator color={colors2.orange} />
+      </View>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors2.cardOptionIdle,
@@ -85,6 +109,7 @@ const styles = StyleSheet.create({
   dateRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
   dateText: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.whiteMuted },
   dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors2.whiteMuted },
+  pendingStatusText: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.orange },
   scoreText: { fontFamily: fontFamily2.displaySpeed, fontSize: 16, lineHeight: 24, color: colors2.white },
   scoreMax: { color: colors2.orange },
   skillBox: {

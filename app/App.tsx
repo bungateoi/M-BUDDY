@@ -11,7 +11,6 @@ import {
   Nunito_900Black,
 } from '@expo-google-fonts/nunito';
 import { Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
-import { DarumadropOne_400Regular } from '@expo-google-fonts/darumadrop-one';
 import { webPhoneFrameMaxWidth } from './components/theme';
 import { NavigationProvider, useAppNavigation } from './navigation/NavigationContext';
 import { AuthProvider, useAuth } from './lib/AuthContext';
@@ -69,7 +68,7 @@ function RootNavigator() {
     case 'personaEdit':
       return <PersonaEditScreen personaId={params.personaId} />;
     case 'quiz':
-      return <QuizScreen levelId={params.levelId ?? '2.3'} />;
+      return <QuizScreen levelId={params.levelId ?? '2.3'} backTo={params.backTo} />;
     case 'roleplay':
       return (
         <RolePlayScreen
@@ -77,6 +76,7 @@ function RootNavigator() {
           practiceCustomerId={params.practiceCustomerId}
           generatedCustomer={params.generatedCustomer}
           isSkipAhead={params.isSkipAhead}
+          backTo={params.backTo}
         />
       );
     case 'result':
@@ -85,6 +85,7 @@ function RootNavigator() {
           levelId={params.levelId}
           practiceCustomerId={params.practiceCustomerId}
           generatedCustomer={params.generatedCustomer}
+          backTo={params.backTo}
         />
       );
     case 'home':
@@ -202,7 +203,6 @@ export default function App() {
     Nunito_900Black,
     Inter_400Regular,
     Inter_600SemiBold,
-    DarumadropOne_400Regular,
     // Font trả phí, không lấy từ Google Fonts — file .ttf do người dùng cung
     // cấp trực tiếp (đã license), đặt tại app/assets/fonts/.
     'A4Speed-Bold': require('./assets/fonts/A4Speed-Bold.ttf'),

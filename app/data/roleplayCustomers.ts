@@ -1,41 +1,36 @@
-import type { RoleplayCustomer } from './types';
+import type { LevelAvatarConfig } from './types';
 
-// Tên + avatar khách hàng cho từng level — avatar chọn theo đúng bộ quy
-// tắc persona → nhân vật minh hoạ mà người dùng cung cấp:
-// - Chặng 1 (Nội trợ tiết kiệm)      → old-women
-// - Chặng 2 (NV văn phòng trẻ)       → nam-tre / nu-tre tuỳ level
-//   (2.2 Thẻ tín dụng & 2.4 Bảo hiểm khớp đúng ví dụ tình huống được cho)
-// - Chặng 3 (Chủ hộ kinh doanh)      → adult-women
-// - Chặng 4 (Người đa nghi)          → old-men
-// - Chặng 5 (Khách VIP / Boss)       → adult-men
-export const roleplayCustomersByLevelId: Record<string, RoleplayCustomer> = {
-  '1.1': { name: 'Cô Hạnh', avatarKey: 'old-women' },
-  '1.2': { name: 'Cô Hạnh', avatarKey: 'old-women' },
-  '1.3': { name: 'Cô Hạnh', avatarKey: 'old-women' },
-  '1.4': { name: 'Cô Hạnh', avatarKey: 'old-women' },
-  '1.5': { name: 'Cô Hạnh', avatarKey: 'old-women' },
+// Avatar minh hoạ cho từng level Map — tên hiển thị lấy trực tiếp từ
+// persona.name (xem personas.ts + splitPersonaName trong RolePlayScreen.tsx),
+// KHÔNG lưu tên ở đây nữa để tránh lệch dữ liệu mỗi khi personas.ts đổi.
+// Avatar chọn theo đúng bộ quy tắc persona → nhân vật minh hoạ:
+// - Chặng 1 (Bác Lan, nội trợ tiết kiệm)      → old-women
+// - Chặng 2 (My, nhân viên văn phòng trẻ)     → nu-tre
+// - Chặng 3 (Ông Thắng, chủ hộ kinh doanh)    → adult-men
+// - Chặng 4 (Bà Thuý, đa nghi / từng bị lừa)  → old-women
+// - Chặng 5 (Ông Việt, VIP / đàm phán cứng)   → adult-men
+export const roleplayCustomersByLevelId: Record<string, LevelAvatarConfig> = {
+  '1.1': { avatarKey: 'old-women' },
+  '1.2': { avatarKey: 'old-women' },
+  '1.3': { avatarKey: 'old-women' },
+  '1.4': { avatarKey: 'old-women' },
 
-  '2.1': { name: 'Anh Tuấn', avatarKey: 'nam-tre' },
-  '2.2': { name: 'Anh Minh', avatarKey: 'nam-tre' },
-  '2.3': { name: 'Anh Tuấn', avatarKey: 'nam-tre' },
-  '2.4': { name: 'Chị Linh', avatarKey: 'nu-tre' },
-  '2.5': { name: 'Chị Trang', avatarKey: 'nu-tre' },
+  '2.1': { avatarKey: 'nu-tre' },
+  '2.2': { avatarKey: 'nu-tre' },
+  '2.3': { avatarKey: 'nu-tre' },
+  '2.4': { avatarKey: 'nu-tre' },
 
-  '3.1': { name: 'Chị Hương', avatarKey: 'adult-women' },
-  '3.2': { name: 'Chị Hương', avatarKey: 'adult-women' },
-  '3.3': { name: 'Chị Hương', avatarKey: 'adult-women' },
-  '3.4': { name: 'Chị Hương', avatarKey: 'adult-women' },
-  '3.5': { name: 'Chị Hương', avatarKey: 'adult-women' },
+  '3.1': { avatarKey: 'adult-men' },
+  '3.2': { avatarKey: 'adult-men' },
+  '3.3': { avatarKey: 'adult-men' },
+  '3.4': { avatarKey: 'adult-men' },
 
-  '4.1': { name: 'Chú Bình', avatarKey: 'old-men' },
-  '4.2': { name: 'Chú Bình', avatarKey: 'old-men' },
-  '4.3': { name: 'Chú Bình', avatarKey: 'old-men' },
-  '4.4': { name: 'Chú Bình', avatarKey: 'old-men' },
-  '4.5': { name: 'Chú Bình', avatarKey: 'old-men' },
+  '4.1': { avatarKey: 'old-women' },
+  '4.2': { avatarKey: 'old-women' },
+  '4.3': { avatarKey: 'old-women' },
 
-  '5.1': { name: 'Anh Đức', avatarKey: 'adult-men' },
-  '5.2': { name: 'Anh Đức', avatarKey: 'adult-men' },
-  '5.3': { name: 'Anh Đức', avatarKey: 'adult-men' },
-  '5.4': { name: 'Anh Đức', avatarKey: 'adult-men' },
-  '5.5': { name: 'Anh Đức', avatarKey: 'adult-men' },
+  '5.1': { avatarKey: 'adult-men' },
+  '5.2': { avatarKey: 'adult-men' },
+  '5.3': { avatarKey: 'adult-men' },
+  '5.4': { avatarKey: 'adult-men' },
 };

@@ -59,7 +59,11 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   avatar: { width: '100%', height: '100%', borderRadius: (AVATAR_SIZE - 10) / 2 },
-  name: { marginTop: spacing2.lg, fontFamily: fontFamily2.semiBold, fontSize: 24, lineHeight: 36, color: colors2.white },
+  // marginTop tăng hẳn từ spacing2.lg (24) lên 90 — theo phản hồi người dùng
+  // (chữ nằm đè lên hoạ tiết cờ đua ở nền, nền bận rộn làm khó đọc chữ),
+  // đẩy khối tên/persona/status xuống dưới hẳn hoạ tiết (hoạ tiết kết thúc ở
+  // y=406, xem RolePlayScreen.tsx#flagBg) thay vì chỉ cách đều avatar.
+  name: { marginTop: 90, fontFamily: fontFamily2.semiBold, fontSize: 24, lineHeight: 36, color: colors2.white },
   persona: { fontFamily: fontFamily2.regular, fontSize: 14, lineHeight: 20, color: colors2.whiteMuted },
   status: { marginTop: spacing2.md, fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.orange },
 });

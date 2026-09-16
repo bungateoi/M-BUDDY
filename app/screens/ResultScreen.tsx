@@ -15,16 +15,21 @@ import { ArrowRightStraightIcon, RefreshIcon } from '../components/icons2';
 import { getRoleplayResultByLevelId } from '../data';
 import type { GeneratedCustomerPersona } from '../data/types';
 import { useAuth } from '../lib/AuthContext';
-import { useAppNavigation } from '../navigation/NavigationContext';
+import { useAppNavigation, type ScreenName } from '../navigation/NavigationContext';
 
 export function ResultScreen({
   levelId,
   practiceCustomerId,
   generatedCustomer,
+  backTo,
 }: {
   levelId?: string;
   practiceCustomerId?: string;
   generatedCustomer?: GeneratedCustomerPersona;
+  /** Màn quay về khi bấm nút đóng (X) — Map nếu đang học 1 level, Practice
+   * nếu "Chinh phục"/"Thiết lập", Ôn tập nếu xem lại 1 mục lịch sử, xem
+   * NavigationContext.tsx. */
+  backTo?: ScreenName;
 }) {
   const { navigate, params } = useAppNavigation();
   const { profile } = useAuth();
@@ -34,7 +39,10 @@ export function ResultScreen({
   // không có (vd. vào thẳng màn Kết quả để xem UI khi dev) — chỉ có mock cho
   // các level cố định trong Map, không có cho hồ sơ khách hàng thật.
   const result = params.roleplayResult ?? (levelId ? getRoleplayResultByLevelId(levelId) : undefined);
-  const retryParams = levelId ? { levelId } : practiceCustomerId ? { practiceCustomerId } : { generatedCustomer };
+  const retryParams = {
+    ...(levelId ? { levelId } : practiceCustomerId ? { practiceCustomerId } : { generatedCustomer }),
+    backTo,
+  };
 
   if (!result || !profile) {
     return (
@@ -51,7 +59,7 @@ export function ResultScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <QuizTopBar title="Kết quả luyện tập" onClose={() => navigate('home')} />
+      <QuizTopBar title="Về đích" onClose={() => navigate(backTo ?? 'home')} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {params.unlockedChaptersUpTo != null && (

@@ -49,7 +49,7 @@ export function LeaderboardScreen() {
         ) : (
           <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
             <LeaderboardSection
-              title="Top 10 học viên"
+              title="Top 10 tay đua"
               entries={topFour}
               onPressSeeAll={() => navigate('leaderboardFull')}
             />

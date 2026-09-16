@@ -34,7 +34,10 @@ export function SkipAheadIntroScreen({ levelId }: { levelId?: string }) {
       </View>
 
       <View style={styles.actions}>
-        <Pressable onPress={() => navigate('roleplay', { levelId, isSkipAhead: true })} style={styles.startButton}>
+        <Pressable
+          onPress={() => navigate('roleplay', { levelId, isSkipAhead: true, backTo: 'map' })}
+          style={styles.startButton}
+        >
           <Text style={styles.startButtonText}>Bắt đầu</Text>
         </Pressable>
         <Pressable onPress={() => navigate('map')} style={styles.laterButton}>

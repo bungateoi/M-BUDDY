@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle, Line, Polygon } from 'react-native-svg';
 import { colors2, fontFamily2 } from './theme';
 import { SkillHexRings } from './icons2';
 import type { SkillScore } from '../data/types';
@@ -45,6 +46,26 @@ const VALUE_H = 20 + 2;
 const BLOCK_H_1LINE = LINE_H + VALUE_H;
 const BLOCK_H_2LINE = LINE_H * 2 + VALUE_H;
 
+// Bán kính đỉnh của vòng NGOÀI CÙNG trong SkillHexRings (node-id=118:13334
+// vùng) — suy từ path gốc Figma của HEX_RING_PATHS.outer trong icons2.tsx:
+// đỉnh trên ở y=0.576, đỉnh dưới ở y=149.423 (viewBox cao 150) -> tâm
+// y=75, bán kính gốc = 75 - 0.576 = 74.42, nhân với scale = RING_SIZE/150
+// (xem SkillHexRings) = 0.8 -> 74.42*0.8 ≈ 59.5. Đây là bán kính ứng với
+// 100% trên biểu đồ dữ liệu (Polygon118:13334-13346 trong Figma), để hình
+// dữ liệu khớp đúng cỡ 3 vòng lưới nền.
+const DATA_MAX_RADIUS = 59.5;
+// Sàn tối thiểu để 0% vẫn hiện 1 chấm nhỏ cạnh tâm thay vì biến mất hẳn
+// (dễ đọc hơn là 1 điểm trùng tâm không phân biệt được góc trục nào).
+const MIN_VALUE_RATIO = 0.08;
+
+/** Toạ độ 1 đỉnh của hình dữ liệu/lưới nền — cùng hệ góc với SLOTS bên dưới
+ * (thứ tự xuôi kim đồng hồ bắt đầu từ trục trên-phải, xem app/data/types.ts). */
+function hexPointAt(index: number, radius: number) {
+  const angleDeg = -60 + index * 60;
+  const angleRad = (angleDeg * Math.PI) / 180;
+  return { x: CX + radius * Math.cos(angleRad), y: CY + radius * Math.sin(angleRad) };
+}
+
 // Đúng 6 vị trí đỉnh lục giác (nhọn trái/phải, phẳng trên/dưới) — thứ tự
 // khớp UserProgress.skills: "xuôi theo chiều kim đồng hồ bắt đầu từ trục
 // trên-phải" (xem app/data/types.ts).
@@ -58,11 +79,37 @@ const SLOTS = [
 ];
 
 export function SkillHexChart({ skills }: { skills: SkillScore[] }) {
+  const shownSkills = skills.slice(0, 6);
+  const dataPoints = shownSkills
+    .map((s, i) => {
+      const p = hexPointAt(i, DATA_MAX_RADIUS * Math.max(MIN_VALUE_RATIO, s.value / 100));
+      return `${p.x},${p.y}`;
+    })
+    .join(' ');
+
   return (
     <View style={styles.wrap}>
       <View style={styles.rings}>
         <SkillHexRings size={RING_SIZE} />
       </View>
+
+      {/* 6 trục từ tâm ra đỉnh lục giác ngoài cùng (node-id=118:13334-13337
+          trong Figma — 3 "Vector" vẽ 3 đường thẳng, mỗi đường xuyên tâm nối
+          2 đỉnh đối nhau, tức đủ 6 trục) + hình dữ liệu thật (điểm user) +
+          chấm ở mỗi đỉnh (node-id=118:13340-13346). Trước đây chart chỉ vẽ 3
+          vòng lưới nền cố định, thiếu cả 2 phần này nên luôn trông như "0%"
+          dù skills có điểm thật. */}
+      <Svg width={CONTAINER_W} height={CONTAINER_H} style={StyleSheet.absoluteFill} pointerEvents="none">
+        {Array.from({ length: 6 }, (_, i) => {
+          const p = hexPointAt(i, DATA_MAX_RADIUS);
+          return <Line key={i} x1={CX} y1={CY} x2={p.x} y2={p.y} stroke={colors2.white} strokeOpacity={0.6} strokeWidth={1.2} />;
+        })}
+        <Polygon points={dataPoints} fill={colors2.orange} fillOpacity={0.85} stroke={colors2.orange} strokeWidth={1.5} strokeLinejoin="round" />
+        {shownSkills.map((s, i) => {
+          const p = hexPointAt(i, DATA_MAX_RADIUS * Math.max(MIN_VALUE_RATIO, s.value / 100));
+          return <Circle key={s.key} cx={p.x} cy={p.y} r={2} fill={colors2.orange} />;
+        })}
+      </Svg>
 
       {skills.slice(0, 6).map((skill, i) => {
         const slot = SLOTS[i];

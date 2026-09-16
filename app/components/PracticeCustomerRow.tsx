@@ -45,7 +45,7 @@ export function PracticeCustomerRow({
 
       <Pressable onPress={onPressPractice} style={styles.ctaShadow} hitSlop={6}>
         <View style={styles.cta}>
-          <Text style={styles.ctaText}>Luyện tập</Text>
+          <Text style={styles.ctaText}>Chinh phục</Text>
         </View>
       </Pressable>
     </Pressable>

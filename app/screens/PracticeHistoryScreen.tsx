@@ -1,9 +1,10 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { ActivityIndicator, FlatList, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import {
   PracticeHistoryHeader,
   PracticeSearchBar,
   PracticeHistoryCard,
+  PendingHistoryCard,
   HomeBottomNavBar,
   colors2,
   fontFamily2,
@@ -12,6 +13,7 @@ import {
 } from '../components';
 import type { PracticeHistoryEntry } from '../data/types';
 import { fetchPracticeHistory } from '../lib/authData';
+import { usePendingHistoryJobs } from '../lib/scoringJobs';
 import { useAppNavigation } from '../navigation/NavigationContext';
 
 // Màn "Ôn tập" (node-id=101-1661, "Lịch sử luyện tập") — lịch sử MỌI buổi
@@ -23,12 +25,29 @@ export function PracticeHistoryScreen() {
   const { navigate } = useAppNavigation();
   const [history, setHistory] = useState<PracticeHistoryEntry[] | null>(null);
   const [query, setQuery] = useState('');
+  // Buổi vừa luyện xong, còn đang chấm điểm NGẦM (xem lib/scoringJobs.ts) —
+  // hiện thẻ "Đang đánh giá" ở đầu danh sách kể cả khi người dùng đã bấm
+  // "Xem sau" và rời khỏi RolePlayScreen từ trước.
+  const pendingJobs = usePendingHistoryJobs();
+  const pendingCountRef = useRef(pendingJobs.length);
 
   useEffect(() => {
     fetchPracticeHistory()
       .then(setHistory)
       .catch(() => setHistory([]));
   }, []);
+
+  // Job vừa rời khỏi danh sách "đang đánh giá" (chấm xong -> đã có bản ghi
+  // thật trong Supabase) -> tải lại lịch sử để thẻ tạm được thay bằng thẻ
+  // điểm số thật.
+  useEffect(() => {
+    if (pendingJobs.length < pendingCountRef.current) {
+      fetchPracticeHistory()
+        .then(setHistory)
+        .catch(() => {});
+    }
+    pendingCountRef.current = pendingJobs.length;
+  }, [pendingJobs.length]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -43,6 +62,7 @@ export function PracticeHistoryScreen() {
       levelId: entry.levelId,
       practiceCustomerId: entry.practiceCustomerId,
       roleplayResult: entry.result,
+      backTo: 'practiceHistory',
     });
   };
 
@@ -62,17 +82,17 @@ export function PracticeHistoryScreen() {
         {/* Ô tìm kiếm đứng NGOÀI FlatList — cố định, không cuộn theo — chỉ
             phần danh sách lịch sử bên dưới mới cuộn (giống PracticeScreen). */}
         <View style={styles.fixedHeader}>
-          <PracticeSearchBar value={query} onChangeText={setQuery} placeholder="Tìm theo tên bài luyện tập" />
+          <PracticeSearchBar value={query} onChangeText={setQuery} placeholder="Tìm theo tên chặng đua" />
         </View>
 
-        {!history ? (
+        {!history && pendingJobs.length === 0 ? (
           <View style={styles.centerWrap}>
             <ActivityIndicator color={colors2.white} />
           </View>
-        ) : filtered.length === 0 ? (
+        ) : filtered.length === 0 && pendingJobs.length === 0 ? (
           <View style={styles.centerWrap}>
             <Text style={styles.emptyText}>
-              {history.length === 0
+              {(history?.length ?? 0) === 0
                 ? 'Chưa có lịch sử luyện tập nào — vào Bản đồ hoặc Luyện tập để bắt đầu nhé!'
                 : 'Không tìm thấy bài nào khớp từ khoá.'}
             </Text>
@@ -84,6 +104,15 @@ export function PracticeHistoryScreen() {
             style={styles.list}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              pendingJobs.length === 0 ? null : (
+                <View style={{ gap: spacing2.md, marginBottom: filtered.length > 0 ? spacing2.md : 0 }}>
+                  {pendingJobs.map((job) => (
+                    <PendingHistoryCard key={job.id} titleLine={job.titleLine} subtitleLine={job.subtitleLine} />
+                  ))}
+                </View>
+              )
+            }
             renderItem={({ item }) => (
               <PracticeHistoryCard entry={item} onPress={() => handlePressEntry(item)} />
             )}

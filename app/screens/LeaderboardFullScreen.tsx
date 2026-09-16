@@ -23,7 +23,7 @@ export function LeaderboardFullScreen() {
     <SafeAreaView style={styles.safe}>
       <QuizHeader
         title="Bảng xếp hạng đầy đủ"
-        subtitle={`${entries?.length ?? 0} học viên`}
+        subtitle={`${entries?.length ?? 0} tay đua`}
         streakDays={profile.currentStreak}
         onBack={() => navigate('leaderboard')}
       />

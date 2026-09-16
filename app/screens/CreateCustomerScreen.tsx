@@ -70,7 +70,7 @@ export function CreateCustomerScreen() {
     setIsSubmitting(true);
     try {
       const generatedCustomer = await callGeneratePersona(criteria);
-      navigate('roleplay', { generatedCustomer });
+      navigate('roleplay', { generatedCustomer, backTo: 'practice' });
     } catch {
       showAlert('Không tạo được chân dung khách hàng', 'Có lỗi kết nối tới AI, vui lòng thử lại.');
     } finally {

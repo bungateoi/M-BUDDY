@@ -30,6 +30,8 @@ interface ProductRow {
   compliance_note: string | null;
   is_hidden: boolean;
   hidden_chapter_numbers: number[];
+  /** v2 — xem migration 0006_v2_content_reseed.sql. */
+  knowledge_base: string | null;
 }
 
 interface PersonaRow {
@@ -44,6 +46,15 @@ interface PersonaRow {
   recommended_product_id: string | null;
   is_boss_chapter: boolean;
   is_hidden: boolean;
+  // v2 — xem migration 0006_v2_content_reseed.sql.
+  self_address: string | null;
+  seller_address: string | null;
+  speaking_style: string | null;
+  patience_note: string | null;
+  closing_signal: string | null;
+  financial_data: string | null;
+  hidden_data: string | null;
+  contrast_example: string | null;
 }
 
 interface LevelRow {
@@ -57,6 +68,8 @@ interface LevelRow {
   objection_bank: Level['objectionBank'];
   win_criteria: string;
   is_final_boss: boolean;
+  /** v2 — xem migration 0006_v2_content_reseed.sql. */
+  training_script: string | null;
 }
 
 interface QuizQuestionRow {
@@ -83,6 +96,7 @@ function mapProductRow(row: ProductRow): Product {
     complianceNote: row.compliance_note ?? undefined,
     isHidden: row.is_hidden ?? false,
     hiddenChapterNumbers: row.hidden_chapter_numbers ?? [],
+    knowledgeBase: row.knowledge_base ?? undefined,
   };
 }
 
@@ -99,6 +113,14 @@ function mapPersonaRow(row: PersonaRow): Persona {
     recommendedProductId: row.recommended_product_id ?? '',
     isBossChapter: row.is_boss_chapter ?? false,
     isHidden: row.is_hidden ?? false,
+    selfAddress: row.self_address ?? undefined,
+    sellerAddress: row.seller_address ?? undefined,
+    speakingStyle: row.speaking_style ?? undefined,
+    patienceNote: row.patience_note ?? undefined,
+    closingSignal: row.closing_signal ?? undefined,
+    financialData: row.financial_data ?? undefined,
+    hiddenData: row.hidden_data ?? undefined,
+    contrastExample: row.contrast_example ?? undefined,
   };
 }
 
@@ -114,6 +136,7 @@ function mapLevelRow(row: LevelRow): Level {
     objectionBank: row.objection_bank ?? [],
     winCriteria: row.win_criteria,
     isFinalBoss: row.is_final_boss ?? false,
+    trainingScript: row.training_script ?? undefined,
   };
 }
 

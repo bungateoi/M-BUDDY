@@ -205,6 +205,29 @@ export function ProgressCornerDecor() {
   );
 }
 
+/** Dải caro đen-trắng lặp lại kín chiều ngang màn hình — khác
+ * ProgressCornerDecor (chỉ 1 khối ở 2 đầu) ở chỗ đây là DẢI LIÊN TỤC, dùng
+ * làm đường phân cách kiểu cờ đua ở màn Tôi (node-id=118-12753, quanh khối
+ * "Name"). Render cứng nhiều khối hơn mức 1 màn hình cần (kể cả web giới hạn
+ * webPhoneFrameMaxWidth=480) rồi cắt bằng overflow:hidden của khung cha,
+ * thay vì đo bề rộng thật — đơn giản hơn hẳn mà không lệch mắt thường. */
+export function CheckerStrip() {
+  const TILE = 8;
+  const COUNT = 40;
+  return (
+    <View style={{ flexDirection: 'row', height: TILE * 2 }}>
+      {Array.from({ length: COUNT }).map((_, i) => (
+        <View key={i} style={{ width: TILE * 2, height: TILE * 2, flexDirection: 'row', flexWrap: 'wrap' }}>
+          <View style={{ width: TILE, height: TILE, backgroundColor: '#222222' }} />
+          <View style={{ width: TILE, height: TILE, backgroundColor: '#FFFFFF' }} />
+          <View style={{ width: TILE, height: TILE, backgroundColor: '#FFFFFF' }} />
+          <View style={{ width: TILE, height: TILE, backgroundColor: '#222222' }} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 // ---- Icon màn Role-play/"Gọi khách" (node-id=76-3536) ----
 
 const LIGHTBULB_XML = `<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">

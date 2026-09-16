@@ -65,7 +65,7 @@ export function HomeHeader({
           nên banner ở đây CHỈ còn chữ (khớp đúng node-id=58:317, "Content"
           trong "Banner" chỉ có text, không có illustration riêng). */}
       <View style={styles.banner}>
-        <Text style={styles.bannerCaption}>Chuỗi ngày học liên tiếp</Text>
+        <Text style={styles.bannerCaption}>Chuỗi ngày bứt phá</Text>
         <View style={styles.streakRow}>
           <Text style={styles.streakNumber}>{streakDays}</Text>
           <StreakFlameVectorIcon width={17} height={25} />

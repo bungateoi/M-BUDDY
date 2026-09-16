@@ -26,7 +26,7 @@ export function DailyChallengeCard({
           dưới, giả lập drop-shadow(0px 6px 0px) không có blur như Figma. */}
       <Pressable onPress={onPress} style={styles.ctaShadow}>
         <LinearGradient colors={orangeGradient2.colors} start={orangeGradient2.start} end={orangeGradient2.end} style={styles.cta}>
-          <Text style={styles.ctaTitle}>Tham gia</Text>
+          <Text style={styles.ctaTitle}>Chinh phục</Text>
           <Text style={styles.ctaReward}>+{rewardXp} XP</Text>
         </LinearGradient>
       </Pressable>

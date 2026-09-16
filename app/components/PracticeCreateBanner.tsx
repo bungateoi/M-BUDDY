@@ -14,12 +14,12 @@ export function PracticeCreateBanner({ onPress }: { onPress?: () => void }) {
     <View style={styles.banner}>
       <View style={styles.textCol}>
         <Text style={styles.title}>Tạo khách hàng của bạn</Text>
-        <Text style={styles.desc}>Xây dựng chân dung khách hàng theo nhu cầu để luyện tập Role-Play.</Text>
+        <Text style={styles.desc}>Xây dựng chân dung khách hàng theo nhu cầu để luyện tập Role-Play thực chiến.</Text>
       </View>
 
       <Pressable onPress={onPress} style={styles.ctaShadow}>
         <View style={styles.cta}>
-          <Text style={styles.ctaText}>Luyện tập</Text>
+          <Text style={styles.ctaText}>Thiết lập</Text>
         </View>
       </Pressable>
 

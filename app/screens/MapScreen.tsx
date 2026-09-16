@@ -362,7 +362,7 @@ export function MapScreen() {
       showAlert('Chưa mở khoá', 'Hoàn thành các bài trước đó (hoặc dùng "Học vượt") để mở khoá bài này.');
       return;
     }
-    navigate('quiz', { levelId });
+    navigate('quiz', { levelId, backTo: 'map' });
   };
 
   // Danh sách con PHẲNG [divider, block, ...] cho từng chặng — "Học vượt"
@@ -416,7 +416,7 @@ export function MapScreen() {
           ScrollView (từng lộ node bên dưới lúc kéo qua vùng trong suốt
           quanh banner). */}
       <View style={styles.header}>
-        <MapHeader title="Hành trình học tập" />
+        <MapHeader title="Hành trình bứt phá" />
         <View style={styles.bannerWrap}>
           <CurrentLevelBanner chapterNumber={activeChapterNumber} personaName={activePersona?.name} />
         </View>

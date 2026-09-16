@@ -10,7 +10,9 @@ import type { BadgeTierId } from '../data/types';
 // vang→Gold, bachkim→Platinum, kimcuong→Diamond). Ảnh xuất theo đúng tỉ lệ/
 // canh lề của từng biến thể trong Figma (Bronze canh đáy, Silver/Gold hụt
 // 22.9px trên đỉnh, Platinum/Diamond cao đầy đủ) — xem TROPHY_SPECS.
-const TROPHY_SOURCES: Record<BadgeTierId, unknown> = {
+// Xuất ra để dùng lại ở ProfileScreen (node-id=118-12753, "Trophy" — chỉ 1
+// cúp đúng hạng hiện tại, không phải cả dải như ở đây).
+export const TROPHY_SOURCES: Record<BadgeTierId, unknown> = {
   dong: require('../assets/v2/leaderboard/trophy-bronze.png'),
   bac: require('../assets/v2/leaderboard/trophy-silver.png'),
   vang: require('../assets/v2/leaderboard/trophy-gold.png'),
@@ -21,7 +23,7 @@ const TROPHY_SOURCES: Record<BadgeTierId, unknown> = {
 const COLUMN_HEIGHT = 120;
 const COLUMN_GAP = 24;
 
-const TROPHY_SPECS: Record<BadgeTierId, { width: number; height: number; marginTop: number }> = {
+export const TROPHY_SPECS: Record<BadgeTierId, { width: number; height: number; marginTop: number }> = {
   dong: { width: 94, height: 80, marginTop: COLUMN_HEIGHT - 80 },
   bac: { width: 120, height: 97, marginTop: 23 },
   vang: { width: 121, height: 97, marginTop: 23 },
@@ -85,7 +87,9 @@ export function BadgeTierCard({ xp }: { xp: number }) {
                   resizeMode="contain"
                 />
               </View>
-              <Text style={styles.tierXp}>{formatXp(tier.minXp)} XP</Text>
+              <Text style={styles.tierXp} numberOfLines={1}>
+                {formatXp(tier.minXp)} XP
+              </Text>
               <Text style={styles.tierLabel}>{tier.label}</Text>
             </View>
           );
@@ -114,6 +118,8 @@ const styles = StyleSheet.create({
   trophyCol: { alignItems: 'center' },
   trophyBox: { height: COLUMN_HEIGHT, width: '100%', alignItems: 'center' },
   trophyBoxDimmed: { opacity: 0.5 },
-  tierXp: { fontFamily: fontFamily2.display, fontSize: 24, lineHeight: 36, color: colors2.white, marginTop: spacing2.xs },
+  // fontSize giảm từ 24 xuống 18 — ở size 24, chuỗi dài như "3.000 XP"/
+  // "5.000 XP" bị tràn bề rộng cột cúp (120-145px) nên tự xuống dòng, xấu.
+  tierXp: { fontFamily: fontFamily2.display, fontSize: 18, lineHeight: 26, color: colors2.white, marginTop: spacing2.xs },
   tierLabel: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
 });

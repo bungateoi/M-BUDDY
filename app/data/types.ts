@@ -31,6 +31,14 @@ export interface Product {
   /** Ẩn sản phẩm này CHỈ ở 1 số chặng cụ thể (chapterNumber) — độc lập với
    * isHidden. Xem isLevelVisible() trong app/data/index.ts. */
   hiddenChapterNumbers?: number[];
+  /**
+   * Trích đoạn kiến thức sản phẩm ĐẦY ĐỦ, nguồn: v2_docs/MSB_Product_Knowledge_Base.md
+   * — gửi nguyên văn cho AI (chấm điểm "kiến thức sản phẩm" +  đối chiếu số
+   * liệu khi khách hỏi) thay vì chỉ dựa vào benefits/keySellingPoints rút
+   * gọn ở trên (vốn chỉ để hiển thị UI cho gọn). Không hiển thị trực tiếp
+   * trên UI admin — chỉ dùng làm ngữ cảnh cho backend (agent/main.py).
+   */
+  knowledgeBase?: string;
 }
 
 export interface PersonaCriteria {
@@ -62,6 +70,31 @@ export interface Persona {
   /** Ẩn TOÀN BỘ chặng này khỏi màn Map — set qua "Quản trị hành trình &
    * tri thức" (app/screens/PersonaEditScreen.tsx). */
   isHidden?: boolean;
+
+  // ---- Nguồn: v2_docs/Persona_5_nhan_vat.md + v2_docs/Rule_chung.md (mục
+  // B — chi tiết từng persona) — nạp vào prompt AI đóng vai khách hàng để
+  // xưng hô/giọng điệu/ngưỡng kiên nhẫn khớp ĐÚNG từng persona thay vì ép
+  // cứng 1 kiểu xưng hô chung cho tất cả (xem agent/main.py). Tất cả optional
+  // để không phá vỡ các persona sinh bởi AI (generate-persona) hoặc hồ sơ
+  // Practice cũ — những persona đó không có các field chi tiết này.
+
+  /** Đại từ nhân xưng CỐ ĐỊNH của khách trong suốt phiên, vd "bác"/"tôi"/"anh". */
+  selfAddress?: string;
+  /** Cách khách gọi nhân viên sales, vd "cháu"/"bạn"/"em". */
+  sellerAddress?: string;
+  /** "Cách nói chuyện đặc trưng" — mô tả phong cách khẩu ngữ + ví dụ câu nói mẫu. */
+  speakingStyle?: string;
+  /** "Mức độ kiên nhẫn" — mô tả định tính + ngưỡng cụ thể (Loại 1: tư vấn
+   * chưa tốt: Loại 2: thái độ tệ) theo Rule_chung.md mục B. */
+  patienceNote?: string;
+  /** "Tín hiệu sẵn sàng chốt" — dấu hiệu cho AI biết khi nào nên để khách tiến gần quyết định. */
+  closingSignal?: string;
+  /** "Dữ liệu tài chính" — số liệu cụ thể (thu nhập, tài sản, sản phẩm đang dùng...) để khách trả lời nhất quán khi được hỏi. */
+  financialData?: string;
+  /** "Dữ liệu ẩn" — thông tin chỉ lộ khi Sales hỏi đúng cách, kèm gợi ý câu hỏi "trúng". */
+  hiddenData?: string;
+  /** "Ví dụ đối lập" — 1 câu Sales trả lời ổn (✅) vs 1 câu chưa ổn (❌) để AI hiệu chỉnh mức độ phản ứng. */
+  contrastExample?: string;
 }
 
 export interface LevelObjection {
@@ -70,7 +103,10 @@ export interface LevelObjection {
 }
 
 export interface Level {
-  /** Mã level dạng "{chapterNumber}.{productOrder}", vd "1.1", "5.5". */
+  /** Mã level dạng "{chapterNumber}.{thứ tự trong chặng}", vd "1.1", "4.3" —
+   * KHÔNG còn cố định đúng 5 level/chặng (xem v2_docs/Kich_ban_training.md,
+   * mỗi chặng có thể có số level khác nhau: chặng 4 chỉ có 3, các chặng
+   * khác có 4). */
   id: string;
   chapterNumber: number;
   personaId: string;
@@ -86,6 +122,16 @@ export interface Level {
   winCriteria: string;
   /** true cho level 5.5 — boss cuối, khó nhất toàn app. */
   isFinalBoss?: boolean;
+  /**
+   * Kịch bản phân nhánh ĐẦY ĐỦ cho level này, nguồn: nguyên văn từng mục
+   * (### x.y — ...) trong v2_docs/Kich_ban_training.md — gồm bối cảnh, các
+   * mốc thời gian, nhánh phản ứng theo từng cách Sale xử lý, và điều kiện
+   * WIN/LOSE. Đây là ngữ cảnh CHÍNH cho AI đóng vai khách hàng phản ứng
+   * đúng theo kịch bản thay vì chỉ dựa vào winCriteria/objectionBank rút
+   * gọn ở trên (vẫn giữ 2 field đó để hiển thị UI admin cho gọn). Optional
+   * để không phá vỡ persona/level sinh bởi AI (generate-persona, Practice).
+   */
+  trainingScript?: string;
 }
 
 // ---- Tiến độ người dùng (màn Home) ----
@@ -182,6 +228,13 @@ export interface RoleplayCustomer {
   /** Tên xưng hô hiển thị, vd "Anh Minh", "Cô Hạnh". */
   name: string;
   /** Khớp key trong roleplayAvatars.ts. */
+  avatarKey: string;
+}
+
+/** Chỉ chọn avatar minh hoạ theo level Map — tên hiển thị lấy trực tiếp từ
+ * persona.name (xem splitPersonaName trong RolePlayScreen.tsx), không lưu ở
+ * đây để tránh lệch dữ liệu mỗi khi personas.ts đổi. */
+export interface LevelAvatarConfig {
   avatarKey: string;
 }
 
