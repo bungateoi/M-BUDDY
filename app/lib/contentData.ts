@@ -70,6 +70,10 @@ interface LevelRow {
   is_final_boss: boolean;
   /** v2 — xem migration 0006_v2_content_reseed.sql. */
   training_script: string | null;
+  /** v2 — xem migration 0006_v2_content_reseed.sql. */
+  opener_role: 'customer' | 'seller' | null;
+  /** v2 — xem migration 0006_v2_content_reseed.sql. */
+  strict_script: boolean | null;
 }
 
 interface QuizQuestionRow {
@@ -137,6 +141,8 @@ function mapLevelRow(row: LevelRow): Level {
     winCriteria: row.win_criteria,
     isFinalBoss: row.is_final_boss ?? false,
     trainingScript: row.training_script ?? undefined,
+    openerRole: row.opener_role ?? undefined,
+    strictScript: row.strict_script ?? undefined,
   };
 }
 

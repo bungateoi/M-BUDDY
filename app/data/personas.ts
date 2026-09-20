@@ -122,7 +122,7 @@ export let personas: Persona[] = [
     name: 'Bà Thuý, đa nghi / từng bị lừa',
     starRating: 4,
     selfAddress: 'tôi',
-    sellerAddress: 'cô/cậu',
+    sellerAddress: 'cô',
     criteria: {
       age: '50–58 tuổi',
       occupation: 'Không cố định, thu nhập không đều',

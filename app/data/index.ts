@@ -12,7 +12,7 @@ export { roleplayResultsByLevelId } from './roleplayResults';
 export { customerProfiles } from './customerProfiles';
 export { customerRoleplayConfigsByCustomerId } from './customerRoleplayConfigs';
 export { badgeTiers, badgeTierIcons, getBadgeTierProgress } from './badgeTiers';
-export { SCORE_CRITERIA_META, buildSkillScoresFromRaw, averageSkillScore } from './scoreCriteriaMeta';
+export { SCORE_CRITERIA_META, buildSkillScoresFromRaw, averageSkillScore, averageTeamSkills } from './scoreCriteriaMeta';
 export type { ScoreCriterionMeta } from './scoreCriteriaMeta';
 export { buildSkillInsightSummary, buildKnowledgeTopics, buildPracticeRecommendations } from './personalAnalysis';
 

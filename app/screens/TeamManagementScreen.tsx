@@ -15,7 +15,7 @@ import {
   spacing2,
   type SimpleSelectOption,
 } from '../components';
-import { SCORE_CRITERIA_META, averageSkillScore, buildSkillScoresFromRaw } from '../data';
+import { SCORE_CRITERIA_META, averageSkillScore, averageTeamSkills } from '../data';
 import type { TeamMember } from '../data/types';
 import { fetchMyTeam } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
@@ -47,17 +47,6 @@ function fmtDMY(d: Date): string {
 
 function rangeLabel(start: Date, end: Date): string {
   return `${fmtDM(start)} - ${fmtDMY(end)}`;
-}
-
-/** Điểm trung bình cả team theo từng tiêu chí — cho radar "Knowledge & Skill Gaps". */
-function averageTeamSkills(members: TeamMember[]) {
-  if (members.length === 0) return buildSkillScoresFromRaw({});
-  const raw: Record<string, number> = {};
-  for (const c of SCORE_CRITERIA_META) {
-    const total = members.reduce((sum, m) => sum + (m.scores[c.key] ?? 0), 0);
-    raw[c.key] = total / members.length;
-  }
-  return buildSkillScoresFromRaw(raw);
 }
 
 export function TeamManagementScreen() {

@@ -81,7 +81,7 @@ function personaRow(p: (typeof personas)[number]): string {
 }
 
 function levelRow(l: (typeof levels)[number]): string {
-  return `(${sqlStr(l.id)}, ${sqlNum(l.chapterNumber)}, ${sqlStr(l.personaId)}, ${sqlStr(l.productId)}, ${sqlNum(l.starRating)}, ${sqlStr(l.openingLine)}, ${sqlJson(l.sampleFlow)}, ${sqlJson(l.objectionBank)}, ${sqlStr(l.winCriteria)}, ${sqlBool(l.isFinalBoss)}, ${sqlStr(l.trainingScript)})`;
+  return `(${sqlStr(l.id)}, ${sqlNum(l.chapterNumber)}, ${sqlStr(l.personaId)}, ${sqlStr(l.productId)}, ${sqlNum(l.starRating)}, ${sqlStr(l.openingLine)}, ${sqlJson(l.sampleFlow)}, ${sqlJson(l.objectionBank)}, ${sqlStr(l.winCriteria)}, ${sqlBool(l.isFinalBoss)}, ${sqlStr(l.trainingScript)}, ${sqlStr(l.openerRole ?? 'customer')}, ${sqlBool(l.strictScript)})`;
 }
 
 function quizRows(levelId: string): string[] {
@@ -126,6 +126,9 @@ lines.push('  add column if not exists hidden_data text,');
 lines.push('  add column if not exists contrast_example text;');
 lines.push('');
 lines.push('alter table public.levels add column if not exists training_script text;');
+lines.push('');
+lines.push("alter table public.levels add column if not exists opener_role text not null default 'customer';");
+lines.push('alter table public.levels add column if not exists strict_script boolean not null default false;');
 lines.push('');
 
 lines.push('-- ============================================================');
@@ -199,7 +202,7 @@ lines.push('-- 4. Upsert levels — 13/19 id giữ nguyên (1.1-3.4, 4.1-4.3, 5.
 lines.push('-- ============================================================');
 lines.push('');
 lines.push('insert into public.levels');
-lines.push('  (id, chapter_number, persona_id, product_id, star_rating, opening_line, sample_flow, objection_bank, win_criteria, is_final_boss, training_script)');
+lines.push('  (id, chapter_number, persona_id, product_id, star_rating, opening_line, sample_flow, objection_bank, win_criteria, is_final_boss, training_script, opener_role, strict_script)');
 lines.push('values');
 lines.push(levels.map(levelRow).join(',\n') + '');
 lines.push('on conflict (id) do update set');
@@ -213,6 +216,8 @@ lines.push('  objection_bank = excluded.objection_bank,');
 lines.push('  win_criteria = excluded.win_criteria,');
 lines.push('  is_final_boss = excluded.is_final_boss,');
 lines.push('  training_script = excluded.training_script,');
+lines.push('  opener_role = excluded.opener_role,');
+lines.push('  strict_script = excluded.strict_script,');
 lines.push('  updated_at = now();');
 lines.push('');
 

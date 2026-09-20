@@ -138,10 +138,10 @@ FAQ: có thể có nhiều hợp đồng bảo hiểm sức khỏe nhưng tổng
   {
     id: 'huong-dan-mbank',
     order: 5,
-    name: 'Hướng dẫn mở sổ tiết kiệm online / dùng MSB mBank',
-    shortName: 'Hướng dẫn app mBank',
-    shortDescription: 'Hướng dẫn khách thao tác mở sổ tiết kiệm/ngân hàng số ngay trên app MSB Digital Bank/mBank.',
-    targetAudience: 'Khách hàng đã đồng ý dùng sản phẩm online nhưng chưa quen thao tác app.',
+    name: 'Tiết kiệm online (mở sổ qua app mBank)',
+    shortName: 'Tiết kiệm online',
+    shortDescription: 'Mở sổ tiết kiệm ngay trên app MSB mBank, hưởng lãi suất cao hơn gửi tại quầy.',
+    targetAudience: 'Khách hàng chưa từng gửi tiết kiệm online, có thể mở sổ ngay trên điện thoại.',
     benefits: [
       'Quy trình 9 bước rõ ràng, có thể làm mẫu cùng khách ngay tại quầy/qua điện thoại',
       'Không mất phí thao tác',

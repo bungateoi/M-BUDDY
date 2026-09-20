@@ -91,7 +91,9 @@ const MAX_RECOMMENDATIONS = 3;
  * ý sẽ vào thẳng Ôn tập nhanh (Quiz) của đúng level đó (xem
  * PersonalAnalysisScreen.tsx) — y hệt cách vào 1 level từ Map. Chưa học đủ
  * (levelProgress rỗng) hoặc đã học hết ở mức tốt (>=80%) thì trả mảng rỗng —
- * màn hình tự hiện fallback thân thiện. */
+ * màn hình tự hiện fallback thân thiện. title/subtitle khớp đúng cách hiển
+ * thị "Chủ đề cần cải thiện" trong Figma (node-id=160-16508): tên sản phẩm +
+ * "{score}% - Cần cải thiện", không còn ghép "Level N •" phía trước. */
 export function buildPracticeRecommendations(levelProgress: Record<string, number>): PracticeRecommendation[] {
   return Object.entries(levelProgress)
     .filter(([, score]) => score < LOW_SCORE_THRESHOLD)
@@ -100,13 +102,12 @@ export function buildPracticeRecommendations(levelProgress: Record<string, numbe
     .map(([levelId, score]) => {
       const level = levels.find((l) => l.id === levelId);
       const product = level ? products.find((p) => p.id === level.productId) : undefined;
-      const positionInChapter = Number(levelId.split('.')[1]);
       const productLabel = product?.shortName ?? product?.name ?? 'Sản phẩm';
       return {
         id: `pr-${levelId}`,
         icon: 'refresh-circle',
-        title: `Level ${positionInChapter} • ${productLabel}`,
-        subtitle: `Đạt ${score}% — luyện lại để cải thiện`,
+        title: productLabel,
+        subtitle: `${score}% - Cần cải thiện`,
         levelId,
       };
     });

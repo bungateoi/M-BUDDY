@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Image,
   Platform,
@@ -18,7 +18,9 @@ import {
   colors2,
   spacing2,
 } from '../components';
-import { getRoleplayAvatarSource, mockDailyChallenge } from '../data';
+import { averageTeamSkills, getRoleplayAvatarSource, mockDailyChallenge } from '../data';
+import type { TeamMember } from '../data/types';
+import { fetchMyTeam } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
 import { useAppNavigation } from '../navigation/NavigationContext';
 
@@ -55,9 +57,22 @@ export function HomeScreen() {
   // thật của từng máy.
   const [bgWidth, setBgWidth] = useState(0);
   const handleBgLayout = (e: LayoutChangeEvent) => setBgWidth(e.nativeEvent.layout.width);
+  // Tab "Cá nhân/Đội nhóm" CHỈ cho role='manager' (node-id=160-16417) — nhân
+  // viên thường không có tab này, luôn chỉ thấy skills cá nhân như cũ.
+  const isManager = profile?.role === 'manager';
+  const [skillTab, setSkillTab] = useState<'personal' | 'team'>('personal');
+  const [teamMembers, setTeamMembers] = useState<TeamMember[] | null>(null);
+
+  useEffect(() => {
+    if (!isManager) return;
+    fetchMyTeam()
+      .then(setTeamMembers)
+      .catch(() => setTeamMembers([]));
+  }, [isManager]);
 
   if (!profile) return null;
   const user = profile;
+  const skillsShown = skillTab === 'team' ? averageTeamSkills(teamMembers ?? []) : user.skills;
 
   return (
     <View style={styles.bg} onLayout={handleBgLayout}>
@@ -89,7 +104,17 @@ export function HomeScreen() {
               weekProgress={user.weekProgress}
             />
 
-            <SkillRadarCard skills={user.skills} onPressDetail={() => navigate('personalAnalysis')} />
+            <SkillRadarCard
+              skills={skillsShown}
+              onPressDetail={() => navigate(skillTab === 'team' ? 'teamAnalysis' : 'personalAnalysis')}
+              {...(isManager
+                ? {
+                    activeTab: skillTab,
+                    onSelectPersonal: () => setSkillTab('personal'),
+                    onSelectTeam: () => setSkillTab('team'),
+                  }
+                : {})}
+            />
 
             <DailyChallengeCard
               title={mockDailyChallenge.title}

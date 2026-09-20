@@ -32,7 +32,11 @@ function MessageBubble({ message }: { message: TranscriptMessage }) {
           <Text style={styles.bubbleText}>{message.text}</Text>
         </View>
       </View>
-      {isBad && message.comment && <Text style={styles.commentText}>{message.comment}</Text>}
+      {message.comment && (
+        <Text style={[styles.commentText, isBad ? styles.commentTextBad : styles.commentTextGood]}>
+          {message.comment}
+        </Text>
+      )}
     </View>
   );
 }
@@ -115,7 +119,8 @@ const styles = StyleSheet.create({
     fontFamily: fontFamily2.regular,
     fontSize: 12,
     lineHeight: 16,
-    color: colors2.red500,
     textAlign: 'right',
   },
+  commentTextBad: { color: colors2.red500 },
+  commentTextGood: { color: colors2.green500 },
 });

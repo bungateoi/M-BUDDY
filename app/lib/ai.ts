@@ -82,7 +82,9 @@ export interface RoleplayAIResult {
 export interface TurnFeedback {
   turn_index: number;
   is_good: boolean;
-  /** Chỉ có giá trị khi is_good=false — xem SPEC.md mục 2. */
+  /** Luôn có giá trị cho mọi lượt — khen + gợi ý diễn đạt hay hơn khi
+   * is_good=true, chỉ ra lỗi khi is_good=false. Vẫn khai báo nullable vì
+   * đây là suy đoán từ model, không đảm bảo 100% (xem SPEC.md mục 2). */
   comment: string | null;
 }
 

@@ -132,6 +132,29 @@ export interface Level {
    * để không phá vỡ persona/level sinh bởi AI (generate-persona, Practice).
    */
   trainingScript?: string;
+  /**
+   * Ai nói lượt đầu tiên khi vào role-play, suy theo đúng trình tự viết
+   * trong trainingScript — mặc định 'customer' (khách bắt máy/mở lời trước,
+   * đúng đa số kịch bản hiện tại, vd "Bác Lan nghe máy: 'Alô? Ai đấy?'").
+   * Đặt 'seller' cho những level mà kịch bản ghi rõ Sale chủ động mở lời
+   * trước (vd gặp trực tiếp tại quầy, RM chủ động hỏi thăm trước khi khách
+   * đáp lời) — KHÔNG suy đoán ở runtime, phải đọc đúng trainingScript rồi
+   * gán tay khi soạn level. Optional để không phá vỡ level cũ/level sinh
+   * bởi AI (luôn mặc định 'customer'). Xem RolePlayScreen.tsx.
+   */
+  openerRole?: 'customer' | 'seller';
+  /**
+   * true = AI đóng vai khách hàng PHẢI trả lời đúng NGUYÊN VĂN câu thoại
+   * của khách đã viết sẵn trong trainingScript mỗi khi tình huống khớp
+   * đúng 1 nhánh cụ thể (không diễn đạt lại/paraphrase) — override quy tắc
+   * mặc định "kịch bản chỉ là định hướng ngữ cảnh, không phải lời thoại
+   * bắt buộc" (xem build_roleplay_system_prompt, agent/main.py). Dùng cho
+   * level 4.1 — kịch bản phân nhánh chi tiết, câu thoại đã được chăm chút
+   * kỹ để nghe tự nhiên, muốn tái hiện đúng y nguyên khi diễn ra đúng
+   * nhánh đó thay vì để AI tự diễn đạt lại. Mặc định false/không set —
+   * hầu hết level khác vẫn để AI phản ứng tự nhiên như cũ.
+   */
+  strictScript?: boolean;
 }
 
 // ---- Tiến độ người dùng (màn Home) ----
@@ -375,7 +398,8 @@ export interface TranscriptMessage {
   text: string;
   /** Chỉ có ý nghĩa khi role === 'seller'. */
   isGood?: boolean;
-  /** Chỉ có khi role === 'seller' và isGood === false. */
+  /** Chỉ có khi role === 'seller' — AI luôn kèm nhận xét cho mọi lượt, dù
+   * isGood true (khen + gợi ý diễn đạt hay hơn) hay false (chỉ ra lỗi). */
   comment?: string;
 }
 

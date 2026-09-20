@@ -60,7 +60,7 @@ endpoint, cấu hình ở bước `/agentbase-llm` sau khi spec này được du
     "winCriteria": "Bác chủ động hỏi cách làm và Sale chốt ngay...",
     "trainingScript": "Kịch bản phân nhánh ĐẦY ĐỦ (nguồn Kich_ban_training.md): bối cảnh + các mốc thời gian + nhánh phản ứng theo cách Sale xử lý + điều kiện WIN/LOSE — ngữ cảnh CHÍNH để AI phản ứng đúng, không phải lời thoại đọc lại nguyên văn."
   },
-  "roleplayDurationSec": 150,
+  "roleplayDurationSec": 180,
   "secondsElapsed": 42,
   "history": [
     { "role": "customer", "text": "Mình chưa cần vay gì cả, lương đủ sống mà." },
@@ -172,7 +172,7 @@ Khớp `ScoringAIParams` hiện có trong `app/lib/ai.ts` (`rubric`/`globalRules
   "next_level_suggestion": "Luyện thêm kỹ năng khai thác insight ở level 2.4 (Bảo hiểm liên kết).",
   "turn_feedback": [
     { "turn_index": 1, "is_good": false, "comment": "Khách đã nêu rõ nỗi đau chi tiêu vượt kế hoạch, thay vì hỏi câu đóng \"có muốn dùng thử không\" bạn nên chủ động giới thiệu app quản lý tài chính và mời khách trải nghiệm trực tiếp." },
-    { "turn_index": 3, "is_good": true, "comment": null }
+    { "turn_index": 3, "is_good": true, "comment": "Câu hỏi mở này khai thác đúng nhu cầu của khách. Có thể thử thêm cách hỏi cụ thể hơn: \"Anh/chị hình dung khoản này dùng cho việc gì trong 1-2 năm tới?\" để khách chia sẻ tự nhiên hơn nữa." }
   ]
 }
 ```
@@ -186,12 +186,15 @@ Khớp `ScoringAIParams` hiện có trong `app/lib/ai.ts` (`rubric`/`globalRules
 > **`turn_feedback`** (thêm sau, cho màn "Lịch sử hội thoại" ở màn Kết
 > quả): 1 phần tử cho MỖI lượt `role: "seller"` trong `transcript` đã gửi
 > lên — `turn_index` là index (0-based) của lượt đó trong mảng `transcript`
-> gốc. `is_good: false` PHẢI kèm `comment` — nhận xét dựa trên câu nói của
-> khách ngay trước đó + bối cảnh hội thoại + tính cách khách hàng (ý thật
-> của khách là gì, vì sao câu trả lời chưa tốt, đúng ra nên nói gì). App
-> dùng field này để tô xanh (tốt) / cam-đỏ kèm gợi ý (chưa tốt) từng bong
-> bóng chat của "Bạn" khi mở "Lịch sử hội thoại" — xem
-> `app/data/scoringMapper.ts` (`buildRoleplayResultFromScoring`).
+> gốc. `comment` giờ BẮT BUỘC cho MỌI lượt, không chỉ khi `is_good: false`
+> (đổi 2026-09, xem phản hồi người dùng) — `is_good: false` nhận xét dựa
+> trên câu nói của khách ngay trước đó + bối cảnh hội thoại + tính cách
+> khách hàng (ý thật của khách là gì, vì sao câu trả lời chưa tốt, đúng ra
+> nên nói gì); `is_good: true` khen cụ thể + gợi ý thêm 1 cách diễn đạt còn
+> hay/tự nhiên hơn cho chính câu đó, không chỉ im lặng. App dùng field này
+> để tô xanh (tốt, kèm gợi ý) / đỏ (chưa tốt, kèm nhận xét) từng bong bóng
+> chat của "Bạn" khi mở "Lịch sử hội thoại" — xem `app/data/scoringMapper.ts`
+> (`buildRoleplayResultFromScoring`) và `ConversationHistoryModal.tsx`.
 >
 > **Điểm tổng hiển thị ở màn Kết quả = trung bình cộng của 6 điểm trên**,
 > tính ở phía hiển thị (mobile app), không phải field do backend trả về.

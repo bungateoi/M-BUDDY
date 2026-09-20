@@ -21,7 +21,10 @@ function scoreBandFeedback(score: number): string {
 
 /**
  * Gắn turn_feedback (index-based, xem SPEC.md mục 2) vào đúng transcript
- * gốc đã gửi lên /score — chỉ role="seller" mới có isGood/comment.
+ * gốc đã gửi lên /score — chỉ role="seller" mới có isGood/comment. Backend
+ * giờ luôn trả comment cho MỌI lượt (khen + gợi ý diễn đạt hay hơn khi đã
+ * đúng, không chỉ khi sai) — giữ nguyên comment bất kể isGood, xem
+ * ConversationHistoryModal.tsx.
  */
 function buildTranscriptMessages(transcript: RoleplayTurn[], turnFeedback: ScoringResult['turn_feedback']): TranscriptMessage[] {
   const feedbackByIndex = new Map(turnFeedback.map((f) => [f.turn_index, f]));
@@ -32,7 +35,7 @@ function buildTranscriptMessages(transcript: RoleplayTurn[], turnFeedback: Scori
       role: turn.role,
       text: turn.text,
       isGood: feedback?.is_good,
-      comment: feedback?.is_good === false ? (feedback.comment ?? undefined) : undefined,
+      comment: feedback?.comment ?? undefined,
     };
   });
 }

@@ -59,6 +59,16 @@ app.add_middleware(
 LLM_MODEL = os.environ.get("LLM_MODEL", "")
 LLM_BASE_URL = os.environ.get("LLM_BASE_URL", "")
 LLM_API_KEY = os.environ.get("LLM_API_KEY", "")
+# Model dự phòng cho đường FAST (roleplay/scoring) — cùng gateway/API key,
+# khác model (khác quota rate-limit riêng) — xem invoke_json_with_retry.
+# Optional: để trống thì không có dự phòng, giữ nguyên hành vi cũ (1 model).
+# 2026-09-21: model chính (Qwen 3.6 Flash trên plan hiện tại) chỉ có trần 2
+# requests/phút — quá thấp cho 1 cuộc gọi thoại live, thường xuyên bị 429 rồi
+# object SDK tự chờ tới khi reset (~60s) mới thử lại NẾU không có dự phòng.
+# google/gemma-4-31b-it (đã enable sẵn trên account, quota rate-limit độc
+# lập, đã test tiếng Việt/giọng nhân vật ổn, nhanh hơn hẳn) là lựa chọn mặc
+# định hợp lý — nhưng KHÔNG hardcode, để dễ đổi/tắt nếu account/plan khác.
+LLM_MODEL_FALLBACK = os.environ.get("LLM_MODEL_FALLBACK", "")
 if not LLM_MODEL or not LLM_BASE_URL or not LLM_API_KEY:
     raise ValueError(
         "LLM_MODEL, LLM_BASE_URL, and LLM_API_KEY environment variables are required. "
@@ -70,8 +80,14 @@ if not LLM_MODEL or not LLM_BASE_URL or not LLM_API_KEY:
 # hard failure. Scoring runs after the call ends, not time-critical.
 # max_tokens giới hạn thấp — vừa ép customerReply ngắn gọn tự nhiên như hội
 # thoại điện thoại thật (không thuyết trình dài), vừa giảm độ trễ sinh phản hồi.
-llm_roleplay = ChatOpenAI(model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=60, temperature=0.4, max_tokens=250)
-llm_scoring = ChatOpenAI(model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=90)
+# max_retries=0 — cùng lý do với llm_roleplay_fast/llm_scoring_fast bên dưới:
+# SDK mặc định tự retry 2 lần khi 429/timeout, cộng dồn tới ~3x timeout mỗi
+# khi model chính bị rate-limit, dù đây đã là đường dự phòng (chậm sẵn rồi).
+llm_roleplay = ChatOpenAI(
+    model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=60, temperature=0.4, max_tokens=250,
+    max_retries=0,
+)
+llm_scoring = ChatOpenAI(model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=90, max_retries=0)
 
 # Kể từ khi prompt roleplay/score phình to (thêm globalRules/knowledgeBase/
 # trainingScript ở migration v2), model (Qwen, có "thinking") tốn RẤT nhiều
@@ -98,14 +114,55 @@ _DISABLE_THINKING_KWARGS = {
     "extra_body": {"chat_template_kwargs": {"enable_thinking": False}},
     "response_format": {"type": "json_object"},
 }
+# max_tokens tăng so với trước (250->400, 1500->4000, 2026-09-21): log
+# runtime thực tế cho thấy enable_thinking=false đôi khi vẫn KHÔNG ngăn được
+# model "suy nghĩ" (reasoning_tokens phình to hàng nghìn token dù đã tắt) —
+# ăn hết max_tokens cũ trước khi kịp sinh JSON thật, dính
+# openai.LengthFinishReasonError, phải rơi xuống đường dự phòng chậm hơn hẳn
+# (tool-calling, thinking bật) hoặc fallback "chưa nghe rõ" — đúng nguyên
+# nhân độ trễ cao/kịch bản 4.1 không theo sát report được. Không tự sửa được
+# hành vi model phía provider, nên tăng khoảng đệm để dù có lỡ suy nghĩ vẫn
+# còn đủ chỗ sinh nốt JSON thật ở đường nhanh, tránh phải rơi xuống dự phòng.
+# max_retries=0 trên CẢ 2 client fast lẫn client dự phòng bên dưới: mặc định
+# của OpenAI SDK là tự retry 2 lần (tổng 3 lần gọi) khi gặp lỗi retryable
+# (429/timeout/5xx) — với model chính đang bị trần rate-limit 2 requests/phút
+# (xem LLM_MODEL_FALLBACK ở trên), y hệt lỗi đó lặp lại vô ích 2 lần nữa
+# TRƯỚC KHI raise exception để invoke_json_with_retry kịp chuyển sang model
+# dự phòng — mỗi lần lặp lại tốn gần trọn timeout, cộng dồn thành đúng cái
+# "im lặng ~60s rồi mới trả lời" người dùng report (đã đo trực tiếp
+# 2026-09-21). Tắt hẳn, để invoke_json_with_retry (logic retry CỦA MÌNH, biết
+# chuyển model) quyết định luôn, không để SDK tự ý lặp lại trước.
 llm_roleplay_fast = ChatOpenAI(
-    model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=20, temperature=0.4, max_tokens=250,
-    model_kwargs=_DISABLE_THINKING_KWARGS,
+    model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=20, temperature=0.4, max_tokens=400,
+    max_retries=0, model_kwargs=_DISABLE_THINKING_KWARGS,
 )
 llm_scoring_fast = ChatOpenAI(
-    model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=45, max_tokens=1500,
-    model_kwargs=_DISABLE_THINKING_KWARGS,
+    model=LLM_MODEL, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=45, max_tokens=4000,
+    max_retries=0, model_kwargs=_DISABLE_THINKING_KWARGS,
 )
+# Model dự phòng — provider khác (Google Gemma qua cùng gateway GreenNode),
+# quota rate-limit độc lập với model chính nên KHÔNG bị 429 cùng lúc. Không
+# cần _DISABLE_THINKING_KWARGS (Gemma không có chế độ "thinking" kiểu Qwen).
+llm_roleplay_fast_alt = (
+    ChatOpenAI(
+        model=LLM_MODEL_FALLBACK, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=20, temperature=0.4,
+        max_tokens=400, max_retries=0, model_kwargs={"response_format": {"type": "json_object"}},
+    )
+    if LLM_MODEL_FALLBACK
+    else None
+)
+llm_scoring_fast_alt = (
+    ChatOpenAI(
+        model=LLM_MODEL_FALLBACK, base_url=LLM_BASE_URL, api_key=LLM_API_KEY, timeout=45, max_tokens=4000,
+        max_retries=0, model_kwargs={"response_format": {"type": "json_object"}},
+    )
+    if LLM_MODEL_FALLBACK
+    else None
+)
+# Danh sách llm cho invoke_json_with_retry — lọc None nếu không cấu hình
+# LLM_MODEL_FALLBACK (giữ nguyên hành vi cũ: chỉ 1 model).
+ROLEPLAY_FAST_LLMS = [llm for llm in (llm_roleplay_fast, llm_roleplay_fast_alt) if llm]
+SCORING_FAST_LLMS = [llm for llm in (llm_scoring_fast, llm_scoring_fast_alt) if llm]
 # Sinh chân dung khách hàng — không time-critical (chạy 1 lần khi bấm "Tạo
 # chân dung khách hàng", không phải giữa 1 cuộc gọi), temperature cao hơn để
 # mỗi lần tạo ra 1 khách hàng đa dạng, không lặp lại y hệt nhau.
@@ -294,17 +351,27 @@ class TurnFeedback(BaseModel):
     comment: Optional[str] = Field(
         default=None,
         description=(
-            "CHỈ điền khi is_good=false. Nhận xét ngắn gọn nhưng rõ ý, PHẢI dựa trên "
-            "ĐÚNG câu nói của khách ở index (turn_index - 1) — dòng NGAY TRƯỚC lượt này "
-            "trong transcript, theo số thứ tự index, KHÔNG PHẢI dòng nào khác — cùng bối "
-            "cảnh hội thoại từ đầu tới đó và tính cách khách hàng: chỉ ra ý thật của khách "
-            "ở dòng (turn_index - 1) là gì, vì sao câu trả lời của sales ở turn_index chưa "
-            "tốt, và đúng ra nên nói/hỏi gì. TUYỆT ĐỐI không dùng nội dung khách nói ở các "
-            "index LỚN HƠN turn_index để phân tích/nhận xét — lúc lượt turn_index diễn ra, "
-            "nhân viên sales CHƯA THỂ biết trước khách sẽ nói gì ở những lượt sau đó. Không "
-            "nhận xét chung chung kiểu 'cần cải thiện thêm'. BẮT BUỘC viết TOÀN BỘ bằng "
-            "tiếng Việt — không chêm bất kỳ từ/cụm từ tiếng Anh, tiếng Trung hay ngôn ngữ "
-            "nào khác vào câu."
+            "BẮT BUỘC điền cho MỌI lượt — dù is_good=true hay false, KHÔNG được để trống/null. "
+            "Luôn PHẢI dựa trên ĐÚNG câu nói của khách ở index (turn_index - 1) — dòng NGAY "
+            "TRƯỚC lượt này trong transcript, theo số thứ tự index, KHÔNG PHẢI dòng nào khác "
+            "— cùng bối cảnh hội thoại từ đầu tới đó và tính cách khách hàng. TUYỆT ĐỐI không "
+            "dùng nội dung khách nói ở các index LỚN HƠN turn_index để phân tích/nhận xét — "
+            "lúc lượt turn_index diễn ra, nhân viên sales CHƯA THỂ biết trước khách sẽ nói gì "
+            "ở những lượt sau đó.\n"
+            "- Nếu is_good=false: chỉ ra ý thật của khách ở dòng (turn_index - 1) là gì, vì "
+            "sao câu trả lời của sales ở turn_index chưa tốt, và đúng ra nên nói/hỏi gì.\n"
+            "- Nếu is_good=true: khen ngắn gọn, CỤ THỂ đúng điểm sales vừa làm tốt ở câu này "
+            "(không khen chung chung), rồi gợi ý THÊM 1 cách diễn đạt/từ ngữ khác cho CHÍNH "
+            "câu đó mà vẫn có thể tự nhiên/thuyết phục hơn nữa — không lặp lại nguyên văn câu "
+            "sales đã nói, không bịa ra khuyết điểm giả để có cái chê.\n"
+            "Cả 2 trường hợp đều ngắn gọn (1-2 câu), không nhận xét chung chung kiểu 'tốt lắm' "
+            "hay 'cần cải thiện thêm'. BẮT BUỘC viết TOÀN BỘ bằng tiếng Việt — không chêm bất "
+            "kỳ từ/cụm từ tiếng Anh, tiếng Trung hay ngôn ngữ nào khác vào câu. TUYỆT ĐỐI không "
+            "nhắc tới mã/tên nội bộ của quy tắc hay kịch bản (vd 'quy tắc A19', 'kịch bản', "
+            "'nhánh 2.1', 'training script') — mô tả thẳng hành vi bằng ngôn ngữ tự nhiên như "
+            "đang nhận xét trực tiếp, không lộ ra là đang đối chiếu tài liệu có sẵn. Không dùng "
+            "từ khen sáo rỗng/quá đà kiểu 'đỉnh cao', 'tuyệt vời', 'xuất sắc', 'hoàn hảo' — khen "
+            "thì khen cụ thể, giọng điệu điềm tĩnh, chuyên nghiệp."
         ),
     )
 
@@ -419,9 +486,30 @@ def build_roleplay_system_prompt(
     extra_persona_text = "\n\n".join(extra_persona_blocks)
     extra_persona_block_rendered = ("\n" + extra_persona_text) if extra_persona_text else ""
 
+    # strictScript (xem app/data/types.ts#Level.strictScript, hiện chỉ bật
+    # cho level 4.1): level này yêu cầu AI trả lời ĐÚNG NGUYÊN VĂN câu thoại
+    # đã viết sẵn khi khớp đúng nhánh, thay vì diễn đạt lại tự nhiên như mặc
+    # định — override 2 chỗ discourage việc bám sát kịch bản cố định (khối
+    # này + mục "QUAN TRỌNG NHẤT" bên dưới, xem strict_script_note).
+    strict_script = bool(level.get("strictScript"))
+
     training_script = level.get("trainingScript")
     training_script_block = ""
-    if training_script:
+    if training_script and strict_script:
+        training_script_block = f"""
+
+KỊCH BẢN THAM CHIẾU cho đúng tình huống này (v2_docs/Kich_ban_training.md) —
+level này YÊU CẦU ĐỘ CHÍNH XÁC CAO: khi tình huống hiện tại khớp đúng 1 nhánh
+cụ thể bên dưới, bạn PHẢI trả lời bằng ĐÚNG NGUYÊN VĂN câu thoại của khách
+hàng đã viết trong nhánh đó — KHÔNG diễn đạt lại, không đổi từ ngữ, không rút
+gọn hay thêm bớt ý, chép lại chính xác từng chữ. Chỉ định này ưu tiên CAO HƠN
+mọi hướng dẫn "không lặp lại kịch bản cố định"/"diễn đạt lại tự nhiên" xuất
+hiện ở phần sau của prompt này — bỏ qua các hướng dẫn đó khi đang xử lý đúng
+1 nhánh có sẵn trong kịch bản dưới đây. Chỉ khi KHÔNG có nhánh nào khớp đúng
+tình huống hiện tại (Sale nói điều nằm ngoài kịch bản) thì mới tự do phản
+ứng tự nhiên theo đúng tính cách persona ở trên:
+{training_script}"""
+    elif training_script:
         training_script_block = f"""
 
 KỊCH BẢN THAM CHIẾU cho đúng tình huống này (v2_docs/Kich_ban_training.md) —
@@ -433,6 +521,14 @@ trên. Nếu Sale nói điều gì không khớp bất kỳ nhánh nào bên dư
 tự nhiên theo đúng tính cách, không bắt buộc phải rơi vào 1 trong các nhánh
 có sẵn:
 {training_script}"""
+
+    strict_script_note = (
+        '\n- NGOẠI LỆ CHO LEVEL NÀY: khối "KỊCH BẢN THAM CHIẾU" bên trên đã ghi rõ đây là '
+        "level yêu cầu bám sát kịch bản — khi khớp đúng 1 nhánh trong đó, ƯU TIÊN đúng theo "
+        "chỉ định NGUYÊN VĂN ở khối đó, bỏ qua 2 gạch đầu dòng ngay phía trên."
+        if strict_script
+        else ""
+    )
 
     global_rules_block = f"\n\nQUY TẮC CHUNG (áp dụng cho MỌI persona, ưu tiên cao — đọc kỹ trước khi phản ứng):\n{global_rules}" if global_rules else ""
 
@@ -503,7 +599,7 @@ insight/ý định cho sales — để họ phải tự hỏi, tự khai thác.
 QUAN TRỌNG NHẤT — bám sát đúng câu vừa nghe, không trả lời theo kịch bản:
 - Tin nhắn cuối cùng bạn nhận được (từ nhân viên sales) là câu họ VỪA NÓI XONG. Đọc kỹ câu đó, xác định rõ họ đang làm gì (chào hỏi, hỏi thông tin cụ thể, giới thiệu sản phẩm, xử lý phản đối, chốt đơn...).
 - BẮT BUỘC phản hồi TRỰC TIẾP, đúng trọng tâm nội dung/câu hỏi vừa nghe trước tiên, rồi mới thể hiện thêm tính cách/mối bận tâm của persona. Nếu họ hỏi một câu hỏi cụ thể (ví dụ đang dùng sản phẩm/dịch vụ gì, thói quen chi tiêu ra sao, ngân hàng nào...), PHẢI trả lời câu hỏi đó bằng thông tin cụ thể, hợp lý (được phép tự bịa chi tiết nhỏ — tên ngân hàng khác, con số cụ thể... — miễn khớp hồ sơ persona ở trên), TUYỆT ĐỐI không né tránh hay lái sang chủ đề không liên quan.
-- KHÔNG được lặp lại một kịch bản cố định bất kể nhân viên nói gì. Mỗi câu trả lời của bạn là phản ứng THẬT với đúng câu vừa nghe — không phải câu tiếp theo trong một kịch bản đã định sẵn từ trước. "Mục tiêu của level" và "các phản đối có thể đưa ra" bên trên chỉ là định hướng ngữ cảnh, không phải lời thoại phải nói ra theo đúng thứ tự.
+- KHÔNG được lặp lại một kịch bản cố định bất kể nhân viên nói gì. Mỗi câu trả lời của bạn là phản ứng THẬT với đúng câu vừa nghe — không phải câu tiếp theo trong một kịch bản đã định sẵn từ trước. "Mục tiêu của level" và "các phản đối có thể đưa ra" bên trên chỉ là định hướng ngữ cảnh, không phải lời thoại phải nói ra theo đúng thứ tự.{strict_script_note}
 
 Thái độ khi sales tư vấn KHÔNG tốt (BẮT BUỘC áp dụng ở MỌI cuộc gọi, không
 chỉ tìm cớ kết thúc lịch sự cho có — lưu ý: nếu sales mất bình tĩnh/thiếu
@@ -583,21 +679,29 @@ DEFAULT_SCORING_RUBRIC = """Chấm theo 6 tiêu chí, thang điểm từ 0-100 c
 - next_level_suggestion: đề xuất 1 nội dung nên luyện tập tiếp theo, dựa
   trên điểm yếu ảnh hưởng lớn nhất đến hiệu quả cuộc hội thoại.
 - turn_feedback: chấm TỪNG lượt nói của nhân viên sales (role="seller") —
-  KHÔNG bỏ sót lượt nào, kể cả lượt tốt. Với mỗi lượt tại index i:
-  - is_good=true nếu đây là 1 phản hồi tốt (không cần comment).
-  - is_good=false nếu câu trả lời chưa tối ưu — PHẢI kèm comment giải thích
-    dựa trên ĐÚNG câu nói của khách ở index (i - 1) — dòng NGAY TRƯỚC lượt
-    i, xác định bằng số thứ tự index chứ không phải suy đoán theo ngữ nghĩa
-    — cùng bối cảnh hội thoại từ đầu tới đó và tính cách/hoàn cảnh của
-    khách hàng này: khách ở dòng (i - 1) thực sự đang muốn nói gì, vì sao
-    cách trả lời của sales ở lượt i chưa tốt, và đúng ra nên nói/hỏi gì.
-    TUYỆT ĐỐI KHÔNG được dùng nội dung khách nói ở các dòng SAU lượt i
-    (index > i) để phân tích lượt i — tại thời điểm lượt i diễn ra, nhân
-    viên sales chưa nghe được những gì khách nói sau đó. Ví dụ văn phong
-    mong muốn: "Phần này khách đã nêu rõ nỗi đau của họ, thay vì hỏi 1 câu
-    hỏi đóng 'có muốn không' bạn nên chủ động giới thiệu sản phẩm và những
-    lợi ích mang lại và mời khách trải nghiệm trực tiếp." Ngắn gọn (1-2
-    câu) nhưng đủ ý, không nhận xét chung chung."""
+  KHÔNG bỏ sót lượt nào, kể cả lượt tốt. Với mỗi lượt tại index i, BẮT BUỘC
+  có comment — KHÔNG được để trống/null dù is_good=true hay false — dựa
+  trên ĐÚNG câu nói của khách ở index (i - 1) — dòng NGAY TRƯỚC lượt i, xác
+  định bằng số thứ tự index chứ không phải suy đoán theo ngữ nghĩa — cùng
+  bối cảnh hội thoại từ đầu tới đó và tính cách/hoàn cảnh của khách hàng
+  này. TUYỆT ĐỐI KHÔNG được dùng nội dung khách nói ở các dòng SAU lượt i
+  (index > i) để phân tích lượt i — tại thời điểm lượt i diễn ra, nhân viên
+  sales chưa nghe được những gì khách nói sau đó.
+  - is_good=false: khách ở dòng (i - 1) thực sự đang muốn nói gì, vì sao
+    cách trả lời của sales ở lượt i chưa tốt, và đúng ra nên nói/hỏi gì. Ví
+    dụ văn phong mong muốn: "Phần này khách đã nêu rõ nỗi đau của họ, thay
+    vì hỏi 1 câu hỏi đóng 'có muốn không' bạn nên chủ động giới thiệu sản
+    phẩm và những lợi ích mang lại và mời khách trải nghiệm trực tiếp."
+  - is_good=true: khen ngắn gọn, CỤ THỂ đúng điểm sales vừa làm tốt (không
+    khen chung chung "tốt lắm"), rồi gợi ý THÊM 1 cách diễn đạt khác cho
+    CHÍNH câu đó mà vẫn có thể hay/tự nhiên hơn nữa — không lặp nguyên văn
+    câu sales đã nói, không bịa khuyết điểm giả để có cái chê. Ví dụ văn
+    phong mong muốn: "Câu hỏi mở này khai thác đúng nhu cầu tài chính của
+    khách. Bạn cũng có thể thử cách hỏi gần gũi hơn: 'Anh/chị hình dung
+    khoản này dùng cho việc gì trong 1-2 năm tới?' để khách chia sẻ tự
+    nhiên hơn nữa."
+  Cả 2 trường hợp đều ngắn gọn (1-2 câu) nhưng đủ ý, không nhận xét chung
+  chung."""
 
 
 def build_scoring_prompt(
@@ -666,6 +770,23 @@ tiếng Anh trong ngoặc đơn. Ví dụ SAI: "lắng nghe chủ động (Activ
 Listening)", "phương pháp LARA (Listen - Acknowledge - Respond - Ask)".
 Ví dụ ĐÚNG: "lắng nghe chủ động", "phương pháp lắng nghe - ghi nhận - phản
 hồi - đặt câu hỏi".
+
+QUAN TRỌNG — VIẾT NHƯ NGƯỜI ĐÁNH GIÁ THẬT, KHÔNG LỘ RA ĐANG ĐỐI CHIẾU VỚI TÀI
+LIỆU NỘI BỘ: trong TẤT CẢ nội dung text bạn viết ra (strengths, improvements,
+next_level_suggestion, comment trong turn_feedback), TUYỆT ĐỐI không nhắc tới
+bất kỳ mã/tên nội bộ nào của quy tắc hay kịch bản — ví dụ "quy tắc A19", "mục
+A19", "kịch bản", "training script", "nhánh 2.1", "nhánh LOSE/WIN", "bước
+3"... Thay vào đó, mô tả THẲNG hành vi/nội dung cụ thể bằng ngôn ngữ tự
+nhiên, như đang nghe và nhận xét trực tiếp cuộc gọi chứ không phải đối chiếu
+với 1 tài liệu có sẵn. Ví dụ SAI: "Vi phạm quy tắc A19 vì không giới thiệu
+tên", "Đây là câu trả lời chuẩn theo nhánh 2.1". Ví dụ ĐÚNG: "Chưa giới
+thiệu tên và đơn vị công tác ngay từ đầu cuộc gọi", "Đã trả lời đúng trọng
+tâm câu hỏi của khách".
+
+Cũng KHÔNG dùng các từ khen quá đà/sáo rỗng kiểu "đỉnh cao", "tuyệt vời",
+"xuất sắc", "hoàn hảo" — khen thì khen CỤ THỂ đúng điều đã làm tốt, giọng
+điệu chuyên nghiệp, điềm tĩnh như một chuyên gia đào tạo thật, không tâng
+bốc.
 
 Sản phẩm đang tư vấn: {product.get("name")} — {product.get("shortDescription", "")}
 Điểm bán chính cần thể hiện:
@@ -939,6 +1060,19 @@ ROLEPLAY_FALLBACK_REPLY = {
     "endReason": None,
 }
 
+# Rơi vào đây khi cả 2 đường LLM đều thất bại HOÀN TOÀN (không có completion
+# nào để áp dụng rule A6 "không lặp nguyên văn" trong prompt) NGAY SAU lượt
+# vừa dùng đúng ROLEPLAY_FALLBACK_REPLY ở trên — tức khách đã xin nói lại 1
+# lần rồi mà vẫn rơi tiếp vào fallback. Thay vì lặp y hệt câu "chưa nghe rõ"
+# (đúng cái bug lặp vô hạn ban đầu), buộc kết thúc cuộc gọi luôn — xem phản
+# hồi người dùng (rule A6, app/data/rules.ts).
+ROLEPLAY_FALLBACK_REPLY_REPEATED = {
+    "customerReply": "Thôi, tôi đang bận, khi khác nhé.",
+    "emotion": "annoyed",
+    "shouldEndCall": True,
+    "endReason": "ran_out_of_patience",
+}
+
 STRUCTURED_CALL_ATTEMPTS = 2
 
 
@@ -969,15 +1103,25 @@ async def invoke_structured_with_retry(structured_llm, messages, attempts: int =
 JSON_CALL_ATTEMPTS = 2
 
 
-async def invoke_json_with_retry(llm, messages: list, json_instruction: str, model_cls, attempts: int = JSON_CALL_ATTEMPTS):
+async def invoke_json_with_retry(llms, messages: list, json_instruction: str, model_cls, attempts: int = JSON_CALL_ATTEMPTS):
     """Gọi LLM yêu cầu trả JSON thô trong nội dung completion (KHÔNG ép
     function-calling — xem llm_roleplay_fast/llm_scoring_fast), thử lại tối
     đa `attempts` lần nếu content rỗng hoặc JSON không hợp lệ/không khớp
     schema. `json_instruction` được nối vào cuối nội dung message đầu tiên
-    (System hoặc Human, tuỳ handler)."""
+    (System hoặc Human, tuỳ handler).
+
+    `llms` là 1 LLM hoặc list nhiều LLM (model chính + model dự phòng khác
+    provider, vd llm_roleplay_fast_alt) — mỗi attempt dùng llms[min(attempt,
+    len-1)]. Lý do: model chính (Qwen, plan hiện tại) có trần rate-limit rất
+    thấp (2 requests/phút — xem trao đổi 2026-09-21), 429 trả về gần như tức
+    thì nên thử lại đúng model đó vô nghĩa; cần CHUYỂN SANG model khác ngay ở
+    attempt kế tiếp thay vì lặp lại trên model đang bị chặn."""
+    if not isinstance(llms, (list, tuple)):
+        llms = [llms]
     json_messages = [messages[0].__class__(content=messages[0].content + json_instruction), *messages[1:]]
     last_error: Exception = ValueError("invoke_json_with_retry: no attempts made")
     for attempt in range(attempts):
+        llm = llms[min(attempt, len(llms) - 1)]
         try:
             raw = await llm.ainvoke(json_messages)
             content = (raw.content or "").strip()
@@ -1003,12 +1147,21 @@ async def invoke_json_with_retry(llm, messages: list, json_instruction: str, mod
     raise last_error
 
 
+# "/no_think" ở cuối — quy ước riêng của họ model Qwen3 (hybrid
+# thinking/non-thinking) để ép tắt suy nghĩ ngay trong nội dung prompt, dùng
+# THÊM cho chắc bên cạnh chat_template_kwargs.enable_thinking=false
+# (_DISABLE_THINKING_KWARGS ở trên) — log runtime 2026-09 cho thấy riêng
+# tham số kwargs đôi khi không đủ, model vẫn sinh reasoning_tokens hàng
+# nghìn token dù đã tắt (xem comment ở llm_roleplay_fast/llm_scoring_fast).
+_NO_THINK_SUFFIX = ' /no_think'
+
 ROLEPLAY_JSON_INSTRUCTION = (
     '\n\nBẮT BUỘC: trả lời CHỈ một JSON object DUY NHẤT theo đúng schema bên dưới — KHÔNG thêm lời '
     'giải thích, KHÔNG thêm markdown/code fence, KHÔNG viết gì trước hay sau JSON. Ký tự đầu tiên bạn '
     'viết ra phải là "{" và ký tự cuối cùng phải là "}". Schema: '
     '{"customerReply": string, "emotion": "curious"|"skeptical"|"warming_up"|"satisfied"|"annoyed"|"ending_call", '
     '"shouldEndCall": boolean, "endReason": "convinced"|"not_interested"|"ran_out_of_patience"|null}'
+    + _NO_THINK_SUFFIX
 )
 
 SCORING_JSON_INSTRUCTION = (
@@ -1019,7 +1172,8 @@ SCORING_JSON_INSTRUCTION = (
     '"objection_handling_score": number, "insight_discovery_score": number, "closing_score": number, '
     '"strengths": string[] (tiếng Việt 100%), "improvements": string[] (tiếng Việt 100%), '
     '"next_level_suggestion": string (tiếng Việt 100%), '
-    '"turn_feedback": [{"turn_index": number, "is_good": boolean, "comment": string|null (tiếng Việt 100% nếu có)}, ...]}'
+    '"turn_feedback": [{"turn_index": number, "is_good": boolean, "comment": string (BẮT BUỘC cho MỌI lượt dù is_good true hay false, không để trống/null, tiếng Việt 100%)}, ...]}'
+    + _NO_THINK_SUFFIX
 )
 
 
@@ -1029,7 +1183,7 @@ async def roleplay_handler(request: Request) -> JSONResponse:
         persona = body["persona"]
         product = body["product"]
         level = body["level"]
-        roleplay_duration_sec = body.get("roleplayDurationSec", 150)
+        roleplay_duration_sec = body.get("roleplayDurationSec", 180)
         seconds_elapsed = body.get("secondsElapsed", 0)
         history = body.get("history", [])
         seller_utterance = body["sellerUtterance"]
@@ -1061,8 +1215,12 @@ async def roleplay_handler(request: Request) -> JSONResponse:
         # 3 lượt thử vẫn rẻ (~3-6s tổng cộng cùng lắm) nên ưu tiên thử lại ở
         # đây nhiều hơn thay vì rơi xuống tool-calling (đường dự phòng cũng
         # hay thất bại y hệt khi prompt lớn, xem lịch sử chat 2026-09-15).
+        # ROLEPLAY_FAST_LLMS: [model chính, model dự phòng] — attempt đầu
+        # dùng model chính, các attempt sau tự chuyển sang dự phòng nếu có
+        # cấu hình (xem LLM_MODEL_FALLBACK) — tránh lặp lại vô ích trên model
+        # đang bị rate-limit.
         result: RoleplayLLMOutput = await invoke_json_with_retry(
-            llm_roleplay_fast, messages, ROLEPLAY_JSON_INSTRUCTION, RoleplayLLMOutput, attempts=3
+            ROLEPLAY_FAST_LLMS, messages, ROLEPLAY_JSON_INSTRUCTION, RoleplayLLMOutput, attempts=3
         )
         response = result.model_dump()
     except Exception:
@@ -1076,7 +1234,18 @@ async def roleplay_handler(request: Request) -> JSONResponse:
         except Exception:
             # Timed, live call — never hard-fail the mobile app mid-conversation.
             app.logger.exception("tool-calling fallback also failed")
-            response = dict(ROLEPLAY_FALLBACK_REPLY)
+            # Lượt customer gần nhất trong lịch sử đã LÀ đúng câu fallback
+            # "chưa nghe rõ" chưa — nếu có nghĩa là lượt trước cũng vừa rơi
+            # vào fallback này rồi, giờ lại rơi tiếp lần 2 liên tiếp. Lặp lại
+            # y hệt câu đó lần nữa đúng là cái bug lặp vô hạn ban đầu — thay
+            # vào đó kết thúc cuộc gọi luôn (xem ROLEPLAY_FALLBACK_REPLY_REPEATED).
+            last_customer_turn = next(
+                (turn.get("text") for turn in reversed(history) if turn.get("role") == "customer"), None
+            )
+            if last_customer_turn == ROLEPLAY_FALLBACK_REPLY["customerReply"]:
+                response = dict(ROLEPLAY_FALLBACK_REPLY_REPEATED)
+            else:
+                response = dict(ROLEPLAY_FALLBACK_REPLY)
 
     # Deterministic safety net: don't rely solely on the LLM noticing the
     # clock ran out — force the call to end once the time limit is hit.
@@ -1110,8 +1279,10 @@ async def score_handler(request: Request) -> JSONResponse:
 
     try:
         # Primary path: JSON thô + tắt thinking — xem llm_scoring_fast.
+        # SCORING_FAST_LLMS: [model chính, model dự phòng] — xem comment ở
+        # ROLEPLAY_FAST_LLMS/LLM_MODEL_FALLBACK.
         result: ScoringOutput = await invoke_json_with_retry(
-            llm_scoring_fast, [HumanMessage(content=prompt)], SCORING_JSON_INSTRUCTION, ScoringOutput
+            SCORING_FAST_LLMS, [HumanMessage(content=prompt)], SCORING_JSON_INSTRUCTION, ScoringOutput
         )
         result = await ensure_scoring_is_vietnamese_only(result, prompt)
         return JSONResponse(strip_strings_deep(result.model_dump()))

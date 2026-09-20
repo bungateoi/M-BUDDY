@@ -40,10 +40,13 @@ import { getVoiceProfile } from '../lib/voiceProfiles';
 import { useAppNavigation, type NavigationParams, type ScreenName } from '../navigation/NavigationContext';
 
 // Level chưa có field thời lượng cuộc gọi riêng trong data model — dùng
-// hằng số chung, khớp giá trị mặc định roleplayDurationSec=150 ở backend
+// hằng số chung, khớp giá trị mặc định roleplayDurationSec=180 ở backend
 // (agent/main.py, xem SPEC.md). Nếu sau này cần thời lượng riêng theo
 // từng level, thêm field vào Level (data/types.ts) và dùng ở đây.
-const CALL_DURATION_SECONDS = 150;
+// Riêng luồng "Tạo khách hàng theo tiêu chí" cho tự chọn 3p/5p/10p/15p
+// (CreateCustomerScreen.tsx) — truyền qua prop durationSec, không đổi mặc
+// định của Map/Practice.
+const CALL_DURATION_SECONDS = 180;
 
 type CallPhase = 'connecting' | 'speaking' | 'idle' | 'recording' | 'thinking' | 'ending';
 
@@ -91,6 +94,10 @@ interface RoleplaySetup {
    * trong Map) — nếu không, dùng voiceDifficultyFallback để suy tốc độ nói. */
   voicePersonaKey: string;
   voiceDifficultyFallback?: CustomerDifficulty;
+  /** Ai nói lượt đầu tiên — mặc định 'customer' (khách tự mở lời, xem
+   * Level.openerRole). Practice/generated customer luôn 'customer' vì
+   * không có trainingScript để biết chắc thứ tự. */
+  openerRole: 'customer' | 'seller';
 }
 
 /** persona.name trong data/personas.ts có dạng "Tên ngắn, mô tả vai trò"
@@ -120,6 +127,7 @@ function buildMapSetup(levelId: string): RoleplaySetup | undefined {
     tip: level.sampleFlow[0],
     resultParams: { levelId },
     voicePersonaKey: persona.id,
+    openerRole: level.openerRole ?? 'customer',
   };
 }
 
@@ -159,6 +167,7 @@ function buildGeneratedSetup(g: GeneratedCustomerPersona): RoleplaySetup {
     resultParams: { generatedCustomer: g },
     voicePersonaKey: `generated-${g.name}`,
     voiceDifficultyFallback: g.difficulty,
+    openerRole: 'customer',
   };
 }
 
@@ -191,6 +200,7 @@ function buildPracticeSetup(customerId: string): RoleplaySetup | undefined {
     // luôn rơi vào nhánh fallback theo độ khó, xem getVoiceProfile.
     voicePersonaKey: `practice-${profile.id}`,
     voiceDifficultyFallback: profile.difficulty,
+    openerRole: 'customer',
   };
 }
 
@@ -242,12 +252,16 @@ export function RolePlayScreen({
   levelId,
   practiceCustomerId,
   generatedCustomer,
+  durationSec,
   isSkipAhead,
   backTo,
 }: {
   levelId?: string;
   practiceCustomerId?: string;
   generatedCustomer?: GeneratedCustomerPersona;
+  /** Thời lượng cuộc gọi (giây) tự chọn ở CreateCustomerScreen — không có
+   * (Map/Practice) thì dùng mặc định CALL_DURATION_SECONDS. */
+  durationSec?: number;
   /** true nếu vào level này qua nút "Học vượt" ở Map — xem finishCall. */
   isSkipAhead?: boolean;
   /** Màn quay về khi bấm nút đóng (X) — truyền tiếp nguyên vẹn sang màn Kết
@@ -263,10 +277,15 @@ export function RolePlayScreen({
       : generatedCustomer
         ? buildGeneratedSetup(generatedCustomer)
         : undefined;
+  // Cố định giá trị lúc mount — không đổi giữa chừng cuộc gọi dù prop có
+  // đổi (không xảy ra trong thực tế vì mỗi lượt role-play là 1 lượt mount
+  // màn hình mới, nhưng useState/useRef bên dưới chỉ đọc giá trị khởi tạo
+  // đúng 1 lần nên khai báo tường minh ở đây cho rõ ràng).
+  const callDurationSeconds = durationSec ?? CALL_DURATION_SECONDS;
 
   const [phase, setPhase] = useState<CallPhase>('connecting');
   const [history, setHistory] = useState<RoleplayTurn[]>([]);
-  const [secondsLeft, setSecondsLeft] = useState(CALL_DURATION_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(callDurationSeconds);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   // Job chấm điểm chạy NGẦM (xem lib/scoringJobs.ts) — khác 0 khi cuộc gọi đã
   // kết thúc, điều khiển popup "Đang đánh giá kết quả" (EvaluatingResultModal).
@@ -286,7 +305,7 @@ export function RolePlayScreen({
   // Refs mirror state đang đổi liên tục — cần cho callback của event
   // listener native (expo-speech-recognition) và timer, tránh stale closure.
   const historyRef = useRef<RoleplayTurn[]>([]);
-  const secondsLeftRef = useRef(CALL_DURATION_SECONDS);
+  const secondsLeftRef = useRef(callDurationSeconds);
   const callEndedRef = useRef(false);
   const hasStartedRef = useRef(false);
   // continuous:true chia lời nói thành nhiều "segment" — mỗi 'result'
@@ -448,8 +467,8 @@ export function RolePlayScreen({
         persona: setup.persona,
         product: setup.product,
         level: setup.level,
-        roleplayDurationSec: CALL_DURATION_SECONDS,
-        secondsElapsed: CALL_DURATION_SECONDS - secondsLeftRef.current,
+        roleplayDurationSec: callDurationSeconds,
+        secondsElapsed: callDurationSeconds - secondsLeftRef.current,
         history: historyRef.current,
         sellerUtterance: sellerText,
         globalRules: GLOBAL_ROLEPLAY_RULES,
@@ -488,14 +507,24 @@ export function RolePlayScreen({
     }
   };
 
-  // Mở đầu cuộc gọi — gọi 1 lần khi vào màn (hoặc khi người dùng chạm nút
-  // "Bắt đầu" trên web, xem startCallOnWeb), sellerUtterance rỗng để AI tự
-  // mở lời (xem SPEC.md). Guard bằng ref để tránh double-call do
-  // StrictMode double-invoke effect ở dev.
+  // Mở đầu cuộc gọi — chạy 1 lần khi vào màn (hoặc khi người dùng chạm nút
+  // "Bắt đầu" trên web, xem startCallOnWeb). Guard bằng ref để tránh
+  // double-call do StrictMode double-invoke effect ở dev.
+  // openerRole='customer' (mặc định, đa số kịch bản): sellerUtterance rỗng
+  // để AI tự mở lời trước (xem SPEC.md).
+  // openerRole='seller' (kịch bản ghi rõ Sale chủ động mở lời): KHÔNG gọi
+  // AI trước — chuyển thẳng sang 'idle' để Sale bấm mic nói trước, lượt gọi
+  // AI đầu tiên chỉ diễn ra sau khi có sellerUtterance thật (submitTurn ở
+  // handleMicPress/consumeRecordingResult), lúc đó is_opening_turn ở backend
+  // tự động = false vì sellerUtterance không rỗng nên vẫn đúng logic.
   useEffect(() => {
     if (hasStartedRef.current || !setup || awaitingTapToStart) return;
     hasStartedRef.current = true;
-    submitTurn('');
+    if (setup.openerRole === 'seller') {
+      setPhase('idle');
+    } else {
+      submitTurn('');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setup, awaitingTapToStart]);
 
@@ -630,7 +659,7 @@ export function RolePlayScreen({
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.timerRow}>
-          <CountdownRing secondsLeft={secondsLeft} totalSeconds={CALL_DURATION_SECONDS} />
+          <CountdownRing secondsLeft={secondsLeft} totalSeconds={callDurationSeconds} />
         </View>
 
         <View style={styles.centerArea}>

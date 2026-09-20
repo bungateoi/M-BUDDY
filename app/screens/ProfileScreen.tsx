@@ -112,17 +112,6 @@ export function ProfileScreen() {
             </View>
           </View>
 
-          {user.role === 'manager' && (
-            <Pressable style={styles.teamCard} onPress={() => navigate('teamManagement')}>
-              <Ionicons name="people" size={26} color={colors2.yellow} />
-              <View style={styles.teamText}>
-                <Text style={styles.teamTitle}>Nhóm của tôi</Text>
-                <Text style={styles.teamSubtitle}>Theo dõi tiến độ và hỗ trợ thành viên</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors2.white} />
-            </Pressable>
-          )}
-
           {user.role === 'admin' && (
             <Pressable style={styles.teamCard} onPress={() => navigate('admin')}>
               <Ionicons name="shield-checkmark" size={26} color={colors2.yellow} />

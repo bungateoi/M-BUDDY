@@ -19,6 +19,13 @@ import { showAlert } from '../lib/platformAlert';
 import type { PersonaCriteriaInput, PersonaFieldAnswer } from '../data/types';
 import { useAppNavigation } from '../navigation/NavigationContext';
 
+// Các luồng role-play khác (Map/Practice) đều cố định 180s (xem
+// RolePlayScreen.tsx#CALL_DURATION_SECONDS) — riêng luồng tự tạo khách hàng
+// này cho chọn thời lượng, vì đây là buổi luyện tự do, không gắn 1 kịch bản
+// có độ dài chuẩn hoá sẵn.
+const DURATION_OPTIONS_MIN = [3, 5, 10, 15];
+const DEFAULT_DURATION_MIN = 3;
+
 function fieldSummaryParts(answer: PersonaFieldAnswer | undefined): string[] {
   if (!answer) return [];
   const parts = answer.selected.filter((s) => s !== CUSTOM_CHIP_LABEL);
@@ -32,6 +39,7 @@ export function CreateCustomerScreen() {
   const [answers, setAnswers] = useState<Record<string, PersonaFieldAnswer>>({});
   const [activeCriterionId, setActiveCriterionId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [durationMinutes, setDurationMinutes] = useState(DEFAULT_DURATION_MIN);
 
   const activeCriterion = personaBuilderCriteria.find((c) => c.id === activeCriterionId);
 
@@ -70,7 +78,7 @@ export function CreateCustomerScreen() {
     setIsSubmitting(true);
     try {
       const generatedCustomer = await callGeneratePersona(criteria);
-      navigate('roleplay', { generatedCustomer, backTo: 'practice' });
+      navigate('roleplay', { generatedCustomer, durationSec: durationMinutes * 60, backTo: 'practice' });
     } catch {
       showAlert('Không tạo được chân dung khách hàng', 'Có lỗi kết nối tới AI, vui lòng thử lại.');
     } finally {
@@ -102,6 +110,24 @@ export function CreateCustomerScreen() {
               onPress={() => setActiveCriterionId(criterion.id)}
             />
           ))}
+        </View>
+
+        <View style={styles.durationSection}>
+          <Text style={styles.durationLabel}>⏱️ Thời gian cuộc gọi</Text>
+          <View style={styles.durationRow}>
+            {DURATION_OPTIONS_MIN.map((min) => {
+              const selected = min === durationMinutes;
+              return (
+                <Pressable
+                  key={min}
+                  onPress={() => setDurationMinutes(min)}
+                  style={[styles.durationChip, selected && styles.durationChipSelected]}
+                >
+                  <Text style={[styles.durationChipText, selected && styles.durationChipTextSelected]}>{min} phút</Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         <View style={styles.tipCard}>
@@ -149,6 +175,18 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors2.black },
   content: { padding: spacing2.md, gap: spacing2.md, paddingBottom: spacing2.xl },
   rows: { gap: spacing2.xs },
+  durationSection: { gap: 8 },
+  durationLabel: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  durationRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  durationChip: {
+    borderRadius: radii2.pill,
+    backgroundColor: colors2.cardOptionIdle,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: 8,
+  },
+  durationChipSelected: { backgroundColor: colors2.orange },
+  durationChipText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  durationChipTextSelected: { color: colors2.white },
   tipCard: {
     backgroundColor: colors2.cardOptionIdle,
     borderRadius: radii2.card,

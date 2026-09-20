@@ -1,7 +1,13 @@
 greennode-agentbase
-# Note: langchain v1.1.x removed create_agent from agents module.
-# Pin >=1.2.0 where it was restored.
-langchain>=1.2.0,<2.0.0
-langchain-openai>=1.1.0,<2.0.0
+# Pin CHÍNH XÁC (không dùng range) — mỗi lần build lại image (vd redeploy
+# GreenNode) mà không pin, pip resolve ra bản mới nhất trong range, có thể
+# âm thầm đổi hành vi thư viện dù KHÔNG đổi 1 dòng code nào (đã gặp thật
+# 2026-09: build lại kéo langchain-openai 1.1.x -> 1.6.2, đúng lúc độ trễ
+# roleplay và tần suất LengthFinishReasonError của scoring tăng vọt — xem
+# comment ở llm_roleplay_fast/llm_scoring_fast, main.py). Nâng version thì
+# chủ động đổi số ở đây, test kỹ, không để redeploy tự ý kéo bản mới.
+langchain==1.4.2
+langchain-openai==1.6.2
+openai==3.16.2
 python-dotenv
-httpx>=0.27,<1.0
+httpx==0.28.1
