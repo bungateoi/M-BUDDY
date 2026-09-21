@@ -8,9 +8,6 @@ trưởng nhóm).
 ## Demo
 
 - **Web app**: https://mbuddy-v2.vercel.app
-- **Tài khoản demo**: `TODO — điền email/mật khẩu tài khoản demo trước khi nộp bài`
-  (app không cho tự đăng ký — tài khoản do admin tạo sẵn trong Supabase rồi
-  cấp cho nhân viên, xem `app/screens/LoginScreen.tsx`).
 
 ## Kiến trúc & dịch vụ bên thứ ba
 
@@ -31,7 +28,7 @@ supabase/  Schema + migration cho Postgres (Supabase) — dữ liệu người d
 | **Vercel** | Hosting bản web (static export từ Expo) |
 
 Toàn bộ dữ liệu huấn luyện (persona khách hàng, kịch bản hội thoại, sản
-phẩm ngân hàng) là nội dung **dàn dựng/hư cấu** phục vụ mô phỏng, không phải
+phẩm ngân hàng) là nội dung phục vụ mô phỏng, không phải
 dữ liệu khách hàng thật hay thông tin nội bộ MSB.
 
 ## Chạy thử ở local
@@ -65,11 +62,6 @@ Chạy lần lượt các file trong `supabase/migrations/` (theo đúng thứ t
 trên project Supabase của bạn qua SQL Editor, hoặc `supabase db push` nếu
 dùng Supabase CLI.
 
-## Bảo mật
-
-Không có API key, mật khẩu hay file cấu hình nội bộ nào được commit vào
-repo — mọi secret nằm trong `.env` (bị `.gitignore` chặn ở cả 3 cấp: gốc,
-`app/`, `agent/`), chỉ có `.env.example` (giá trị rỗng) được đưa vào repo.
 
 ## Tài liệu thêm
 
