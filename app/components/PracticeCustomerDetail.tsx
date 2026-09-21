@@ -2,7 +2,7 @@ import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar } from './Avatar';
 import { Card } from './Card';
-import { cardShadow, colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { CustomerProfile } from '../data/types';
 
 function initialsOf(name: string): string {
@@ -47,7 +47,7 @@ export function PracticeCustomerDetail({
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <Pressable onPress={onBack} hitSlop={8} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
+          <Ionicons name="arrow-back" size={20} color={colors2.white} />
         </Pressable>
         <View style={styles.headerTextCol}>
           <Text style={styles.headerTitle} numberOfLines={1}>
@@ -84,7 +84,7 @@ export function PracticeCustomerDetail({
 
         <Pressable onPress={onPressPractice} style={styles.practiceButton}>
           <Text style={styles.practiceButtonText}>Luyện tập role-play</Text>
-          <Ionicons name="arrow-forward" size={16} color={colors.white} />
+          <Ionicons name="arrow-forward" size={16} color={colors2.white} />
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -92,58 +92,55 @@ export function PracticeCustomerDetail({
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.black },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    gap: spacing2.xs,
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.xs,
+    paddingBottom: spacing2.md,
+    backgroundColor: colors2.black,
   },
   backBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: colors.white,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
-    ...cardShadow,
   },
   headerTextCol: { flex: 1, gap: 1 },
-  headerTitle: { fontFamily: fontFamily.extraBold, fontSize: 16.5, color: colors.textPrimary },
-  headerSubtitle: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
-  content: { padding: spacing.xl, gap: spacing.md, paddingBottom: spacing.xxl },
-  identityCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.lg },
+  headerTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16.5, color: colors2.white },
+  headerSubtitle: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted },
+  content: { padding: spacing2.md, gap: spacing2.md, paddingBottom: spacing2.xl },
+  identityCard: { flexDirection: 'row', alignItems: 'center', gap: spacing2.md, padding: spacing2.md },
   identityText: { gap: 2 },
-  identityName: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
-  identityPhone: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textMuted },
-  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  identityName: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
+  identityPhone: { fontFamily: fontFamily2.regular, fontSize: 12.5, color: colors2.whiteMuted },
+  statGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing2.xs },
   statChip: {
     flexBasis: '31%',
     flexGrow: 1,
-    backgroundColor: colors.white,
-    borderRadius: radii.md,
-    padding: spacing.sm,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.xs,
     gap: 2,
   },
-  statLabel: { fontFamily: fontFamily.semiBold, fontSize: 10, color: colors.textMuted },
-  statValue: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.textPrimary },
-  section: { backgroundColor: colors.white, borderRadius: radii.lg, padding: spacing.md, gap: 4 },
-  sectionTitle: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.primary },
-  sectionText: { fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textPrimary, lineHeight: 19 },
+  statLabel: { fontFamily: fontFamily2.regular, fontSize: 10, color: colors2.whiteMuted },
+  statValue: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  section: { backgroundColor: colors2.cardOptionIdle, borderRadius: radii2.card, padding: spacing2.md, gap: 4 },
+  sectionTitle: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.orange },
+  sectionText: { fontFamily: fontFamily2.regular, fontSize: 13, color: colors2.white, lineHeight: 19 },
   practiceButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
-    marginTop: spacing.sm,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
+    marginTop: spacing2.xs,
   },
-  practiceButtonText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.white },
+  practiceButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
 });

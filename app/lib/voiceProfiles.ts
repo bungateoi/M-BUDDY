@@ -45,15 +45,20 @@ const RATE_BY_DIFFICULTY: Record<CustomerDifficulty, number> = {
   RatKho: 0.88,
 };
 
+// Tăng tốc đọc tổng thể theo yêu cầu người dùng ("nhanh hơn 1 xíu") — nhân
+// thêm vào MỌI rate bên trên thay vì sửa từng số trong bảng, để vẫn giữ
+// đúng tỉ lệ nhanh/chậm tương đối giữa các persona/độ khó.
+const GLOBAL_RATE_BOOST = 1.15;
+
 export function getVoiceProfile(
   avatarKey: RoleplayAvatarKey,
   personaId: string,
   difficultyFallback?: CustomerDifficulty
 ): VoiceProfile {
-  const rate =
+  const baseRate =
     RATE_BY_PERSONA_ID[personaId] ?? (difficultyFallback ? RATE_BY_DIFFICULTY[difficultyFallback] : 1.0);
   return {
     pitch: PITCH_BY_AVATAR_KEY[avatarKey] ?? 1.0,
-    rate,
+    rate: baseRate * GLOBAL_RATE_BOOST,
   };
 }

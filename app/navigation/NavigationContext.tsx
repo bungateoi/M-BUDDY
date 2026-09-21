@@ -20,6 +20,7 @@ export type ScreenName =
   | 'profile'
   | 'teamManagement'
   | 'personalAnalysis'
+  | 'teamAnalysis'
   | 'admin'
   | 'skipAheadIntro'
   | 'practiceHistory'
@@ -37,6 +38,11 @@ export interface NavigationParams {
    * levelId/practiceCustomerId. RolePlayScreen/ResultScreen chỉ đọc đúng 1
    * trong 3 nguồn này. */
   generatedCustomer?: GeneratedCustomerPersona;
+  /** Thời lượng cuộc gọi (giây) do người dùng tự chọn ở màn "Tạo khách hàng
+   * theo tiêu chí" (3p/5p/10p/15p) — chỉ dùng cho luồng generatedCustomer;
+   * không set thì RolePlayScreen tự dùng mặc định 180s như các luồng khác
+   * (Map/Practice), xem RolePlayScreen.tsx#CALL_DURATION_SECONDS. */
+  durationSec?: number;
   /** Kết quả chấm điểm THẬT từ backend cho lượt role-play vừa xong — nếu
    * không có (vd. vào thẳng màn Kết quả), ResultScreen sẽ fallback về mock
    * trong roleplayResultsByLevelId. */
@@ -51,6 +57,14 @@ export interface NavigationParams {
   productId?: string;
   /** Màn personaEdit — id chặng cần sửa; không có = chế độ "thêm mới". */
   personaId?: string;
+  /** Màn cần quay về khi bấm nút đóng (X) ở Quiz/RolePlay/Result — luồng
+   * "học 1 level" (Map -> Quiz -> RolePlay -> Result) đóng giữa chừng thì về
+   * lại Map, "Chinh phục" ở Practice thì về lại Practice, xem lại 1 mục
+   * trong Ôn tập thì về lại Ôn tập... thay vì luôn về Home như trước. Set ở
+   * đúng điểm bắt đầu mỗi luồng (MapScreen/PracticeScreen/CreateCustomerScreen/
+   * PracticeHistoryScreen/SkipAheadIntroScreen) rồi truyền tiếp nguyên vẹn
+   * qua từng bước (Quiz -> RolePlay -> Result) — không suy luận lại. */
+  backTo?: ScreenName;
 }
 
 interface NavigationState {

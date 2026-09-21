@@ -12,20 +12,24 @@ import {
   Text,
   View,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import {
   MapHeader,
   CurrentLevelBanner,
   MapLevelRow,
   MapPathLine,
-  BottomNavBar,
+  RoadDecorCluster,
+  CLUSTER_HEIGHT,
+  HomeBottomNavBar,
   computeMapNodeCenters,
-  cardShadow,
-  colors,
-  fontFamily,
-  radii,
-  spacing,
+  MAP_ROW_PITCH,
+  MAP_NODE_LABEL_HEIGHT,
+  MAP_NODE_LABEL_GAP,
+  MAP_NODE_CIRCLE_HEIGHT,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
 } from '../components';
 import { levels, personas, getLevelsByChapter, getProductById, getPositionInChapter, isLevelVisible } from '../data';
 import type { LevelStatus } from '../data/types';
@@ -34,20 +38,19 @@ import { useAuth } from '../lib/AuthContext';
 import { showAlert } from '../lib/platformAlert';
 import { useAppNavigation } from '../navigation/NavigationContext';
 
-const INITIAL_LANE_WIDTH = Dimensions.get('window').width - spacing.xl * 2;
+const INITIAL_LANE_WIDTH = Dimensions.get('window').width - spacing2.md * 2;
 // Chặng cao nhất trên cùng, chặng thấp nhất dưới cùng — cùng chiều với thứ
 // tự level trong 1 chặng (level cao hơn ở trên). Danh sách chặng CÒN HIỂN
 // THỊ (bỏ chặng bị admin ẩn qua "Quản trị hành trình & tri thức") được tính
 // động trong MapScreen (biến chapterOrder) thay vì hardcode [5,4,3,2,1] —
 // xem chapterOrder/defaultViewChapter bên dưới.
-// Banner "Chặng N" cố định — CHỈ 1 instance duy nhất, render đè lên trên
-// ScrollView (không dùng stickyHeaderIndices nữa vì mỗi section 1 sticky
-// header riêng gây hiện tượng chồng 2 banner lúc chuyển giao giữa 2
-// chặng). Nội dung banner đổi theo scroll qua state activeChapterNumber.
-const STICKY_BANNER_HEIGHT = 124;
+// Banner "Chặng N" giờ nằm HẲN trong phần header cố định (không cuộn) thay
+// vì đè overlay lên ScrollView như trước — tránh hiện tượng che nội dung
+// scroll bên dưới lúc kéo (phần trong suốt quanh overlay từng lộ ra node
+// bên dưới). Nội dung banner vẫn đổi theo scroll qua state activeChapterNumber.
 const CHAPTER_DIVIDER_HEIGHT = 44;
-const CHAPTER_BLOCK_MARGIN_TOP = spacing.lg;
-const CHAPTER_BLOCK_MARGIN_BOTTOM = spacing.xxl;
+const CHAPTER_BLOCK_MARGIN_TOP = spacing2.md;
+const CHAPTER_BLOCK_MARGIN_BOTTOM = spacing2.lg;
 // "Học vượt" của chặng N nằm NGAY SAU level 1 của chặng N (level 1 luôn ở
 // TRÊN — chặng render theo chapterOrder giảm dần nên level1 của chặng N là
 // node cuối cùng/thấp nhất của chặng N, ngay phía trên chặng liền trước còn
@@ -87,6 +90,36 @@ function getChapterFlowHeight(
   return CHAPTER_DIVIDER_HEIGHT + CHAPTER_BLOCK_MARGIN_TOP + totalHeight + CHAPTER_BLOCK_MARGIN_BOTTOM + skipBlock;
 }
 
+// Đệm nhỏ phía trên node "2 hàng trước level đang học" khi tự cuộn vào màn
+// (xem SCROLL_TOP_PADDING trong handleContentLayout) — để label của node đó
+// không dính sát mép trên viewport.
+const SCROLL_TOP_PADDING = 24;
+// computeMapNodeCenters trả toạ độ Y là TÂM vòng tròn — quy đổi ngược về mép
+// TRÊN của cả cột (nhãn "Level N" + khoảng cách + vòng tròn) để canh đúng
+// mép viewport khi tự cuộn (xem handleContentLayout).
+const NODE_COL_TOP_OFFSET = MAP_NODE_LABEL_HEIGHT + MAP_NODE_LABEL_GAP + MAP_NODE_CIRCLE_HEIGHT / 2;
+
+/** Toạ độ Y TUYỆT ĐỐI (trong nội dung cuộn) của 1 node level cụ thể — dùng
+ * để tự cuộn vào đúng vị trí "level đang học nằm ở hàng thứ 3" lúc mở màn
+ * (xem handleContentLayout). Không phụ thuộc laneWidth (toạ độ Y trong
+ * computeMapNodeCenters không dùng tới nó) nên truyền 0 cũng cho kết quả
+ * đúng. Trả về undefined nếu không tìm thấy (level bị ẩn, chặng không còn
+ * hiển thị...). */
+function getLevelNodeGlobalY(
+  levelId: string,
+  chapterNumber: number,
+  resolveStatus: (levelId: string) => LevelStatus,
+  chapterStartY: Record<number, number>
+): number | undefined {
+  const chapterStart = chapterStartY[chapterNumber];
+  if (chapterStart === undefined) return undefined;
+  const { displayLevels, statuses } = getChapterStatuses(chapterNumber, resolveStatus);
+  const idx = displayLevels.findIndex((l) => l.id === levelId);
+  if (idx === -1) return undefined;
+  const { points } = computeMapNodeCenters(statuses, 0);
+  return chapterStart + CHAPTER_DIVIDER_HEIGHT + CHAPTER_BLOCK_MARGIN_TOP + points[idx].y;
+}
+
 // Định nghĩa NGOÀI MapScreen (không phải component lồng bên trong) — bắt
 // buộc để tránh bị remount lại mỗi lần MapScreen re-render (sẽ làm mất
 // hover state, gây onLayout lặp vô hạn...).
@@ -113,6 +146,25 @@ function ChapterBlock({
   return (
     <View style={styles.chapterBlock} onLayout={handleLayout}>
       <MapPathLine points={points} height={totalHeight} width={laneWidth} />
+      {/* Trang trí ven đường (bụi cây + xe đồ chơi) — 1 cụm mỗi hàng, đặt ở
+          làn ĐỐI DIỆN với node hàng đó (node bên phải -> cụm lấp bên trái và
+          ngược lại), đúng nhịp xen kẽ như Figma (node-id=76-5842). Xoay vòng
+          3 kiểu xe theo index cho đỡ lặp. */}
+      {points.map((point, index) => {
+        const isRight = index % 2 === 0;
+        return (
+          <RoadDecorCluster
+            key={`decor-${index}`}
+            variant={index % 3}
+            flipX={isRight}
+            style={
+              isRight
+                ? { position: 'absolute', left: 0, top: point.y - CLUSTER_HEIGHT / 2 }
+                : { position: 'absolute', right: 0, top: point.y - CLUSTER_HEIGHT / 2 }
+            }
+          />
+        );
+      })}
       {displayLevels.map((level, index) => {
         const product = getProductById(level.productId);
         if (!product) return null;
@@ -121,10 +173,8 @@ function ChapterBlock({
             key={level.id}
             status={statuses[index]}
             positionInChapter={getPositionInChapter(level.id)}
-            productName={product.shortName ?? product.name}
             offsetIndex={index}
             laneWidth={laneWidth}
-            alignLeft={index % 2 === 0}
             isLast={index === displayLevels.length - 1}
             onPressStart={() => onPressLevel(level.id)}
           />
@@ -135,11 +185,13 @@ function ChapterBlock({
 }
 
 // Chỉ 1 nút nhỏ, căn giữa — icon tia sét + "Học vượt", không mô tả thêm.
+// Figma không thiết kế riêng nút này (chỉ 1 chặng, chưa cần học vượt) —
+// dùng lại đúng ngôn ngữ pill tối màu như nút "Chi tiết" ở Home.
 function SkipAheadButton({ onPress }: { onPress: () => void }) {
   return (
     <View style={styles.skipAheadRow}>
       <Pressable style={styles.skipAheadPill} onPress={onPress}>
-        <Ionicons name="flash" size={16} color={colors.primary} />
+        <Ionicons name="flash" size={16} color={colors2.yellow} />
         <Text style={styles.skipAheadPillText}>Học vượt</Text>
       </Pressable>
     </View>
@@ -175,7 +227,6 @@ export function MapScreen() {
         .sort((a, b) => b - a),
     []
   );
-  const defaultViewChapter = chapterOrder[chapterOrder.length - 1] ?? 1;
   // Thứ tự tiến độ THẬT (tăng dần theo id) — khác chapterOrder (chỉ để
   // hiển thị chặng cao nhất trên cùng), dùng để suy level "hiện tại" (bước
   // tiếp theo). Chỉ tính trên level CÒN HIỂN THỊ — level bị ẩn không được
@@ -185,6 +236,14 @@ export function MapScreen() {
     () => orderedLevelIds.find((id) => !completedLevelIds.has(id)),
     [orderedLevelIds, completedLevelIds]
   );
+  // Chặng ban đầu hiện trên banner cố định — khớp với chặng mà
+  // handleContentLayout sắp tự cuộn tới (chặng chứa level đang học; đã học
+  // hết thì mặc định chặng cao nhất) để banner không "nháy" sai chặng trước
+  // khi sự kiện scroll đầu tiên bắn ra.
+  const currentLevelChapterNumber = firstIncompleteLevelId
+    ? levels.find((l) => l.id === firstIncompleteLevelId)?.chapterNumber
+    : undefined;
+  const initialActiveChapter = currentLevelChapterNumber ?? chapterOrder[0] ?? 1;
 
   const resolveStatus = (levelId: string): LevelStatus => {
     if (isAdmin) return 'completed';
@@ -210,7 +269,7 @@ export function MapScreen() {
     return !!targetLevelId && !completedLevelIds.has(targetLevelId);
   };
 
-  const [activeChapterNumber, setActiveChapterNumber] = useState(defaultViewChapter);
+  const [activeChapterNumber, setActiveChapterNumber] = useState(initialActiveChapter);
 
   // Vị trí Y (trong nội dung cuộn, TÍNH TỪ SAU paddingTop) mà divider của
   // mỗi chặng bắt đầu — tính lại đúng 1 lần SAU khi tiến độ thật tải xong
@@ -258,13 +317,42 @@ export function MapScreen() {
     setActiveChapterNumber((prev) => (prev === nextActive ? prev : nextActive));
   };
 
-  // Vào màn là cuộn thẳng tới ĐẦU chặng thấp nhất còn hiển thị, thấy được
-  // cả banner lẫn các level trong chặng đó — thay vì luôn bắt đầu ở chặng
-  // cao nhất (trên cùng của toàn bộ hành trình).
+  // Vào màn tự cuộn tới đúng vị trí "đang học dở" thay vì luôn về 1 điểm cố
+  // định — 1 màn hình xem trọn được 4 level, nên canh sao cho level đang
+  // học (firstIncompleteLevelId) nằm ở hàng thứ 3 từ trên xuống: 2 hàng
+  // TRÊN nó (chưa học, level/chặng cao hơn) + chính nó + 1 hàng DƯỚI nó (đã
+  // học). Không tự set giới hạn trên/dưới — nhờ ScrollView tự kẹp giá trị
+  // scrollTo vào [0, max] hộ:
+  //  - Chưa học gì (level đang học = level 1 chặng 1, node CUỐI CÙNG/thấp
+  //    nhất của toàn bộ hành trình): trừ đi 2 hàng sẽ ra 1 số vượt quá đáy
+  //    nội dung -> tự kẹp về đáy -> level 1 nằm dưới cùng, thấy đủ 4 level
+  //    đầu (đúng yêu cầu, không cần case riêng).
+  //  - Đã học hết (không còn level nào "đang học"): không có node để canh
+  //    giữa -> cuộn thẳng lên đỉnh (chặng cao nhất), tự nhiên khớp bằng 0.
   const handleContentLayout = () => {
     if (hasAutoScrolledRef.current) return;
     hasAutoScrolledRef.current = true;
-    scrollRef.current?.scrollTo({ y: chapterStartY[defaultViewChapter] ?? 0, animated: false });
+
+    // Tính lại "chặng đang học" NGAY LÚC NÀY (không dùng initialActiveChapter
+    // tính lúc mount — khi đó tiến độ thật (levelProgress) có thể chưa tải
+    // xong nên firstIncompleteLevelId lúc đó chưa chắc đúng) rồi set thẳng
+    // cho banner — không trông chờ vào sự kiện scroll đầu tiên để tự sửa,
+    // vì nếu target vừa hay trùng đúng vị trí đang đứng (vd 0), ScrollView
+    // không bắn onScroll (không có gì thay đổi) nên banner sẽ kẹt sai chặng.
+    let targetY = 0;
+    let targetChapter = chapterOrder[0] ?? 1;
+    if (firstIncompleteLevelId) {
+      const currentLevel = levels.find((l) => l.id === firstIncompleteLevelId);
+      if (currentLevel) {
+        targetChapter = currentLevel.chapterNumber;
+        const nodeY = getLevelNodeGlobalY(currentLevel.id, currentLevel.chapterNumber, resolveStatus, chapterStartY);
+        if (nodeY !== undefined) {
+          targetY = Math.max(0, nodeY - 2 * MAP_ROW_PITCH - NODE_COL_TOP_OFFSET - SCROLL_TOP_PADDING);
+        }
+      }
+    }
+    setActiveChapterNumber(targetChapter);
+    scrollRef.current?.scrollTo({ y: targetY, animated: false });
   };
 
   const activePersona = personas.find((p) => p.chapterNumber === activeChapterNumber);
@@ -274,7 +362,7 @@ export function MapScreen() {
       showAlert('Chưa mở khoá', 'Hoàn thành các bài trước đó (hoặc dùng "Học vượt") để mở khoá bài này.');
       return;
     }
-    navigate('quiz', { levelId });
+    navigate('quiz', { levelId, backTo: 'map' });
   };
 
   // Danh sách con PHẲNG [divider, block, ...] cho từng chặng — "Học vượt"
@@ -323,40 +411,36 @@ export function MapScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <MapHeader
-        title="Hành trình học tập"
-        streakDays={profile.currentStreak}
-        onBack={() => navigate('home')}
-      />
+      {/* Banner "Chặng N" thuộc HẲN phần header cố định (không cuộn) — nền
+          xanh liền với header, không còn là overlay trong suốt đè lên
+          ScrollView (từng lộ node bên dưới lúc kéo qua vùng trong suốt
+          quanh banner). */}
+      <View style={styles.header}>
+        <MapHeader title="Hành trình bứt phá" />
+        <View style={styles.bannerWrap}>
+          <CurrentLevelBanner chapterNumber={activeChapterNumber} personaName={activePersona?.name} />
+        </View>
+      </View>
 
-      <LinearGradient
-        colors={[colors.mapBackgroundStart, colors.mapBackgroundEnd]}
-        style={styles.gradientFlex}
-      >
+      <View style={styles.body}>
         {!levelProgress ? (
           <View style={styles.loadingWrap}>
-            <ActivityIndicator color={colors.primary} />
+            <ActivityIndicator color={colors2.white} />
           </View>
         ) : (
-          <>
-            <ScrollView
-              ref={scrollRef}
-              contentContainerStyle={styles.content}
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              showsVerticalScrollIndicator={false}
-            >
-              <View onLayout={handleContentLayout}>{children}</View>
-            </ScrollView>
-
-            <View style={styles.stickyOverlay} pointerEvents="none">
-              <CurrentLevelBanner chapterNumber={activeChapterNumber} personaName={activePersona?.name} />
-            </View>
-          </>
+          <ScrollView
+            ref={scrollRef}
+            contentContainerStyle={styles.content}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
+            showsVerticalScrollIndicator={false}
+          >
+            <View onLayout={handleContentLayout}>{children}</View>
+          </ScrollView>
         )}
-      </LinearGradient>
+      </View>
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="map"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -371,30 +455,23 @@ export function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.white },
-  gradientFlex: { flex: 1, position: 'relative' },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  header: { backgroundColor: colors2.black },
+  bannerWrap: { paddingHorizontal: spacing2.md, paddingBottom: spacing2.md },
+  body: { flex: 1, position: 'relative' },
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   content: {
-    paddingTop: STICKY_BANNER_HEIGHT,
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
-  },
-  stickyOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: STICKY_BANNER_HEIGHT,
-    paddingHorizontal: spacing.xl,
-    justifyContent: 'center',
+    paddingTop: spacing2.md,
+    paddingHorizontal: spacing2.md,
+    paddingBottom: spacing2.md,
   },
   chapterDivider: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
+    gap: spacing2.xs,
   },
-  dividerLine: { flex: 1, height: 1, backgroundColor: '#E3D5CC' },
-  dividerText: { fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textMuted },
+  dividerLine: { flex: 1, height: 1, backgroundColor: colors2.navBorder, opacity: 0.4 },
+  dividerText: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.whiteMuted },
   chapterBlock: {
     position: 'relative',
     marginTop: CHAPTER_BLOCK_MARGIN_TOP,
@@ -405,11 +482,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.lg,
+    backgroundColor: colors2.black,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 10,
-    ...cardShadow,
   },
-  skipAheadPillText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.primary },
+  skipAheadPillText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.yellow },
 });

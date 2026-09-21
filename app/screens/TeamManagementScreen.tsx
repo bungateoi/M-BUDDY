@@ -9,13 +9,13 @@ import {
   TeamMemberTableBody,
   SimpleSelectModal,
   DateRangeCalendarModal,
-  BottomNavBar,
-  colors,
-  radii,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  radii2,
+  spacing2,
   type SimpleSelectOption,
 } from '../components';
-import { SCORE_CRITERIA_META, averageSkillScore, buildSkillScoresFromRaw } from '../data';
+import { SCORE_CRITERIA_META, averageSkillScore, averageTeamSkills } from '../data';
 import type { TeamMember } from '../data/types';
 import { fetchMyTeam } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
@@ -47,17 +47,6 @@ function fmtDMY(d: Date): string {
 
 function rangeLabel(start: Date, end: Date): string {
   return `${fmtDM(start)} - ${fmtDMY(end)}`;
-}
-
-/** Điểm trung bình cả team theo từng tiêu chí — cho radar "Knowledge & Skill Gaps". */
-function averageTeamSkills(members: TeamMember[]) {
-  if (members.length === 0) return buildSkillScoresFromRaw({});
-  const raw: Record<string, number> = {};
-  for (const c of SCORE_CRITERIA_META) {
-    const total = members.reduce((sum, m) => sum + (m.scores[c.key] ?? 0), 0);
-    raw[c.key] = total / members.length;
-  }
-  return buildSkillScoresFromRaw(raw);
 }
 
 export function TeamManagementScreen() {
@@ -116,7 +105,7 @@ export function TeamManagementScreen() {
 
       {!members ? (
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors2.white} />
         </View>
       ) : (
         // stickyHeaderIndices={[1]} ghim ĐÚNG 1 khối con: thanh tìm kiếm +
@@ -149,7 +138,7 @@ export function TeamManagementScreen() {
         </ScrollView>
       )}
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -181,18 +170,18 @@ export function TeamManagementScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.black },
   scroll: { flex: 1 },
-  content: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, paddingBottom: spacing.xl, gap: spacing.md },
+  content: { paddingHorizontal: spacing2.md, paddingTop: spacing2.xs, paddingBottom: spacing2.xl, gap: spacing2.md },
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   // Nền phải trùng màu nền trang (không trong suốt) — khi bị ghim, khối này
   // che lên nội dung đang cuộn bên dưới nó.
-  stickyGroup: { backgroundColor: colors.background, gap: spacing.md, paddingBottom: spacing.md },
-  tableHeaderCard: { borderTopLeftRadius: radii.lg, borderTopRightRadius: radii.lg, overflow: 'hidden' },
+  stickyGroup: { backgroundColor: colors2.black, gap: spacing2.md, paddingBottom: spacing2.md },
+  tableHeaderCard: { borderTopLeftRadius: radii2.card, borderTopRightRadius: radii2.card, overflow: 'hidden' },
   tableBodyCard: {
-    backgroundColor: colors.white,
-    borderBottomLeftRadius: radii.lg,
-    borderBottomRightRadius: radii.lg,
+    backgroundColor: colors2.cardOptionIdle,
+    borderBottomLeftRadius: radii2.card,
+    borderBottomRightRadius: radii2.card,
     overflow: 'hidden',
   },
 });

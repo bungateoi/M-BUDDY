@@ -1,8 +1,5 @@
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, fontFamily, primaryGradient, radii, spacing } from './theme';
-
-const mascotSource = require('../assets/mascot-confident.png');
+import { StyleSheet, Text, View } from 'react-native';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function CurrentLevelBanner({
   chapterNumber,
@@ -13,7 +10,7 @@ export function CurrentLevelBanner({
   chapterNumber: number;
   /** Bỏ trống (cùng productName) để hiện bản gọn "Chặng N - Persona" —
    * dùng làm banner cố định (sticky) đầu màn Map, không gắn với 1 level
-   * cụ thể. */
+   * cụ thể. Đúng chế độ Figma (node-id=30:1819, "Level Box") hiển thị. */
   levelPosition?: number;
   productName?: string;
   /** Chỉ dùng ở chế độ gọn (levelPosition/productName bỏ trống). */
@@ -21,69 +18,47 @@ export function CurrentLevelBanner({
 }) {
   const isCompact = levelPosition === undefined || productName === undefined;
   return (
-    <LinearGradient
-      colors={primaryGradient.colors}
-      start={primaryGradient.start}
-      end={primaryGradient.end}
-      style={styles.banner}
-    >
-      <Image source={mascotSource} style={styles.mascot} resizeMode="contain" />
-      <Text style={styles.sparkle}>✨</Text>
-      <View style={styles.textCol}>
-        {isCompact ? (
-          <>
-            <Text style={styles.label}>Chặng {chapterNumber}</Text>
-            <Text style={styles.compactValue} numberOfLines={2}>
-              {personaName}
-            </Text>
-          </>
-        ) : (
-          <>
-            <Text style={styles.label}>
-              Chặng {chapterNumber}, level {levelPosition}:
-            </Text>
-            <Text style={styles.value} numberOfLines={1}>
-              {productName}
-            </Text>
-          </>
-        )}
-      </View>
-    </LinearGradient>
+    <View style={styles.banner}>
+      {isCompact ? (
+        <>
+          <Text style={styles.label}>Chặng {chapterNumber}</Text>
+          <Text style={styles.value} numberOfLines={2}>
+            {personaName}
+          </Text>
+        </>
+      ) : (
+        <>
+          <Text style={styles.label}>
+            Chặng {chapterNumber}, level {levelPosition}:
+          </Text>
+          <Text style={styles.value} numberOfLines={1}>
+            {productName}
+          </Text>
+        </>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // "Sticker shadow" cứng (0px 4px 0px white, không blur) — dùng shadowOffset
+  // lớn + shadowOpacity=1 + shadowRadius=0 để mô phỏng đúng kiểu Figma (drop-
+  // shadow phẳng) thay vì shadow mờ mặc định. Bản Figma mới (node-id=76-5842)
+  // đổi viền/bóng từ cam sang TRẮNG (trước dùng shadowOrange/offset 6, xem
+  // git blame) — khớp cùng ngôn ngữ "sticker trắng" với StreakCard ở Home.
   banner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    minHeight: 108,
-    borderRadius: radii.xl,
-    paddingLeft: 132,
-    paddingRight: spacing.lg,
-    shadowColor: '#C4460F',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.25,
-    shadowRadius: 18,
-    elevation: 6,
+    backgroundColor: colors2.orange,
+    borderWidth: 1,
+    borderColor: colors2.white,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    gap: 0,
+    shadowColor: colors2.white,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 4,
   },
-  mascot: {
-    position: 'absolute',
-    left: -10,
-    bottom: -12,
-    width: 148,
-    height: 168,
-  },
-  sparkle: {
-    position: 'absolute',
-    left: 116,
-    top: 20,
-    fontSize: 16,
-    color: colors.white,
-  },
-  textCol: { flex: 1, gap: 2 },
-  label: { fontFamily: fontFamily.semiBold, fontSize: 13.5, color: 'rgba(255,255,255,0.92)' },
-  value: { fontFamily: fontFamily.extraBold, fontSize: 22, color: colors.white },
-  // Tên persona dài hơn tên sản phẩm nhiều ("Người đa nghi / từng bị lừa"...)
-  // nên dùng cỡ nhỏ hơn value để hạn chế bị cắt bớt (numberOfLines=1).
-  compactValue: { fontFamily: fontFamily.extraBold, fontSize: 17, color: colors.white },
+  label: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.whiteMuted },
+  value: { fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.white },
 });

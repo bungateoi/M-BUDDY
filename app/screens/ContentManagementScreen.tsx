@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomNavBar, QuizHeader, cardShadow, colors, fontFamily, radii, spacing } from '../components';
+import { HomeBottomNavBar, QuizHeader, colors2, fontFamily2, radii2, spacing2 } from '../components';
 import { personas, products } from '../data';
 import { useAuth } from '../lib/AuthContext';
 import { useAppNavigation } from '../navigation/NavigationContext';
@@ -56,12 +56,12 @@ export function ContentManagementScreen() {
       </View>
 
       <View style={styles.searchWrap}>
-        <Ionicons name="search" size={17} color={colors.textMuted} />
+        <Ionicons name="search" size={17} color={colors2.whiteMuted} />
         <TextInput
           value={query}
           onChangeText={setQuery}
           placeholder="Tìm theo tên..."
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={colors2.whiteMuted}
           style={styles.searchInput}
         />
       </View>
@@ -71,7 +71,7 @@ export function ContentManagementScreen() {
           style={styles.addBtn}
           onPress={() => (tab === 'products' ? navigate('productEdit', {}) : navigate('personaEdit', {}))}
         >
-          <Ionicons name="add-circle" size={18} color={colors.primary} />
+          <Ionicons name="add-circle" size={18} color={colors2.orange} />
           <Text style={styles.addBtnText}>{tab === 'products' ? 'Thêm sản phẩm mới' : 'Thêm chặng mới'}</Text>
         </Pressable>
 
@@ -89,7 +89,7 @@ export function ContentManagementScreen() {
                     {productHiddenLabel(p)}
                   </Text>
                 </View>
-                <Ionicons name="create-outline" size={18} color={colors.textMuted} />
+                <Ionicons name="create-outline" size={18} color={colors2.whiteMuted} />
               </Pressable>
             ))
           : filteredPersonas.map((p) => (
@@ -102,7 +102,7 @@ export function ContentManagementScreen() {
                     {p.isHidden ? 'Ẩn' : 'Hiện'}
                   </Text>
                 </View>
-                <Ionicons name="create-outline" size={18} color={colors.textMuted} />
+                <Ionicons name="create-outline" size={18} color={colors2.whiteMuted} />
               </Pressable>
             ))}
 
@@ -111,7 +111,7 @@ export function ContentManagementScreen() {
         )}
       </ScrollView>
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -126,51 +126,49 @@ export function ContentManagementScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  tabRow: { flexDirection: 'row', gap: spacing.sm, marginHorizontal: spacing.xl, marginTop: spacing.sm },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: radii.pill, alignItems: 'center', backgroundColor: colors.white },
-  tabActive: { backgroundColor: colors.primary },
-  tabText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.textMuted },
-  tabTextActive: { color: colors.white },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  tabRow: { flexDirection: 'row', gap: spacing2.xs, marginHorizontal: spacing2.md, marginTop: spacing2.xs },
+  tab: { flex: 1, paddingVertical: 10, borderRadius: radii2.pill, alignItems: 'center', backgroundColor: colors2.cardOptionIdle },
+  tabActive: { backgroundColor: colors2.orange },
+  tabText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.whiteMuted },
+  tabTextActive: { color: colors2.white },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    gap: spacing2.xs,
+    marginHorizontal: spacing2.md,
+    marginTop: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 10,
-    ...cardShadow,
   },
-  searchInput: { flex: 1, fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textPrimary, padding: 0 },
-  content: { padding: spacing.xl, gap: spacing.sm, paddingBottom: spacing.xxl },
+  searchInput: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 13, color: colors2.white, padding: 0 },
+  content: { padding: spacing2.md, gap: spacing2.xs, paddingBottom: spacing2.xl },
   addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
     borderWidth: 1.5,
-    borderColor: colors.primary,
+    borderColor: colors2.orange,
     borderStyle: 'dashed',
-    borderRadius: radii.lg,
-    paddingVertical: spacing.md,
-    marginBottom: spacing.xs,
+    borderRadius: radii2.card,
+    paddingVertical: spacing2.md,
+    marginBottom: spacing2.xxs,
   },
-  addBtnText: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.primary },
+  addBtnText: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.orange },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.lg,
-    padding: spacing.md,
-    ...cardShadow,
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
   },
   rowText: { flex: 1, gap: 2 },
-  rowName: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.textPrimary },
-  rowStatus: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.success },
-  rowStatusHidden: { color: colors.error },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textMuted, textAlign: 'center', marginTop: spacing.xl },
+  rowName: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
+  rowStatus: { fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.green500 },
+  rowStatusHidden: { color: colors2.red500 },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.whiteMuted, textAlign: 'center', marginTop: spacing2.md },
 });

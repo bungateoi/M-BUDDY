@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 const studyingMascot = require('../assets/mascot-studying.png');
 
@@ -16,16 +16,16 @@ export function BuddySuggestionBubble({ message }: { message: string }) {
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing.sm },
+  row: { flexDirection: 'row', alignItems: 'flex-end', gap: spacing2.xs },
   bubble: {
     flex: 1,
-    backgroundColor: colors.white,
-    borderRadius: radii.lg,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
     borderBottomRightRadius: 4,
-    padding: spacing.md,
+    padding: spacing2.md,
     gap: 2,
   },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 12, color: colors.primary },
-  message: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textPrimary, lineHeight: 18 },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 12, color: colors2.orange },
+  message: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white, lineHeight: 18 },
   mascot: { width: 52, height: 60 },
 });

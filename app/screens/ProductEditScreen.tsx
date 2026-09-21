@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { BottomNavBar, ConfirmModal, QuizHeader, cardShadow, colors, fontFamily, radii, spacing } from '../components';
+import { HomeBottomNavBar, ConfirmModal, QuizHeader, colors2, fontFamily2, radii2, spacing2 } from '../components';
 import { personas, products } from '../data';
 import type { ProductObjection } from '../data/types';
 import { saveProduct } from '../lib/contentData';
@@ -39,17 +39,17 @@ function ListEditor({
             value={v}
             onChangeText={(text) => onChange(values.map((x, idx) => (idx === i ? text : x)))}
             placeholder={placeholder}
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={colors2.whiteMuted}
             style={[styles.input, styles.listInput]}
             multiline
           />
           <Pressable onPress={() => onChange(values.filter((_, idx) => idx !== i))} hitSlop={8}>
-            <Ionicons name="close-circle" size={20} color={colors.textMuted} />
+            <Ionicons name="close-circle" size={20} color={colors2.whiteMuted} />
           </Pressable>
         </View>
       ))}
       <Pressable style={styles.addLineBtn} onPress={() => onChange([...values, ''])}>
-        <Ionicons name="add" size={16} color={colors.primary} />
+        <Ionicons name="add" size={16} color={colors2.orange} />
         <Text style={styles.addLineText}>Thêm dòng</Text>
       </Pressable>
     </View>
@@ -67,26 +67,26 @@ function ObjectionBankEditor({ value, onChange }: { value: ProductObjection[]; o
               value={o.question}
               onChangeText={(text) => onChange(value.map((x, idx) => (idx === i ? { ...x, question: text } : x)))}
               placeholder="Câu hỏi/phản đối thường gặp"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor={colors2.whiteMuted}
               style={[styles.input, styles.listInput]}
               multiline
             />
             <Pressable onPress={() => onChange(value.filter((_, idx) => idx !== i))} hitSlop={8}>
-              <Ionicons name="close-circle" size={20} color={colors.textMuted} />
+              <Ionicons name="close-circle" size={20} color={colors2.whiteMuted} />
             </Pressable>
           </View>
           <TextInput
             value={o.sampleAnswer}
             onChangeText={(text) => onChange(value.map((x, idx) => (idx === i ? { ...x, sampleAnswer: text } : x)))}
             placeholder="Câu trả lời mẫu"
-            placeholderTextColor={colors.textMuted}
+            placeholderTextColor={colors2.whiteMuted}
             style={[styles.input, styles.listInput]}
             multiline
           />
         </View>
       ))}
       <Pressable style={styles.addLineBtn} onPress={() => onChange([...value, { question: '', sampleAnswer: '' }])}>
-        <Ionicons name="add" size={16} color={colors.primary} />
+        <Ionicons name="add" size={16} color={colors2.orange} />
         <Text style={styles.addLineText}>Thêm phản đối</Text>
       </Pressable>
     </View>
@@ -184,26 +184,26 @@ export function ProductEditScreen({ productId }: { productId?: string }) {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.field}>
           <Text style={styles.label}>Tên sản phẩm</Text>
-          <TextInput value={name} onChangeText={setName} placeholder="Tiết kiệm online" placeholderTextColor={colors.textMuted} style={styles.input} />
+          <TextInput value={name} onChangeText={setName} placeholder="Tiết kiệm online" placeholderTextColor={colors2.whiteMuted} style={styles.input} />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>Tên rút gọn (tuỳ chọn)</Text>
-          <TextInput value={shortName} onChangeText={setShortName} placeholder="Dùng cho node trên Map" placeholderTextColor={colors.textMuted} style={styles.input} />
+          <TextInput value={shortName} onChangeText={setShortName} placeholder="Dùng cho node trên Map" placeholderTextColor={colors2.whiteMuted} style={styles.input} />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>Mô tả</Text>
-          <TextInput value={shortDescription} onChangeText={setShortDescription} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={shortDescription} onChangeText={setShortDescription} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
         <View style={styles.field}>
           <Text style={styles.label}>Đối tượng phù hợp</Text>
-          <TextInput value={targetAudience} onChangeText={setTargetAudience} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={targetAudience} onChangeText={setTargetAudience} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
 
         <ListEditor label="Lợi ích chính" values={benefits} onChange={setBenefits} placeholder="Lợi ích..." />
 
         <View style={styles.field}>
           <Text style={styles.label}>Điều kiện cơ bản</Text>
-          <TextInput value={basicConditions} onChangeText={setBasicConditions} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={basicConditions} onChangeText={setBasicConditions} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
 
         <ListEditor label="Key selling points" values={keySellingPoints} onChange={setKeySellingPoints} placeholder="Điểm bán chính..." />
@@ -212,13 +212,13 @@ export function ProductEditScreen({ productId }: { productId?: string }) {
 
         <View style={styles.field}>
           <Text style={styles.label}>Ghi chú compliance (tuỳ chọn)</Text>
-          <TextInput value={complianceNote} onChangeText={setComplianceNote} placeholderTextColor={colors.textMuted} style={[styles.input, styles.multiline]} multiline />
+          <TextInput value={complianceNote} onChangeText={setComplianceNote} placeholderTextColor={colors2.whiteMuted} style={[styles.input, styles.multiline]} multiline />
         </View>
 
         <View style={styles.field}>
           <Text style={styles.label}>Ẩn sản phẩm</Text>
           <Pressable style={styles.checkRow} onPress={() => setHideAll((v) => !v)}>
-            <Ionicons name={hideAll ? 'checkbox' : 'square-outline'} size={20} color={colors.primary} />
+            <Ionicons name={hideAll ? 'checkbox' : 'square-outline'} size={20} color={colors2.orange} />
             <Text style={styles.checkLabel}>Ẩn toàn bộ (mọi chặng)</Text>
           </Pressable>
           {!hideAll && (
@@ -264,7 +264,7 @@ export function ProductEditScreen({ productId }: { productId?: string }) {
         </Pressable>
       </ScrollView>
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -288,42 +288,38 @@ export function ProductEditScreen({ productId }: { productId?: string }) {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, gap: spacing.lg, paddingBottom: spacing.xxl },
-  field: { gap: spacing.sm },
-  label: { fontFamily: fontFamily.bold, fontSize: 13, color: colors.textPrimary },
-  helperText: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  content: { padding: spacing2.md, gap: spacing2.lg, paddingBottom: spacing2.xl },
+  field: { gap: spacing2.xs },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
+  helperText: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted },
   input: {
-    backgroundColor: colors.white,
-    borderRadius: radii.md,
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    paddingHorizontal: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 12,
-    fontFamily: fontFamily.semiBold,
+    fontFamily: fontFamily2.regular,
     fontSize: 14,
-    color: colors.textPrimary,
+    color: colors2.white,
   },
   multiline: { minHeight: 70, textAlignVertical: 'top' },
-  listRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  listRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
   listInput: { flex: 1 },
   addLineBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingVertical: 4 },
-  addLineText: { fontFamily: fontFamily.bold, fontSize: 12.5, color: colors.primary },
-  objectionCard: { backgroundColor: colors.white, borderRadius: radii.md, padding: spacing.sm, gap: spacing.sm, ...cardShadow },
-  checkRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  checkLabel: { fontFamily: fontFamily.semiBold, fontSize: 13.5, color: colors.textPrimary },
-  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  addLineText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.orange },
+  objectionCard: { backgroundColor: colors2.cardOptionIdle, borderRadius: radii2.card, padding: spacing2.xs, gap: spacing2.xs },
+  checkRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
+  checkLabel: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  chipWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing2.xs },
   chip: {
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 8,
-    backgroundColor: colors.white,
+    backgroundColor: colors2.cardOptionIdle,
   },
-  chipChecked: { backgroundColor: colors.primaryLight, borderColor: colors.primary },
-  chipText: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textPrimary },
-  chipTextChecked: { color: colors.primary, fontFamily: fontFamily.extraBold },
-  saveBtn: { backgroundColor: colors.primary, borderRadius: radii.pill, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
-  saveBtnText: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.white },
+  chipChecked: { backgroundColor: colors2.orange },
+  chipText: { fontFamily: fontFamily2.semiBold, fontSize: 12, color: colors2.white },
+  chipTextChecked: { color: colors2.white, fontFamily: fontFamily2.semiBold },
+  saveBtn: { backgroundColor: colors2.orange, borderRadius: radii2.pill, paddingVertical: spacing2.md, alignItems: 'center', marginTop: spacing2.xs },
+  saveBtnText: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
 });

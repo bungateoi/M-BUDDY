@@ -1,76 +1,56 @@
-import { StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { colors, fontFamily, primaryGradient, radii, spacing } from './theme';
+import { ImageBackground, StyleSheet, View } from 'react-native';
+import { colors2, radii2, spacing2 } from './theme';
 import { WeekDayChip } from './WeekDayChip';
 import type { WeekDayProgress } from '../data/types';
 
+const cardBg = require('../assets/v2/home2/streak-card-bg.png');
+
+// Thiết kế mới chỉ hiện hàng 7 ngày trong tuần (không còn ô "Kỷ lục") — số
+// ngày chuỗi hiện tại (currentStreak) đã chuyển lên hiện to trong Banner của
+// HomeHeader. Vẫn nhận đủ props để không đổi cách HomeScreen gọi component.
 export function StreakCard({
   currentStreak,
   longestStreak,
   weekProgress,
 }: {
-  currentStreak: number;
-  longestStreak: number;
+  currentStreak?: number;
+  longestStreak?: number;
   weekProgress: WeekDayProgress[];
 }) {
   return (
-    <LinearGradient
-      colors={primaryGradient.colors}
-      start={primaryGradient.start}
-      end={primaryGradient.end}
-      style={styles.card}
-    >
-      <View style={styles.topRow}>
-        <View style={styles.streakInfo}>
-          <View style={styles.iconCircle}>
-            <Text style={styles.fireBig}>🔥</Text>
-          </View>
-          <View>
-            <Text style={styles.streakCount}>{currentStreak} ngày</Text>
-            <Text style={styles.streakLabel}>chuỗi học liên tiếp</Text>
-          </View>
+    // "Sticker shadow" trắng đặc 4px, không blur (Figma:
+    // shadow-[0px_4px_0px_0px_white]) — khối trắng phía dưới hiện đúng 4px.
+    <View style={styles.shadowWrap}>
+      <ImageBackground source={cardBg} style={styles.card} imageStyle={styles.cardImage} resizeMode="cover">
+        <View style={[StyleSheet.absoluteFill, styles.overlay]} />
+        <View style={styles.row}>
+          {weekProgress.map((day) => (
+            <WeekDayChip key={day.label} day={day} />
+          ))}
         </View>
-        <View style={styles.recordBox}>
-          <Text style={styles.recordLabel}>Kỷ lục</Text>
-          <Text style={styles.recordValue}>{longestStreak} ngày</Text>
-        </View>
-      </View>
-
-      <View style={styles.weekRow}>
-        {weekProgress.map((day) => (
-          <WeekDayChip key={day.label} day={day} />
-        ))}
-      </View>
-    </LinearGradient>
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shadowWrap: {
+    backgroundColor: colors2.white,
+    borderRadius: radii2.card,
+    paddingBottom: 4,
+  },
   card: {
-    borderRadius: radii.xl,
-    padding: spacing.md,
-    gap: spacing.md,
-    shadowColor: '#C4460F',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.28,
-    shadowRadius: 18,
-    elevation: 6,
+    borderRadius: radii2.card,
+    borderWidth: 1,
+    borderColor: colors2.white,
+    overflow: 'hidden',
+    paddingTop: spacing2.xl,
+    paddingBottom: spacing2.md,
+    paddingHorizontal: spacing2.md,
   },
-  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  streakInfo: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fireBig: { fontSize: 24 },
-  streakCount: { fontFamily: fontFamily.extraBold, fontSize: 21, color: colors.white },
-  streakLabel: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: 'rgba(255,255,255,0.9)' },
-  recordBox: { alignItems: 'flex-end' },
-  recordLabel: { fontFamily: fontFamily.semiBold, fontSize: 12, color: 'rgba(255,255,255,0.85)' },
-  recordValue: { fontFamily: fontFamily.extraBold, fontSize: 17, color: colors.white },
-  weekRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  cardImage: { borderRadius: radii2.card },
+  // Lớp phủ tối rgba(34,34,34,0.64) đè lên ảnh cờ caro (Figma) để chữ/icon
+  // trắng bên trên luôn đọc rõ.
+  overlay: { backgroundColor: 'rgba(34,34,34,0.64)' },
+  row: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing2.sm },
 });

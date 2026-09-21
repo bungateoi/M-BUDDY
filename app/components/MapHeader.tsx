@@ -1,57 +1,20 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { StreakBadge } from './StreakBadge';
-import { cardShadow, colors, fontFamily, spacing } from './theme';
+import { StyleSheet, Text, View } from 'react-native';
+import { colors2, fontFamily2, spacing2 } from './theme';
 
-const mascotSource = require('../assets/mascot.png');
-
-export function MapHeader({
-  title,
-  streakDays,
-  onBack,
-}: {
-  title: string;
-  streakDays: number;
-  onBack?: () => void;
-}) {
+// Figma (node-id=30:1819) chỉ còn tiêu đề trên nền xanh — bỏ nút back/
+// streak badge/mascot của bản cũ vì đã có "Trang chủ" ở thanh menu dưới để
+// quay lại Home, không cần nút back riêng nữa.
+export function MapHeader({ title }: { title: string }) {
   return (
     <View style={styles.wrap}>
-      <Pressable onPress={onBack} hitSlop={8} style={styles.backBtn}>
-        <Ionicons name="arrow-back" size={20} color={colors.textPrimary} />
-      </Pressable>
       <Text style={styles.title} numberOfLines={1}>
         {title}
       </Text>
-      <View style={styles.right}>
-        <Image source={mascotSource} style={styles.mascot} resizeMode="contain" />
-        <StreakBadge days={streakDays} />
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
-    backgroundColor: colors.white,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
-  },
-  backBtn: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...cardShadow,
-  },
-  title: { flex: 1, fontFamily: fontFamily.extraBold, fontSize: 16.5, color: colors.textPrimary },
-  right: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  mascot: { width: 32, height: 37 },
+  wrap: { padding: spacing2.md },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 24, lineHeight: 32, color: colors2.white },
 });

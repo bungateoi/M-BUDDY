@@ -4,12 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import {
   QuizHeader,
   SimpleSelectModal,
-  BottomNavBar,
-  cardShadow,
-  colors,
-  fontFamily,
-  radii,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
   webPhoneFrameMaxWidth,
   type SimpleSelectOption,
 } from '../components';
@@ -19,7 +18,7 @@ import type { AdminMemberRow, UserRole } from '../data/types';
 import { useAppNavigation } from '../navigation/NavigationContext';
 
 const ROLE_LABEL: Record<UserRole, string> = { employee: 'Nhân viên', manager: 'Trưởng nhóm', admin: 'Admin' };
-const ROLE_COLOR: Record<UserRole, string> = { employee: colors.textMuted, manager: colors.primary, admin: '#7C4DFF' };
+const ROLE_COLOR: Record<UserRole, string> = { employee: colors2.whiteMuted, manager: colors2.orange, admin: '#B98CFF' };
 const ROLE_OPTIONS: SimpleSelectOption[] = [
   { id: 'employee', label: 'Nhân viên' },
   { id: 'manager', label: 'Trưởng nhóm' },
@@ -119,19 +118,19 @@ export function AdminScreen() {
       />
 
       <View style={styles.searchWrap}>
-        <Ionicons name="search" size={17} color={colors.textMuted} />
+        <Ionicons name="search" size={17} color={colors2.whiteMuted} />
         <TextInput
           value={query}
           onChangeText={setQuery}
           placeholder="Tìm theo tên hoặc email..."
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={colors2.whiteMuted}
           style={styles.searchInput}
         />
       </View>
 
       {!members ? (
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors2.white} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -144,9 +143,9 @@ export function AdminScreen() {
                   <Text style={styles.name} numberOfLines={1}>
                     {member.fullName}
                   </Text>
-                  {savingId === member.id && <ActivityIndicator size="small" color={colors.primary} />}
+                  {savingId === member.id && <ActivityIndicator size="small" color={colors2.orange} />}
                   <Pressable onPress={() => openProfileEdit(member)} hitSlop={8}>
-                    <Ionicons name="create-outline" size={18} color={colors.textMuted} />
+                    <Ionicons name="create-outline" size={18} color={colors2.whiteMuted} />
                   </Pressable>
                 </View>
                 <Text style={styles.email} numberOfLines={1}>
@@ -165,11 +164,11 @@ export function AdminScreen() {
                   </Pressable>
 
                   <Pressable style={styles.pill} onPress={() => setManagerEditId(member.id)}>
-                    <Ionicons name="people-outline" size={12} color={colors.textPrimary} />
+                    <Ionicons name="people-outline" size={12} color={colors2.white} />
                     <Text style={styles.pillText}>
                       {member.managerId ? (managerNameById.get(member.managerId) ?? 'Đã gán') : 'Chưa có quản lý'}
                     </Text>
-                    <Ionicons name="chevron-down" size={12} color={colors.textPrimary} />
+                    <Ionicons name="chevron-down" size={12} color={colors2.white} />
                   </Pressable>
                 </View>
               </View>
@@ -178,7 +177,7 @@ export function AdminScreen() {
         </ScrollView>
       )}
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -214,25 +213,25 @@ export function AdminScreen() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Sửa thông tin</Text>
               <Pressable onPress={() => setProfileEditId(null)} hitSlop={8} style={styles.modalCloseBtn}>
-                <Ionicons name="close" size={20} color={colors.textPrimary} />
+                <Ionicons name="close" size={20} color={colors2.white} />
               </Pressable>
             </View>
 
             <View style={styles.modalField}>
               <Text style={styles.modalLabel}>Họ và tên</Text>
-              <TextInput value={draftFullName} onChangeText={setDraftFullName} placeholder="Nguyễn Thị Thảo Hương" placeholderTextColor={colors.textMuted} style={styles.modalInput} />
+              <TextInput value={draftFullName} onChangeText={setDraftFullName} placeholder="Nguyễn Thị Thảo Hương" placeholderTextColor={colors2.whiteMuted} style={styles.modalInput} />
             </View>
             <View style={styles.modalField}>
               <Text style={styles.modalLabel}>Chức danh</Text>
-              <TextInput value={draftJobTitle} onChangeText={setDraftJobTitle} placeholder="Chuyên viên khách hàng cá nhân" placeholderTextColor={colors.textMuted} style={styles.modalInput} />
+              <TextInput value={draftJobTitle} onChangeText={setDraftJobTitle} placeholder="Chuyên viên khách hàng cá nhân" placeholderTextColor={colors2.whiteMuted} style={styles.modalInput} />
             </View>
             <View style={styles.modalField}>
               <Text style={styles.modalLabel}>Chi nhánh</Text>
-              <TextInput value={draftBranch} onChangeText={setDraftBranch} placeholder="Hội sở chính" placeholderTextColor={colors.textMuted} style={styles.modalInput} />
+              <TextInput value={draftBranch} onChangeText={setDraftBranch} placeholder="Hội sở chính" placeholderTextColor={colors2.whiteMuted} style={styles.modalInput} />
             </View>
 
             <Pressable onPress={handleSaveProfile} disabled={savingId === profileEditId} style={styles.modalSaveBtn}>
-              {savingId === profileEditId ? <ActivityIndicator color={colors.white} /> : <Text style={styles.modalSaveText}>Lưu</Text>}
+              {savingId === profileEditId ? <ActivityIndicator color={colors2.white} /> : <Text style={styles.modalSaveText}>Lưu</Text>}
             </Pressable>
           </View>
         </View>
@@ -242,45 +241,43 @@ export function AdminScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.black },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    marginHorizontal: spacing.xl,
-    marginTop: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    gap: spacing2.xs,
+    marginHorizontal: spacing2.md,
+    marginTop: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 10,
-    ...cardShadow,
   },
-  searchInput: { flex: 1, fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textPrimary, padding: 0 },
-  content: { padding: spacing.xl, gap: spacing.sm, paddingBottom: spacing.xxl },
+  searchInput: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 13, color: colors2.white, padding: 0 },
+  content: { padding: spacing2.md, gap: spacing2.xs, paddingBottom: spacing2.xl },
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.textMuted, textAlign: 'center', marginTop: spacing.xl },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.whiteMuted, textAlign: 'center', marginTop: spacing2.md },
   row: {
-    backgroundColor: colors.white,
-    borderRadius: radii.lg,
-    padding: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
     gap: 4,
-    ...cardShadow,
   },
-  rowTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm },
-  name: { flex: 1, fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.textPrimary },
-  email: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
-  pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: 6 },
+  rowTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing2.xs },
+  name: { flex: 1, fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
+  email: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted },
+  pillRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing2.xs, marginTop: 6 },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
+    borderColor: colors2.black,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.xs,
     paddingVertical: 6,
   },
-  pillText: { fontFamily: fontFamily.bold, fontSize: 11.5, color: colors.textPrimary },
+  pillText: { fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.white },
 
   // alignItems:'center' + modalSheet có width/maxWidth — trên web, Modal
   // portal thẳng ra document.body (ngoài khung "phản chiếu điện thoại" bọc
@@ -291,28 +288,26 @@ const styles = StyleSheet.create({
   modalSheet: {
     width: '100%',
     maxWidth: webPhoneFrameMaxWidth,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radii.xl,
-    borderTopRightRadius: radii.xl,
-    padding: spacing.xl,
-    gap: spacing.md,
+    backgroundColor: colors2.black,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
+    padding: spacing2.md,
+    gap: spacing2.md,
   },
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  modalTitle: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
-  modalCloseBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.background, alignItems: 'center', justifyContent: 'center' },
+  modalTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
+  modalCloseBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: colors2.cardOptionIdle, alignItems: 'center', justifyContent: 'center' },
   modalField: { gap: 6 },
-  modalLabel: { fontFamily: fontFamily.bold, fontSize: 12.5, color: colors.textPrimary },
+  modalLabel: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
   modalInput: {
-    backgroundColor: colors.background,
-    borderRadius: radii.md,
-    borderWidth: 1.5,
-    borderColor: '#F1E7E0',
-    paddingHorizontal: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 12,
-    fontFamily: fontFamily.semiBold,
+    fontFamily: fontFamily2.regular,
     fontSize: 14,
-    color: colors.textPrimary,
+    color: colors2.white,
   },
-  modalSaveBtn: { backgroundColor: colors.primary, borderRadius: radii.pill, paddingVertical: spacing.md, alignItems: 'center', marginTop: spacing.sm },
-  modalSaveText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.white },
+  modalSaveBtn: { backgroundColor: colors2.orange, borderRadius: radii2.pill, paddingVertical: spacing2.md, alignItems: 'center', marginTop: spacing2.xs },
+  modalSaveText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
 });

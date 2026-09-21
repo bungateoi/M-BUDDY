@@ -26,13 +26,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const loadProfile = useCallback(async () => {
-    try {
-      const p = await fetchMyProfile();
-      setProfile(p);
-    } catch {
-      // Chưa có profile (vd. đăng ký thành công nhưng trigger chưa chạy kịp)
-      // hoặc lỗi mạng — coi như chưa sẵn sàng, không chặn app crash.
-      setProfile(null);
+    // Thử lại vài lần trước khi kết luận "không có profile" — phần lớn lỗi ở
+    // đây là thoáng qua (mạng chập chờn, hoặc getUser()/query profiles vừa
+    // gọi đúng lúc session mới refresh xong nên chưa ổn định), chứ không
+    // phải profile thật sự không tồn tại. Trước đây chỉ thử 1 lần nên gặp
+    // đúng lúc mạng chớp nhoáng là rơi thẳng vào màn báo lỗi, dù đăng xuất
+    // vào lại là hết (vì lúc đó gọi lại và không còn dính lỗi thoáng qua).
+    const maxAttempts = 3;
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        const p = await fetchMyProfile();
+        setProfile(p);
+        return;
+      } catch {
+        if (attempt === maxAttempts) {
+          setProfile(null);
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, attempt * 800));
+      }
     }
   }, []);
 

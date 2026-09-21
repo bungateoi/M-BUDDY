@@ -1,80 +1,44 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MapLevelNode } from './MapLevelNode';
-import { MapLevelCard } from './MapLevelCard';
-import {
-  MAP_NODE_GAP,
-  MAP_NODE_SIZE,
-  MAP_ROW_SPACING,
-  MAP_ROW_TOP_HEIGHT,
-  getMapNodeCenterX,
-} from './mapLayout';
-import { spacing } from './theme';
+import { MAP_NODE_COL_HEIGHT, MAP_NODE_COL_WIDTH, MAP_ROW_PITCH, getMapNodeCenterX } from './mapLayout';
+import { colors2, fontFamily2 } from './theme';
 import type { LevelStatus } from '../data/types';
 
+// Mỗi node CHỈ còn nhãn "Level N" phía trên + vòng tròn trạng thái, canh
+// giữa theo 1 cột — không còn thẻ tên sản phẩm bên cạnh như bản cũ (Figma
+// node-id=30:1819 không có thẻ này, bấm thẳng vào node để vào học).
 export function MapLevelRow({
   status,
   positionInChapter,
-  productName,
   offsetIndex,
   laneWidth,
-  alignLeft,
   onPressStart,
   isLast,
 }: {
   status: LevelStatus;
   positionInChapter: number;
-  productName: string;
   offsetIndex: number;
   laneWidth: number;
-  alignLeft: boolean;
   onPressStart?: () => void;
   isLast?: boolean;
 }) {
-  const nodeSize = MAP_NODE_SIZE[status];
-  const topHeight = MAP_ROW_TOP_HEIGHT[status];
-  const rowHeight = topHeight;
-
-  const nodeCenterX = getMapNodeCenterX(offsetIndex, laneWidth);
-  const nodeLeft = nodeCenterX - nodeSize / 2;
-  const leftWidth = Math.max(nodeLeft - MAP_NODE_GAP, 0);
-  const rightLeft = nodeLeft + nodeSize + MAP_NODE_GAP;
-  const rightWidth = Math.max(laneWidth - rightLeft, 0);
-
-  const sideAlign = alignLeft ? 'flex-end' : 'flex-start';
-  const cardMaxWidth = (alignLeft ? leftWidth : rightWidth) - spacing.xs;
-
-  // Card chỉ để hiển thị tên level/sản phẩm — bấm để vào học giờ nằm ở
-  // node (ngôi sao/tick), không còn nút "Bắt đầu học" riêng nữa.
-  const content = (
-    <View style={[styles.cardWrap, { height: topHeight, alignItems: sideAlign }]}>
-      <MapLevelCard
-        status={status}
-        positionInChapter={positionInChapter}
-        productName={productName}
-        maxWidth={cardMaxWidth}
-      />
-    </View>
-  );
+  const centerX = getMapNodeCenterX(offsetIndex, laneWidth);
 
   return (
-    <View style={[styles.row, { height: rowHeight }, !isLast && { marginBottom: MAP_ROW_SPACING }]}>
-      <View style={[styles.slot, { left: 0, width: leftWidth }]}>{alignLeft && content}</View>
-
+    <View style={[styles.row, { height: MAP_NODE_COL_HEIGHT }, !isLast && { marginBottom: MAP_ROW_PITCH - MAP_NODE_COL_HEIGHT }]}>
       <Pressable
-        style={[styles.nodeSlot, { left: nodeLeft, width: nodeSize, height: topHeight }]}
+        style={[styles.col, { left: centerX - MAP_NODE_COL_WIDTH / 2, width: MAP_NODE_COL_WIDTH }]}
         onPress={onPressStart}
       >
-        <MapLevelNode status={status} size={nodeSize} />
+        <Text style={styles.label}>Level {positionInChapter}</Text>
+        <MapLevelNode status={status} />
       </Pressable>
-
-      <View style={[styles.slot, { left: rightLeft, width: rightWidth }]}>{!alignLeft && content}</View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   row: { position: 'relative' },
-  slot: { position: 'absolute', top: 0 },
-  cardWrap: { justifyContent: 'center' },
-  nodeSlot: { position: 'absolute', top: 0, alignItems: 'center', justifyContent: 'center' },
+  col: { position: 'absolute', top: 0, alignItems: 'center', gap: 8 },
+  label: { fontFamily: fontFamily2.display, fontSize: 16, lineHeight: 24, color: colors2.white, textAlign: 'center' },
 });

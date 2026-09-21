@@ -54,3 +54,16 @@ export function averageSkillScore(raw: Record<string, number> | null | undefined
   const values = SCORE_CRITERIA_META.map((c) => raw?.[c.key] ?? 0);
   return Math.round(values.reduce((sum, v) => sum + v, 0) / values.length);
 }
+
+/** Điểm trung bình CẢ ĐỘI theo từng tiêu chí — cho radar "Đội nhóm" (màn
+ * Nhóm của tôi + màn Phân tích Kiến thức & Kỹ năng > tab Đội nhóm). Dùng
+ * chung giữa 2 màn đó để không lệch công thức tính. */
+export function averageTeamSkills(members: { scores: Record<string, number> }[]): SkillScore[] {
+  if (members.length === 0) return buildSkillScoresFromRaw({});
+  const raw: Record<string, number> = {};
+  for (const c of SCORE_CRITERIA_META) {
+    const total = members.reduce((sum, m) => sum + (m.scores[c.key] ?? 0), 0);
+    raw[c.key] = total / members.length;
+  }
+  return buildSkillScoresFromRaw(raw);
+}

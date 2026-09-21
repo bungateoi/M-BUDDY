@@ -1,38 +1,40 @@
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { Card } from './Card';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { QuizOptionRow } from './QuizOptionRow';
-import { QuizFeedbackBanner } from './QuizFeedbackBanner';
-import { colors, fontFamily, primaryGradient, radii, spacing } from './theme';
+import { SpeedMarkDecor } from './icons2';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { QuizOptionId, QuizQuestion } from '../data/types';
 
 const studyingMascot = require('../assets/mascot-studying.png');
 
+// Đã bỏ hẳn banner kết quả + nút "Câu tiếp theo" (chuyển ra
+// QuizBottomSheet.tsx, hiện như 1 sheet trắng cố định dưới đáy màn thay vì
+// nằm trong card — đúng thiết kế mới node-id=69:1815/69:1946).
 export function QuizQuestionCard({
   question,
+  currentIndex,
+  totalQuestions,
   selectedOptionId,
   onSelectOption,
-  onPressNext,
-  isLastQuestion,
 }: {
   question: QuizQuestion;
+  currentIndex: number;
+  totalQuestions: number;
   selectedOptionId?: QuizOptionId;
   onSelectOption: (optionId: QuizOptionId) => void;
-  onPressNext?: () => void;
-  isLastQuestion: boolean;
 }) {
   const answered = selectedOptionId != null;
-  const isCorrect = answered && selectedOptionId === question.correctOptionId;
 
   return (
-    <Card style={styles.card}>
+    <View style={styles.card}>
       <View style={styles.intro}>
         <Image source={studyingMascot} style={styles.introMascot} resizeMode="contain" />
-        <View style={styles.introBubble}>
-          <Text style={styles.introTitle}>Câu hỏi</Text>
-          <Text style={styles.introSubtitle}>Chọn đáp án đúng nhất nhé!</Text>
+        <View style={styles.introTextCol}>
+          <Text style={styles.introTitle}>
+            Câu {currentIndex + 1}/{totalQuestions}
+          </Text>
+          <Text style={styles.introSubtitle}>Chọn đáp án đúng nhất nhé !</Text>
         </View>
+        <SpeedMarkDecor />
       </View>
 
       <Text style={styles.question}>{question.question}</Text>
@@ -56,49 +58,22 @@ export function QuizQuestionCard({
           );
         })}
       </View>
-
-      {answered && <QuizFeedbackBanner isCorrect={isCorrect} explanation={question.explanation} />}
-
-      {answered && (
-        <Pressable onPress={onPressNext}>
-          <LinearGradient
-            colors={primaryGradient.colors}
-            start={primaryGradient.start}
-            end={primaryGradient.end}
-            style={styles.nextButton}
-          >
-            <Text style={styles.nextButtonText}>{isLastQuestion ? 'Hoàn thành' : 'Câu tiếp theo'}</Text>
-            <Ionicons name="arrow-forward" size={18} color={colors.white} />
-          </LinearGradient>
-        </Pressable>
-      )}
-    </Card>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  card: { gap: spacing.lg },
-  intro: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  introMascot: { width: 48, height: 54 },
-  introBubble: {
-    flex: 1,
-    backgroundColor: colors.primaryLight,
-    borderRadius: radii.lg,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    gap: 1,
+  card: {
+    backgroundColor: colors2.black,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    gap: spacing2.md,
   },
-  introTitle: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.primary },
-  introSubtitle: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted },
-  question: { fontFamily: fontFamily.extraBold, fontSize: 17, color: colors.textPrimary, lineHeight: 24 },
-  options: { gap: spacing.sm },
-  nextButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
-  },
-  nextButtonText: { color: colors.white, fontFamily: fontFamily.extraBold, fontSize: 15 },
+  intro: { flexDirection: 'row', alignItems: 'flex-start', gap: spacing2.xxs },
+  introMascot: { width: 40, height: 40 },
+  introTextCol: { flex: 1, gap: spacing2.xxs },
+  introTitle: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
+  introSubtitle: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.whiteMuted },
+  question: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
+  options: { gap: spacing2.xs },
 });

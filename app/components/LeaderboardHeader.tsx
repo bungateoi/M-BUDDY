@@ -1,41 +1,19 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { StreakBadge } from './StreakBadge';
-import { NotificationBell } from './NotificationBell';
-import { colors, fontFamily, spacing } from './theme';
+import { colors2, fontFamily2, spacing2 } from './theme';
 
-export function LeaderboardHeader({
-  streakDays,
-  hasUnreadNotification,
-}: {
-  streakDays: number;
-  hasUnreadNotification?: boolean;
-}) {
+// Figma (node-id=35:2700) chỉ còn tiêu đề "Xếp hạng" — bỏ streak/notification
+// của bản cũ, giống MapHeader/PracticeHeader.
+export function LeaderboardHeader() {
   return (
     <View style={styles.wrap}>
-      <View style={styles.titleRow}>
-        <Text style={styles.title}>Xếp hạng</Text>
-        <Text style={styles.trophy}>🏆</Text>
-      </View>
-      <View style={styles.right}>
-        <StreakBadge days={streakDays} />
-        <NotificationBell hasUnread={hasUnreadNotification} />
-      </View>
+      <Text style={styles.title} numberOfLines={1}>
+        Xếp hạng
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.sm,
-    backgroundColor: colors.background,
-  },
-  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  title: { fontFamily: fontFamily.black, fontSize: 26, color: colors.textPrimary },
-  trophy: { fontSize: 22 },
-  right: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  wrap: { padding: spacing2.md },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 24, lineHeight: 32, color: colors2.white },
 });

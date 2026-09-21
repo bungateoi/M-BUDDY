@@ -1,9 +1,14 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { cardShadow, colors, fontFamily } from './theme';
+import { colors2, fontFamily2 } from './theme';
 
-const SIZE = 60;
-const STROKE = 4;
+// Kích thước + màu khớp Figma (node-id=76:3536, "Clock") — nền tối #2E2E2E
+// thay cho track cam nhạt cũ, viền tiến độ vẫn cam (colors2.orange, đúng màu
+// "Time" asset gốc). Kỹ thuật vẽ (stroke + dasharray/dashoffset, xoay -90°)
+// giữ nguyên như bản cũ — asset SVG gốc của Figma là 1 path tĩnh ứng đúng 1
+// mốc thời gian cụ thể (2:15), không tái dùng được cho giá trị động.
+const SIZE = 64;
+const STROKE = 6.4;
 const RADIUS = (SIZE - STROKE) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
@@ -25,7 +30,7 @@ export function CountdownRing({ secondsLeft, totalSeconds }: { secondsLeft: numb
           cx={SIZE / 2}
           cy={SIZE / 2}
           r={RADIUS}
-          stroke={colors.chipTrack}
+          stroke={colors2.cardOptionIdle}
           strokeWidth={STROKE}
           fill="none"
         />
@@ -33,7 +38,7 @@ export function CountdownRing({ secondsLeft, totalSeconds }: { secondsLeft: numb
           cx={SIZE / 2}
           cy={SIZE / 2}
           r={RADIUS}
-          stroke={colors.primary}
+          stroke={colors2.orange}
           strokeWidth={STROKE}
           strokeLinecap="round"
           strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
@@ -47,15 +52,7 @@ export function CountdownRing({ secondsLeft, totalSeconds }: { secondsLeft: numb
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    width: SIZE,
-    height: SIZE,
-    borderRadius: SIZE / 2,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...cardShadow,
-  },
-  text: { position: 'absolute', fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.textPrimary },
+  wrap: { width: SIZE, height: SIZE, alignItems: 'center', justifyContent: 'center' },
+  text: { position: 'absolute', fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   svgRotated: { transform: [{ rotate: '-90deg' }] },
 });

@@ -6,11 +6,11 @@ import {
   PersonaBuilderRow,
   CriterionPickerModal,
   CUSTOM_CHIP_LABEL,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  radii,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
 } from '../components';
 import { personaBuilderCriteria } from '../data/personaBuilderOptions';
 import { callGeneratePersona } from '../lib/ai';
@@ -18,6 +18,13 @@ import { useAuth } from '../lib/AuthContext';
 import { showAlert } from '../lib/platformAlert';
 import type { PersonaCriteriaInput, PersonaFieldAnswer } from '../data/types';
 import { useAppNavigation } from '../navigation/NavigationContext';
+
+// Các luồng role-play khác (Map/Practice) đều cố định 180s (xem
+// RolePlayScreen.tsx#CALL_DURATION_SECONDS) — riêng luồng tự tạo khách hàng
+// này cho chọn thời lượng, vì đây là buổi luyện tự do, không gắn 1 kịch bản
+// có độ dài chuẩn hoá sẵn.
+const DURATION_OPTIONS_MIN = [3, 5, 10, 15];
+const DEFAULT_DURATION_MIN = 3;
 
 function fieldSummaryParts(answer: PersonaFieldAnswer | undefined): string[] {
   if (!answer) return [];
@@ -32,6 +39,7 @@ export function CreateCustomerScreen() {
   const [answers, setAnswers] = useState<Record<string, PersonaFieldAnswer>>({});
   const [activeCriterionId, setActiveCriterionId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [durationMinutes, setDurationMinutes] = useState(DEFAULT_DURATION_MIN);
 
   const activeCriterion = personaBuilderCriteria.find((c) => c.id === activeCriterionId);
 
@@ -70,7 +78,7 @@ export function CreateCustomerScreen() {
     setIsSubmitting(true);
     try {
       const generatedCustomer = await callGeneratePersona(criteria);
-      navigate('roleplay', { generatedCustomer });
+      navigate('roleplay', { generatedCustomer, durationSec: durationMinutes * 60, backTo: 'practice' });
     } catch {
       showAlert('Không tạo được chân dung khách hàng', 'Có lỗi kết nối tới AI, vui lòng thử lại.');
     } finally {
@@ -104,6 +112,24 @@ export function CreateCustomerScreen() {
           ))}
         </View>
 
+        <View style={styles.durationSection}>
+          <Text style={styles.durationLabel}>⏱️ Thời gian cuộc gọi</Text>
+          <View style={styles.durationRow}>
+            {DURATION_OPTIONS_MIN.map((min) => {
+              const selected = min === durationMinutes;
+              return (
+                <Pressable
+                  key={min}
+                  onPress={() => setDurationMinutes(min)}
+                  style={[styles.durationChip, selected && styles.durationChipSelected]}
+                >
+                  <Text style={[styles.durationChipText, selected && styles.durationChipTextSelected]}>{min} phút</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+        </View>
+
         <View style={styles.tipCard}>
           <Text style={styles.tipTitle}>✨ Gợi ý</Text>
           <Text style={styles.tipText}>
@@ -113,17 +139,17 @@ export function CreateCustomerScreen() {
 
         <Pressable onPress={handleSubmit} disabled={isSubmitting} style={[styles.submitButton, isSubmitting && styles.submitButtonDisabled]}>
           {isSubmitting ? (
-            <ActivityIndicator color={colors.white} />
+            <ActivityIndicator color={colors2.white} />
           ) : (
             <>
               <Text style={styles.submitButtonText}>Tạo chân dung khách hàng</Text>
-              <Ionicons name="arrow-forward" size={17} color={colors.white} />
+              <Ionicons name="arrow-forward" size={17} color={colors2.white} />
             </>
           )}
         </Pressable>
       </ScrollView>
 
-      <BottomNavBar active="practice" onPressItem={(key) => {
+      <HomeBottomNavBar active="practice" onPressItem={(key) => {
         if (key === 'home') navigate('home');
         if (key === 'practice') navigate('practice');
         if (key === 'xephang') navigate('leaderboard');
@@ -146,26 +172,38 @@ export function CreateCustomerScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, gap: spacing.md, paddingBottom: spacing.xxl },
-  rows: { gap: spacing.sm },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  content: { padding: spacing2.md, gap: spacing2.md, paddingBottom: spacing2.xl },
+  rows: { gap: spacing2.xs },
+  durationSection: { gap: 8 },
+  durationLabel: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  durationRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  durationChip: {
+    borderRadius: radii2.pill,
+    backgroundColor: colors2.cardOptionIdle,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: 8,
+  },
+  durationChipSelected: { backgroundColor: colors2.orange },
+  durationChipText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  durationChipTextSelected: { color: colors2.white },
   tipCard: {
-    backgroundColor: colors.primaryLight,
-    borderRadius: radii.lg,
-    padding: spacing.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
     gap: 2,
   },
-  tipTitle: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.primary },
-  tipText: { fontFamily: fontFamily.semiBold, fontSize: 11.5, color: colors.textMuted, lineHeight: 16 },
+  tipTitle: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.orange },
+  tipText: { fontFamily: fontFamily2.regular, fontSize: 11.5, color: colors2.whiteMuted, lineHeight: 16 },
   submitButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingVertical: spacing2.md,
   },
   submitButtonDisabled: { opacity: 0.7 },
-  submitButtonText: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.white },
+  submitButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 14.5, color: colors2.white },
 });

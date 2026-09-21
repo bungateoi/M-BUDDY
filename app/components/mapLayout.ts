@@ -1,58 +1,45 @@
-import { spacing } from './theme';
 import type { LevelStatus } from '../data/types';
 
-// Nguồn toạ độ duy nhất cho path màn Map. Đường đi nằm giữa `laneWidth`
-// (đo thực tế từ layout, responsive theo màn hình), node lệch nhẹ quanh
-// tâm để tạo cảm giác ngoằn ngoèo, card nội dung nằm luân phiên trái/phải
-// quanh node. MapLevelRow dùng đúng các hằng số này để tự đặt kích thước
-// cố định, MapPathLine dùng đúng công thức tương tự để vẽ đường cong đi
-// qua chính xác từng node — không đo layout động, tránh lệch điểm.
+// Nguồn toạ độ duy nhất cho path màn Map — khớp Figma "Hackathon"
+// (node-id=30:1819, Bản đồ): 2 làn trái/phải cố định (không phải wiggle
+// nhỏ như bản cũ), khoảng cách Y đều nhau giữa các node bất kể trạng thái
+// khoá/mở (Figma không có kiểu dáng riêng cho "đã hoàn thành" — locked dùng
+// 1 kiểu, unlocked (current/completed) dùng chung 1 kiểu, xem MapLevelNode).
 
-// Độ lệch của tâm node so với tâm `laneWidth`, theo vị trí dòng (0 = ải
-// trên cùng đang hiển thị). Âm = lệch trái, dương = lệch phải.
-export const MAP_NODE_WIGGLE = [-10, 8, -12, 10, -8];
+// Tâm node lấy đúng tỉ lệ Figma (canvas gốc 390px): trái ở x=89, phải ở
+// x=302 — quy về tỉ lệ % để co giãn theo laneWidth thực tế trên máy.
+export const MAP_LEFT_X_RATIO = 89 / 390;
+export const MAP_RIGHT_X_RATIO = 302 / 390;
 
-export const MAP_NODE_GAP = 10; // khoảng cách giữa node và card 2 bên
-// Giãn rõ rệt so với spacing.xxl (28) gốc — người dùng phản hồi bản trước
-// (28, rồi 36) vẫn còn chật.
-export const MAP_ROW_SPACING = spacing.xxl * 2;
+export const MAP_NODE_COL_WIDTH = 80;
+export const MAP_NODE_LABEL_HEIGHT = 24;
+export const MAP_NODE_LABEL_GAP = 8;
+// Vòng tròn "thật" (không tính phần bóng đổ tràn dưới trong asset xuất
+// 80x70 — ellipse rx=40 ry=32, tức cao 64).
+export const MAP_NODE_CIRCLE_HEIGHT = 64;
+export const MAP_NODE_COL_HEIGHT = MAP_NODE_LABEL_HEIGHT + MAP_NODE_LABEL_GAP + MAP_NODE_CIRCLE_HEIGHT; // 96, khớp Figma
 
-// 'current' dùng CHUNG kích thước với 'completed' — trước đây to hơn hẳn
-// (84px, ngôi sao + gradient cam cố định) gây lệch thiết kế so với các
-// level khác trong cùng chặng. Giờ ngôi sao + gradient chỉ còn là hiệu ứng
-// hover (xem MapLevelNode), không gắn với status nữa, nên node cần đồng
-// nhất kích thước ở mọi trạng thái đã mở khoá.
-export const MAP_NODE_SIZE: Record<LevelStatus, number> = {
-  locked: 62,
-  completed: 62,
-  current: 62,
-};
+// Khoảng cách đều giữa TÂM 2 node liên tiếp — 4 node trong Figma cách đều
+// nhau đúng 146px (72, 218, 364, 510).
+export const MAP_ROW_PITCH = 146;
 
-// Chiều cao cố định phần "node + card" (trước accessory). Card giờ chỉ
-// còn 1 dòng "Level N • Tên sản phẩm" nên chiều cao do node quyết định.
-export const MAP_ROW_TOP_HEIGHT: Record<LevelStatus, number> = {
-  locked: 66,
-  completed: 62,
-  current: 62,
-};
+// Đường nối (road) — xem MapPathLine.tsx. Độ dày + bán kính bo góc lấy từ
+// asset road-corner.svg (100x100, dải dày 25px), bo góc dựng bằng quadratic
+// bezier (không phải cung tròn tuyệt đối) nên đặt "bán kính" xấp xỉ thay vì
+// chép nguyên số Figma.
+export const MAP_ROAD_THICKNESS = 25;
+export const MAP_ROAD_CORNER_RADIUS = 44;
 
-// Không còn nút "Bắt đầu học" riêng — bấm thẳng vào node (ngôi sao/tick)
-// để vào học, nên không còn phần phụ bên dưới card nữa.
-export const MAP_ACCESSORY_HEIGHT: Record<LevelStatus, number> = {
-  locked: 0,
-  completed: 0,
-  current: 0,
-};
-// Khoảng cách giữa card và phần phụ bên dưới nó (chỉ áp dụng khi có phụ).
-export const MAP_ACCESSORY_GAP = 6;
+export function getMapNodeCenterX(offsetIndex: number, laneWidth: number) {
+  // offsetIndex=0 là node TRÊN CÙNG đang hiển thị (level số cao nhất trong
+  // chặng) — Figma đặt node này ở làn PHẢI, rồi so le dần xuống dưới.
+  const isRight = offsetIndex % 2 === 0;
+  return laneWidth * (isRight ? MAP_RIGHT_X_RATIO : MAP_LEFT_X_RATIO);
+}
 
 export interface MapPoint {
   x: number;
   y: number;
-}
-
-export function getMapNodeCenterX(offsetIndex: number, laneWidth: number) {
-  return laneWidth / 2 + MAP_NODE_WIGGLE[offsetIndex % MAP_NODE_WIGGLE.length];
 }
 
 export function computeMapNodeCenters(
@@ -62,23 +49,20 @@ export function computeMapNodeCenters(
    * nối liền nhiều chặng (MapScreen). Cùng độ dài với `statuses`. */
   extraSpaceBeforeRow?: number[]
 ): { points: MapPoint[]; totalHeight: number } {
-  let cumulativeY = 0;
   const points: MapPoint[] = [];
+  let colTopY = 0;
 
-  statuses.forEach((status, i) => {
-    cumulativeY += extraSpaceBeforeRow?.[i] ?? 0;
-    const topHeight = MAP_ROW_TOP_HEIGHT[status];
+  statuses.forEach((_, i) => {
+    colTopY += extraSpaceBeforeRow?.[i] ?? 0;
 
     points.push({
       x: getMapNodeCenterX(i, laneWidth),
-      y: cumulativeY + topHeight / 2,
+      y: colTopY + MAP_NODE_LABEL_HEIGHT + MAP_NODE_LABEL_GAP + MAP_NODE_CIRCLE_HEIGHT / 2,
     });
 
-    const accessoryHeight = MAP_ACCESSORY_HEIGHT[status];
-    const accessoryBlock = accessoryHeight > 0 ? accessoryHeight + MAP_ACCESSORY_GAP : 0;
     const isLast = i === statuses.length - 1;
-    cumulativeY += topHeight + accessoryBlock + (isLast ? 0 : MAP_ROW_SPACING);
+    colTopY += MAP_NODE_COL_HEIGHT + (isLast ? 0 : MAP_ROW_PITCH - MAP_NODE_COL_HEIGHT);
   });
 
-  return { points, totalHeight: cumulativeY };
+  return { points, totalHeight: colTopY };
 }

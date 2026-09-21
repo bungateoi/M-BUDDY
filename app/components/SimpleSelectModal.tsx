@@ -1,6 +1,6 @@
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing, webPhoneFrameMaxWidth } from './theme';
+import { colors2, fontFamily2, radii2, spacing2, webPhoneFrameMaxWidth } from './theme';
 
 export interface SimpleSelectOption {
   id: string;
@@ -30,7 +30,7 @@ export function SimpleSelectModal({
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>{title}</Text>
             <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-              <Ionicons name="close" size={20} color={colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors2.white} />
             </Pressable>
           </View>
           <ScrollView style={styles.sheetScroll} contentContainerStyle={styles.sheetContent} showsVerticalScrollIndicator={false}>
@@ -46,7 +46,7 @@ export function SimpleSelectModal({
                   }}
                 >
                   <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{option.label}</Text>
-                  {selected && <Ionicons name="checkmark" size={18} color={colors.primary} />}
+                  {selected && <Ionicons name="checkmark" size={18} color={colors2.orange} />}
                 </Pressable>
               );
             })}
@@ -67,42 +67,40 @@ const styles = StyleSheet.create({
   sheet: {
     width: '100%',
     maxWidth: webPhoneFrameMaxWidth,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radii.xl,
-    borderTopRightRadius: radii.xl,
+    backgroundColor: colors2.black,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
     maxHeight: '70%',
-    paddingBottom: spacing.lg,
+    paddingBottom: spacing2.lg,
   },
   sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.lg,
+    paddingBottom: spacing2.md,
   },
-  sheetTitle: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
+  sheetTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
   closeBtn: {
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.background,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sheetScroll: { paddingHorizontal: spacing.lg },
-  sheetContent: { paddingTop: spacing.sm, paddingBottom: spacing.sm },
+  sheetScroll: { paddingHorizontal: spacing2.md },
+  sheetContent: { paddingTop: spacing2.xs, paddingBottom: spacing2.xs },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
-    borderRadius: radii.md,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.md,
+    borderRadius: radii2.card,
   },
-  optionSelected: { backgroundColor: colors.primaryLight },
-  optionText: { fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textPrimary },
-  optionTextSelected: { fontFamily: fontFamily.extraBold, color: colors.primary },
+  optionSelected: { backgroundColor: colors2.cardOptionIdle },
+  optionText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
+  optionTextSelected: { fontFamily: fontFamily2.semiBold, color: colors2.orange },
 });

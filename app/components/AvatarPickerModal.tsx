@@ -1,6 +1,6 @@
 import { ActivityIndicator, Image, Modal, Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing, webPhoneFrameMaxWidth } from './theme';
+import { colors2, fontFamily2, radii2, spacing2, webPhoneFrameMaxWidth } from './theme';
 
 export interface AvatarOption {
   key: string;
@@ -30,7 +30,7 @@ export function AvatarPickerModal({
           <View style={styles.sheetHeader}>
             <Text style={styles.sheetTitle}>Chọn ảnh đại diện</Text>
             <Pressable onPress={onClose} hitSlop={8} style={styles.closeBtn}>
-              <Ionicons name="close" size={20} color={colors.textPrimary} />
+              <Ionicons name="close" size={20} color={colors2.white} />
             </Pressable>
           </View>
 
@@ -49,9 +49,9 @@ export function AvatarPickerModal({
                     {selected && (
                       <View style={styles.checkBadge}>
                         {saving ? (
-                          <ActivityIndicator size="small" color={colors.white} />
+                          <ActivityIndicator size="small" color={colors2.white} />
                         ) : (
-                          <Ionicons name="checkmark" size={12} color={colors.white} />
+                          <Ionicons name="checkmark" size={12} color={colors2.white} />
                         )}
                       </View>
                     )}
@@ -78,27 +78,25 @@ const styles = StyleSheet.create({
   sheet: {
     width: '100%',
     maxWidth: webPhoneFrameMaxWidth,
-    backgroundColor: colors.white,
-    borderTopLeftRadius: radii.xl,
-    borderTopRightRadius: radii.xl,
-    paddingBottom: spacing.xl,
+    backgroundColor: colors2.black,
+    borderTopLeftRadius: radii2.navTop,
+    borderTopRightRadius: radii2.navTop,
+    paddingBottom: spacing2.xl,
   },
   sheetHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1E7E0',
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.lg,
+    paddingBottom: spacing2.md,
   },
-  sheetTitle: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
+  sheetTitle: { fontFamily: fontFamily2.semiBold, fontSize: 16, color: colors2.white },
   closeBtn: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: colors.background,
+    backgroundColor: colors2.cardOptionIdle,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -106,9 +104,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: spacing.lg,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
+    gap: spacing2.lg,
+    paddingHorizontal: spacing2.md,
+    paddingTop: spacing2.lg,
   },
   cell: { alignItems: 'center' },
   avatarRing: {
@@ -120,7 +118,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  avatarRingSelected: { borderColor: colors.primary },
+  avatarRingSelected: { borderColor: colors2.orange },
   avatarImg: { width: AVATAR_SIZE - 8, height: AVATAR_SIZE - 8, borderRadius: (AVATAR_SIZE - 8) / 2 },
   checkBadge: {
     position: 'absolute',
@@ -129,9 +127,9 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: colors.primary,
+    backgroundColor: colors2.orange,
     borderWidth: 2,
-    borderColor: colors.white,
+    borderColor: colors2.black,
     alignItems: 'center',
     justifyContent: 'center',
   },

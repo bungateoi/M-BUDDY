@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {
   AvatarPickerModal,
-  BottomNavBar,
-  ProfileStatCard,
-  cardShadow,
-  colors,
-  fontFamily,
-  radii,
-  spacing,
+  HomeBottomNavBar,
+  colors2,
+  fontFamily2,
+  radii2,
+  spacing2,
   type AvatarOption,
 } from '../components';
+import { TROPHY_SOURCES, TROPHY_SPECS } from '../components/BadgeTierCard';
+import { CheckerStrip, StarFillIcon, StreakFlameVectorIcon } from '../components/icons2';
 import { getBadgeTierProgress, getRoleplayAvatarSource, roleplayAvatarSources } from '../data';
 import type { RoleplayAvatarKey } from '../data';
-import { fetchMyLeaderboardRank, updateMyAvatar } from '../lib/authData';
+import { updateMyAvatar } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
 import { showAlert } from '../lib/platformAlert';
 import { useAppNavigation } from '../navigation/NavigationContext';
@@ -24,22 +24,22 @@ const AVATAR_OPTIONS: AvatarOption[] = (Object.keys(roleplayAvatarSources) as Ro
   source: roleplayAvatarSources[key],
 }));
 
+// Redesign theo Figma node-id=118-12753 ("Tôi"). Khác bản cũ (thẻ trắng nhỏ
+// + 3 ô stat chi tiết): giờ có dải caro trang trí quanh khối tên, khối cúp
+// thành tích to (dùng lại đúng TROPHY_SOURCES/SPECS của BadgeTierCard —
+// Xếp hạng), 2 ô stat lớn (Chuỗi học/XP), nút Đăng xuất viền đỏ nổi bật.
+// leaderboardRank không còn dùng nên bỏ luôn field/state đó (Figma không có
+// chỗ hiển thị "Top X BXH" trong bản này).
 export function ProfileScreen() {
   const { navigate } = useAppNavigation();
   const { profile, refreshProfile, signOut } = useAuth();
-  const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null);
   const [avatarModalVisible, setAvatarModalVisible] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
 
-  useEffect(() => {
-    fetchMyLeaderboardRank()
-      .then(setLeaderboardRank)
-      .catch(() => setLeaderboardRank(null));
-  }, []);
-
   if (!profile) return null;
   const user = profile;
-  const badgeTier = getBadgeTierProgress(user.xp).current;
+  const { current: badgeTier } = getBadgeTierProgress(user.xp);
+  const trophySpec = TROPHY_SPECS[badgeTier.id];
 
   const handleSelectAvatar = async (key: string) => {
     if (key === user.avatarKey) {
@@ -61,106 +61,87 @@ export function ProfileScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Tôi</Text>
+        <Pressable onPress={() => navigate('home')} hitSlop={8}>
+          <Ionicons name="arrow-back" size={24} color={colors2.white} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Hồ sơ tay đua</Text>
+        <View style={styles.headerSpacer} />
       </View>
 
-      <View style={styles.content}>
-        <Pressable style={styles.identityCard} onPress={() => setAvatarModalVisible(true)}>
-          <View style={styles.avatarRing}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={styles.checkerClip}>
+          <CheckerStrip />
+        </View>
+        <Pressable style={styles.nameCard} onPress={() => setAvatarModalVisible(true)}>
+          <View style={styles.avatarWrap}>
             <Image source={getRoleplayAvatarSource(user.avatarKey as any)} style={styles.avatar} />
-            <View style={styles.avatarEditBadge}>
-              <Ionicons name="pencil" size={10} color={colors.white} />
-            </View>
           </View>
-          <View style={styles.identityText}>
-            <Text style={styles.name} numberOfLines={2}>
-              {user.fullName}
-            </Text>
-            <Text style={styles.jobTitle} numberOfLines={1}>
-              {user.jobTitle}
-            </Text>
-            <Text style={styles.branch} numberOfLines={1}>
-              {user.branch}
-            </Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={colors.primary} />
+          <Text style={styles.nameLabel}>Họ và tên</Text>
+          <Text style={styles.nameValue} numberOfLines={1}>
+            {user.fullName}
+          </Text>
         </Pressable>
-
-        <View style={styles.statsRow}>
-          <ProfileStatCard
-            icon="🔥"
-            label="Streak"
-            value={`${user.currentStreak} ngày`}
-            sublabel="Chuỗi học liên tiếp"
-            bg={colors.primaryLight}
-            valueColor={colors.primary}
-          />
-          <ProfileStatCard
-            icon="⏱️"
-            label="Kinh nghiệm"
-            value={`${user.xp.toLocaleString('vi-VN')} XP`}
-            sublabel={`Cấp độ: Lv.${user.level}`}
-            bg={colors.successLight}
-            valueColor={colors.success}
-          />
-          <ProfileStatCard
-            icon="🏆"
-            label="Ranking"
-            value={badgeTier.label}
-            sublabel={leaderboardRank ? `Top ${leaderboardRank} BXH` : '—'}
-            bg="#F0E9FB"
-            valueColor="#7C4DFF"
-          />
+        <View style={styles.checkerClip}>
+          <CheckerStrip />
         </View>
 
-        {user.role === 'manager' && (
-          <Pressable style={styles.teamCard} onPress={() => navigate('teamManagement')}>
-            <View style={styles.teamIcon}>
-              <Ionicons name="people" size={20} color={colors.primary} />
+        <View style={styles.box}>
+          <View style={styles.trophyBlock}>
+            <Image
+              source={TROPHY_SOURCES[badgeTier.id] as never}
+              style={{ width: trophySpec.width, height: trophySpec.height }}
+              resizeMode="contain"
+            />
+            <Text style={styles.trophyLabel}>Hạng {badgeTier.label}</Text>
+          </View>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statCard}>
+              <View style={styles.statText}>
+                <Text style={styles.statLabel}>Chuỗi học</Text>
+                <Text style={styles.statValue}>{user.currentStreak}</Text>
+              </View>
+              <StreakFlameVectorIcon width={30} height={44} />
             </View>
-            <View style={styles.teamText}>
-              <Text style={styles.teamTitle}>Nhóm của tôi</Text>
-              <Text style={styles.teamSubtitle}>Theo dõi tiến độ và hỗ trợ thành viên</Text>
+            <View style={styles.statCard}>
+              <View style={styles.statText}>
+                <Text style={styles.statLabel}>XP</Text>
+                <Text style={styles.statValue}>{user.xp.toLocaleString('vi-VN')}</Text>
+              </View>
+              <StarFillIcon size={44} />
             </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.primary} />
+          </View>
+
+          {user.role === 'admin' && (
+            <Pressable style={styles.teamCard} onPress={() => navigate('admin')}>
+              <Ionicons name="shield-checkmark" size={26} color={colors2.yellow} />
+              <View style={styles.teamText}>
+                <Text style={styles.teamTitle}>Quản trị hệ thống</Text>
+                <Text style={styles.teamSubtitle}>Phong trưởng nhóm, gán thành viên vào team</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors2.white} />
+            </Pressable>
+          )}
+
+          {user.role === 'admin' && (
+            <Pressable style={styles.teamCard} onPress={() => navigate('contentManagement')}>
+              <Ionicons name="book-outline" size={26} color={colors2.yellow} />
+              <View style={styles.teamText}>
+                <Text style={styles.teamTitle}>Quản trị hành trình & tri thức</Text>
+                <Text style={styles.teamSubtitle}>Ẩn/sửa/thêm sản phẩm, chặng — tự sinh lại nội dung</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors2.orange} />
+            </Pressable>
+          )}
+
+          <Pressable style={styles.logoutButton} onPress={signOut}>
+            <Text style={styles.logoutText}>Đăng xuất</Text>
+            <Ionicons name="log-out-outline" size={22} color={colors2.red600} />
           </Pressable>
-        )}
+        </View>
+      </ScrollView>
 
-        {user.role === 'admin' && (
-          <Pressable style={styles.teamCard} onPress={() => navigate('admin')}>
-            <View style={styles.teamIcon}>
-              <Ionicons name="shield-checkmark" size={20} color={colors.primary} />
-            </View>
-            <View style={styles.teamText}>
-              <Text style={styles.teamTitle}>Quản trị hệ thống</Text>
-              <Text style={styles.teamSubtitle}>Phong trưởng nhóm, gán thành viên vào team</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.primary} />
-          </Pressable>
-        )}
-
-        {user.role === 'admin' && (
-          <Pressable style={styles.teamCard} onPress={() => navigate('contentManagement')}>
-            <View style={styles.teamIcon}>
-              <Ionicons name="book-outline" size={20} color={colors.primary} />
-            </View>
-            <View style={styles.teamText}>
-              <Text style={styles.teamTitle}>Quản trị hành trình & tri thức</Text>
-              <Text style={styles.teamSubtitle}>Ẩn/sửa/thêm sản phẩm, chặng — tự sinh lại nội dung</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.primary} />
-          </Pressable>
-        )}
-
-        <View style={styles.spacer} />
-
-        <Pressable style={styles.logoutButton} onPress={signOut}>
-          <Ionicons name="log-out-outline" size={18} color={colors.error} />
-          <Text style={styles.logoutText}>Đăng xuất</Text>
-        </Pressable>
-      </View>
-
-      <BottomNavBar
+      <HomeBottomNavBar
         active="toi"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -184,79 +165,75 @@ export function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  header: { paddingHorizontal: spacing.xl, paddingTop: spacing.md, paddingBottom: spacing.sm },
-  headerTitle: { fontFamily: fontFamily.black, fontSize: 26, color: colors.textPrimary },
-  content: { flex: 1, paddingHorizontal: spacing.xl, gap: spacing.md },
-  identityCard: {
+  safe: { flex: 1, backgroundColor: colors2.black },
+  header: { flexDirection: 'row', alignItems: 'center', gap: spacing2.md, padding: spacing2.md },
+  headerTitle: { flex: 1, textAlign: 'center', fontFamily: fontFamily2.semiBold, fontSize: 24, color: colors2.white },
+  headerSpacer: { width: 24 },
+  scroll: { flex: 1 },
+  scrollContent: { paddingBottom: spacing2.xl },
+  // Dải caro tràn hết bề ngang, cắt gọn bởi overflow:hidden — xem CheckerStrip
+  // (icons2.tsx), tự render dư số ô để không lộ hụt ở màn rộng.
+  checkerClip: { width: '100%', overflow: 'hidden' },
+  nameCard: {
+    alignItems: 'center',
+    gap: spacing2.sm,
+    backgroundColor: colors2.orange,
+    borderBottomWidth: 4,
+    borderBottomColor: colors2.white,
+    paddingVertical: spacing2.md,
+    paddingHorizontal: spacing2.md,
+  },
+  avatarWrap: { width: 80, height: 80, borderRadius: 40, overflow: 'hidden', backgroundColor: colors2.black },
+  avatar: { width: '100%', height: '100%' },
+  nameLabel: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
+  nameValue: { fontFamily: fontFamily2.displaySpeed, fontSize: 32, color: colors2.white, textTransform: 'uppercase' },
+  box: { padding: spacing2.md, gap: spacing2.xl, alignItems: 'center' },
+  trophyBlock: { alignItems: 'center', gap: spacing2.xs },
+  trophyLabel: { fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.white },
+  statsRow: { flexDirection: 'row', gap: spacing2.sm, width: '100%' },
+  statCard: {
+    flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    backgroundColor: colors.white,
-    borderRadius: radii.xl,
-    padding: spacing.md,
-    ...cardShadow,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderWidth: 1,
+    borderColor: colors2.white,
+    borderBottomWidth: 4,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
   },
-  avatarRing: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 2,
-    borderColor: colors.error,
-    padding: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  avatarEditBadge: {
-    position: 'absolute',
-    right: -2,
-    bottom: -2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: colors.primary,
-    borderWidth: 1.5,
-    borderColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatar: { width: '100%', height: '100%', borderRadius: 27 },
-  identityText: { flex: 1, gap: 1, minWidth: 0 },
-  name: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
-  jobTitle: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textMuted },
-  branch: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textMuted },
-  statsRow: { flexDirection: 'row', gap: spacing.sm },
+  statText: { gap: spacing2.xs },
+  statLabel: { fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.white },
+  statValue: { fontFamily: fontFamily2.displaySpeed, fontSize: 20, color: colors2.white },
   teamCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primaryLight,
-    borderRadius: radii.xl,
-    padding: spacing.md,
-  },
-  teamIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderWidth: 1,
+    borderColor: colors2.white,
+    borderBottomWidth: 4,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
+    width: '100%',
   },
   teamText: { flex: 1, gap: 1 },
-  teamTitle: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.textPrimary },
-  teamSubtitle: { fontFamily: fontFamily.semiBold, fontSize: 11, color: colors.textMuted },
-  spacer: { flex: 1, minHeight: spacing.xl },
+  teamTitle: { fontFamily: fontFamily2.semiBold, fontSize: 13.5, color: colors2.white },
+  teamSubtitle: { fontFamily: fontFamily2.regular, fontSize: 11, color: colors2.whiteMuted },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingVertical: spacing.md,
-    marginBottom: spacing.lg,
-    ...cardShadow,
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderWidth: 1,
+    borderColor: colors2.red500,
+    borderBottomWidth: 4,
+    borderRadius: 8,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.sm,
   },
-  logoutText: { fontFamily: fontFamily.extraBold, fontSize: 14.5, color: colors.error },
+  logoutText: { fontFamily: fontFamily2.semiBold, fontSize: 16, lineHeight: 24, color: colors2.red600 },
 });

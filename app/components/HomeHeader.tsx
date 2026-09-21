@@ -1,14 +1,25 @@
-import { Image, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { Pressable, StyleSheet, Text, View, type ImageSourcePropType } from 'react-native';
 import { Avatar } from './Avatar';
-import { StreakBadge } from './StreakBadge';
-import { NotificationBell } from './NotificationBell';
 import { XPLevelRow } from './XPLevelRow';
-import { colors, fontFamily, spacing } from './theme';
+import { BellIcon, StreakFlameVectorIcon } from './icons2';
+import { colors2, fontFamily2, spacing2 } from './theme';
 
-const mascotSource = require('../assets/mascot.png');
+// Chấm đỏ báo thông báo chưa đọc — Figma không định nghĩa màu riêng cho
+// trạng thái này (asset "notification on" chỉ có 1 biến thể), nên giữ lại
+// màu đỏ cảnh báo cũ (theme.ts#colors.error) thay vì bịa số liệu mới.
+const UNREAD_DOT_COLOR = '#E63946';
+
+function NotificationButton({ hasUnread }: { hasUnread?: boolean }) {
+  return (
+    <View style={styles.notifBtn}>
+      <BellIcon size={16} />
+      {hasUnread && <View style={styles.notifDot} />}
+    </View>
+  );
+}
 
 export function HomeHeader({
+  name,
   avatarInitials,
   avatarSource,
   streakDays,
@@ -16,7 +27,9 @@ export function HomeHeader({
   xp,
   level,
   levelProgress,
+  onPressAvatar,
 }: {
+  name: string;
   avatarInitials: string;
   avatarSource?: ImageSourcePropType;
   streakDays: number;
@@ -24,79 +37,89 @@ export function HomeHeader({
   xp: number;
   level: number;
   levelProgress: number;
+  /** Màn "Tôi" không còn nằm trên thanh menu dưới — vào bằng cách bấm avatar. */
+  onPressAvatar?: () => void;
 }) {
   return (
-    <LinearGradient
-      colors={[colors.headerGradientStart, colors.headerGradientEnd]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0.7, y: 1 }}
-      style={styles.wrap}
-    >
-      <View style={styles.topRow}>
+    <View style={styles.wrap}>
+      <View style={styles.topBar}>
         <View style={styles.identity}>
-          <Avatar initials={avatarInitials} avatarSource={avatarSource} />
+          <Pressable onPress={onPressAvatar} hitSlop={8}>
+            <Avatar initials={avatarInitials} avatarSource={avatarSource} size={36} />
+          </Pressable>
           <View style={styles.textCol}>
             <Text style={styles.hello}>Xin chào,</Text>
-            <Text style={styles.name}>cùng M-BUDDY luyện tập nhé! 👋</Text>
+            <Text style={styles.name} numberOfLines={1}>
+              {name}
+            </Text>
           </View>
         </View>
         <View style={styles.actions}>
-          <StreakBadge days={streakDays} />
-          <NotificationBell hasUnread={hasUnreadNotification} />
+          <XPLevelRow xp={xp} level={level} levelProgress={levelProgress} />
+          <NotificationButton hasUnread={hasUnreadNotification} />
         </View>
       </View>
 
-      <View style={styles.xpRow}>
-        <XPLevelRow xp={xp} level={level} levelProgress={levelProgress} />
+      {/* Không còn linh vật/trang trí vẽ tay riêng — toàn bộ hình xe đua +
+          cờ caro giờ nằm SẴN trong ảnh nền của HomeScreen.tsx (race-bg.png),
+          nên banner ở đây CHỈ còn chữ (khớp đúng node-id=58:317, "Content"
+          trong "Banner" chỉ có text, không có illustration riêng). */}
+      <View style={styles.banner}>
+        <Text style={styles.bannerCaption}>Chuỗi ngày bứt phá</Text>
+        <View style={styles.streakRow}>
+          <Text style={styles.streakNumber}>{streakDays}</Text>
+          <StreakFlameVectorIcon width={17} height={25} />
+        </View>
       </View>
-
-      <Text style={[styles.sparkle, styles.sparkleA]}>✨</Text>
-      <Text style={[styles.sparkle, styles.sparkleB]}>✨</Text>
-      <Image source={mascotSource} style={styles.mascot} resizeMode="contain" />
-    </LinearGradient>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  wrap: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.md,
-  },
-  topRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-  },
-  identity: {
+  wrap: {},
+  topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.md,
-    flexShrink: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.xs,
+    gap: spacing2.md,
   },
-  // flexShrink + minWidth:0 — không có minWidth:0 thì trên web, Text con bên
-  // trong flex row có thể tràn ra ngoài thay vì tự xuống dòng (mặc định
-  // min-width:auto của flexbox web tính theo độ dài nội dung).
-  textCol: { gap: 1, flexShrink: 1, minWidth: 0 },
-  hello: { fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textMuted },
-  name: { fontFamily: fontFamily.extraBold, fontSize: 16, color: colors.textPrimary },
-  actions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  xpRow: {
-    marginTop: spacing.sm,
-    maxWidth: '68%',
+  identity: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs, flexShrink: 1, minWidth: 0 },
+  textCol: { flexShrink: 1, minWidth: 0 },
+  hello: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.white },
+  name: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
+  actions: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs, flexShrink: 0 },
+  notifBtn: {
+    width: 24,
+    height: 24,
+    borderRadius: 999,
+    backgroundColor: colors2.black,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 4,
   },
-  mascot: {
+  notifDot: {
     position: 'absolute',
-    right: 6,
-    top: 22,
-    width: 134,
-    height: 156,
+    top: 2,
+    right: 2,
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: UNREAD_DOT_COLOR,
+    borderWidth: 1,
+    borderColor: colors2.white,
   },
-  sparkle: {
-    position: 'absolute',
-    fontSize: 15,
-    color: colors.warning,
-  },
-  sparkleA: { right: 132, top: 36 },
-  sparkleB: { right: 118, top: 56 },
+  // Khớp đúng Figma: khối chữ ("Content") cách Top Bar 24px (spacing2.lg),
+  // cách đều 2 bên 16px; khoảng thở 8px dưới cùng trước khi vào "List" card
+  // đầu tiên (StreakCard) — bù lại phần chiều cao dôi ra do line-height chữ
+  // thật lớn hơn hộp chữ trong ảnh gốc Figma.
+  banner: { paddingHorizontal: spacing2.md, paddingTop: spacing2.lg, paddingBottom: spacing2.xs, gap: spacing2.xs },
+  bannerCaption: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.white },
+  // minHeight = đúng line-height 60px của streakNumber (khớp Figma) — chặn
+  // trường hợp hàng số bị "co" thấp hơn 60px do font A4 Speed (font ngoài,
+  // không phải Google Font) render lineHeight khác nhau giữa các máy/nền
+  // tảng, làm card chuỗi ngày bị đẩy lên che gần hết mascot phía sau.
+  streakRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs, minHeight: 60 },
+  streakNumber: { fontFamily: fontFamily2.displaySpeed, fontSize: 40, lineHeight: 60, color: colors2.white },
 });

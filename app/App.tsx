@@ -2,14 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import type { ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useFonts } from 'expo-font';
 import {
-  useFonts,
   Nunito_400Regular,
   Nunito_600SemiBold,
   Nunito_700Bold,
   Nunito_800ExtraBold,
   Nunito_900Black,
 } from '@expo-google-fonts/nunito';
+import { Inter_400Regular, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { webPhoneFrameMaxWidth } from './components/theme';
 import { NavigationProvider, useAppNavigation } from './navigation/NavigationContext';
 import { AuthProvider, useAuth } from './lib/AuthContext';
@@ -26,6 +27,7 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { LoginScreen } from './screens/LoginScreen';
 import { TeamManagementScreen } from './screens/TeamManagementScreen';
 import { PersonalAnalysisScreen } from './screens/PersonalAnalysisScreen';
+import { TeamAnalysisScreen } from './screens/TeamAnalysisScreen';
 import { AdminScreen } from './screens/AdminScreen';
 import { SkipAheadIntroScreen } from './screens/SkipAheadIntroScreen';
 import { PracticeHistoryScreen } from './screens/PracticeHistoryScreen';
@@ -54,6 +56,8 @@ function RootNavigator() {
       return <TeamManagementScreen />;
     case 'personalAnalysis':
       return <PersonalAnalysisScreen />;
+    case 'teamAnalysis':
+      return <TeamAnalysisScreen />;
     case 'admin':
       return <AdminScreen />;
     case 'skipAheadIntro':
@@ -67,14 +71,16 @@ function RootNavigator() {
     case 'personaEdit':
       return <PersonaEditScreen personaId={params.personaId} />;
     case 'quiz':
-      return <QuizScreen levelId={params.levelId ?? '2.3'} />;
+      return <QuizScreen levelId={params.levelId ?? '2.3'} backTo={params.backTo} />;
     case 'roleplay':
       return (
         <RolePlayScreen
           levelId={params.levelId}
           practiceCustomerId={params.practiceCustomerId}
           generatedCustomer={params.generatedCustomer}
+          durationSec={params.durationSec}
           isSkipAhead={params.isSkipAhead}
+          backTo={params.backTo}
         />
       );
     case 'result':
@@ -83,6 +89,7 @@ function RootNavigator() {
           levelId={params.levelId}
           practiceCustomerId={params.practiceCustomerId}
           generatedCustomer={params.generatedCustomer}
+          backTo={params.backTo}
         />
       );
     case 'home':
@@ -99,17 +106,22 @@ function LoadingScreen() {
   );
 }
 
-// Có session nhưng KHÔNG tải được profiles row tương ứng — vd. bảng
-// profiles/trigger chưa được tạo (migration SQL chưa chạy), hoặc lỗi mạng.
-// Trước đây rơi vào trường hợp này thì màn hình trắng trơn (mọi screen đều
-// `if (!profile) return null`) — giờ báo lỗi rõ + cho đăng xuất để thoát ra.
+// Có session nhưng KHÔNG tải được profiles row tương ứng — AuthContext đã tự
+// thử lại 3 lần (xem lib/AuthContext.tsx#loadProfile) nên tới đây gần như
+// chắc chắn không phải lỗi mạng thoáng qua nữa, nhưng vẫn không nói chắc là
+// "chưa có dữ liệu hồ sơ trong database" vì phần lớn trường hợp thực tế lại
+// là lỗi tạm thời khác — dùng thông báo chung chung, không đổ lỗi sai
+// nguyên nhân. Trước đây rơi vào trường hợp này thì màn hình trắng trơn (mọi
+// screen đều `if (!profile) return null`) — giờ báo lỗi rõ + cho đăng xuất
+// để thoát ra.
 function ProfileLoadErrorScreen({ onSignOut }: { onSignOut: () => void }) {
   return (
     <View style={{ flex: 1, backgroundColor: '#FFFBF8', alignItems: 'center', justifyContent: 'center', padding: 32, gap: 16 }}>
-      <Text style={{ fontSize: 15, fontWeight: '700', color: '#2D2D2D', textAlign: 'center' }}>Không tải được hồ sơ</Text>
+      <Text style={{ fontSize: 15, fontWeight: '700', color: '#2D2D2D', textAlign: 'center' }}>
+        Đã xảy ra lỗi khi tải tài khoản.
+      </Text>
       <Text style={{ fontSize: 13, color: '#8A8A8A', textAlign: 'center', lineHeight: 19 }}>
-        Tài khoản đã đăng nhập nhưng chưa có dữ liệu hồ sơ tương ứng trong database — thường do database chưa được
-        khởi tạo (chạy supabase/migrations/0001_init.sql) hoặc tài khoản được tạo trước khi khởi tạo database.
+        Vui lòng đăng nhập lại để tiếp tục sử dụng.
       </Text>
       <Pressable onPress={onSignOut} style={{ backgroundColor: '#FF671F', borderRadius: 999, paddingVertical: 12, paddingHorizontal: 24 }}>
         <Text style={{ color: '#fff', fontWeight: '700' }}>Đăng xuất</Text>
@@ -198,6 +210,11 @@ export default function App() {
     Nunito_700Bold,
     Nunito_800ExtraBold,
     Nunito_900Black,
+    Inter_400Regular,
+    Inter_600SemiBold,
+    // Font trả phí, không lấy từ Google Fonts — file .ttf do người dùng cung
+    // cấp trực tiếp (đã license), đặt tại app/assets/fonts/.
+    'A4Speed-Bold': require('./assets/fonts/A4Speed-Bold.ttf'),
   });
 
   if (!fontsLoaded) {

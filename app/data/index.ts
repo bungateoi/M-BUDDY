@@ -3,6 +3,7 @@ export { products, replaceProducts } from './products';
 export { personas, replacePersonas } from './personas';
 export { levels, replaceLevels } from './levels';
 export { mockDailyChallenge } from './userProgress';
+export { GLOBAL_ROLEPLAY_RULES } from './rules';
 export { quizzesByLevelId, replaceQuizzes } from './quizzes';
 export { roleplayCustomersByLevelId } from './roleplayCustomers';
 export { roleplayAvatarSources, getRoleplayAvatarSource } from './roleplayAvatars';
@@ -11,7 +12,7 @@ export { roleplayResultsByLevelId } from './roleplayResults';
 export { customerProfiles } from './customerProfiles';
 export { customerRoleplayConfigsByCustomerId } from './customerRoleplayConfigs';
 export { badgeTiers, badgeTierIcons, getBadgeTierProgress } from './badgeTiers';
-export { SCORE_CRITERIA_META, buildSkillScoresFromRaw, averageSkillScore } from './scoreCriteriaMeta';
+export { SCORE_CRITERIA_META, buildSkillScoresFromRaw, averageSkillScore, averageTeamSkills } from './scoreCriteriaMeta';
 export type { ScoreCriterionMeta } from './scoreCriteriaMeta';
 export { buildSkillInsightSummary, buildKnowledgeTopics, buildPracticeRecommendations } from './personalAnalysis';
 

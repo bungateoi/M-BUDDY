@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Line, Polygon } from 'react-native-svg';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily } from './theme';
+import { colors2, fontFamily2 } from './theme';
 import type { SkillScore } from '../data/types';
 
 const SIZE = 288;
@@ -55,22 +55,23 @@ export function SkillRadarChart({
               key={ratio}
               points={ringPoints(total, ratio)}
               fill="none"
-              stroke={colors.gridLine}
+              stroke={colors2.navBorder}
+              strokeOpacity={0.3}
               strokeWidth={1}
             />
           ))}
           {skills.map((s, i) => {
             const p = pointAt(i, total, MAX_RADIUS);
             return (
-              <Line key={s.key} x1={CENTER} y1={CENTER} x2={p.x} y2={p.y} stroke={colors.gridLine} strokeWidth={1} />
+              <Line key={s.key} x1={CENTER} y1={CENTER} x2={p.x} y2={p.y} stroke={colors2.navBorder} strokeOpacity={0.3} strokeWidth={1} />
             );
           })}
-          <Polygon points={dataPoints} fill={colors.primary} fillOpacity={0.28} stroke={colors.primary} strokeWidth={2.5} />
+          <Polygon points={dataPoints} fill={colors2.orange} fillOpacity={0.28} stroke={colors2.orange} strokeWidth={2.5} />
           {skills.map((s, i) => {
             const p = pointAt(i, total, MAX_RADIUS * Math.max(0.1, s.value / 100));
-            return <Circle key={s.key} cx={p.x} cy={p.y} r={4} fill={colors.primary} />;
+            return <Circle key={s.key} cx={p.x} cy={p.y} r={4} fill={colors2.orange} />;
           })}
-          <Circle cx={CENTER} cy={CENTER} r={3} fill={colors.gridLine} />
+          <Circle cx={CENTER} cy={CENTER} r={3} fill={colors2.navBorder} />
         </Svg>
 
         {skills.map((s, i) => {
@@ -91,7 +92,7 @@ export function SkillRadarChart({
               pointerEvents="none"
             >
               <View style={styles.iconBadge}>
-                <Ionicons name={s.icon as any} size={13} color={colors.primary} />
+                <Ionicons name={s.icon as any} size={13} color={colors2.orange} />
               </View>
               <View style={{ flexShrink: 1, alignItems: isLeftHalf ? 'flex-end' : 'flex-start' }}>
                 <Text style={[styles.labelText, isLeftHalf && styles.textRight]} numberOfLines={2}>
@@ -120,14 +121,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'baseline',
     gap: 6,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors2.black,
     borderRadius: 999,
     paddingHorizontal: 18,
     paddingVertical: 8,
     marginTop: -8,
   },
-  totalValue: { fontFamily: fontFamily.black, fontSize: 20, color: colors.primary },
-  totalCaption: { fontFamily: fontFamily.bold, fontSize: 11.5, color: colors.textMuted },
+  totalValue: { fontFamily: fontFamily2.displaySpeed, fontSize: 20, color: colors2.orange },
+  totalCaption: { fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.whiteMuted },
   labelItem: {
     position: 'absolute',
     alignItems: 'flex-start',
@@ -137,20 +138,20 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors2.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
   labelText: {
-    fontFamily: fontFamily.semiBold,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 11,
     lineHeight: 13.5,
-    color: colors.textPrimary,
+    color: colors2.white,
   },
   textRight: { textAlign: 'right' },
   labelValue: {
-    fontFamily: fontFamily.extraBold,
+    fontFamily: fontFamily2.semiBold,
     fontSize: 12.5,
-    color: colors.textPrimary,
+    color: colors2.white,
   },
 });

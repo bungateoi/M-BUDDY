@@ -1,21 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Image, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import * as Speech from 'expo-speech';
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from 'expo-speech-recognition';
 import {
-  RolePlayHeader,
+  QuizTopBar,
   CountdownRing,
+  EvaluatingResultModal,
   RolePlayCustomerAvatar,
   RolePlayControls,
   RolePlayTipCard,
-  BottomNavBar,
-  colors,
-  fontFamily,
-  primaryGradient,
-  spacing,
+  colors2,
+  fontFamily2,
+  spacing2,
 } from '../components';
+import { PhoneCallIcon } from '../components/icons2';
 import {
   getLevelById,
   getPersonaById,
@@ -25,27 +23,30 @@ import {
   getRoleplayAvatarSource,
   getCustomerProfileById,
   getCustomerRoleplayConfig,
+  GLOBAL_ROLEPLAY_RULES,
 } from '../data';
 import type { CustomerDifficulty, GeneratedCustomerPersona, RoleplayCustomer, RoleplayResult } from '../data/types';
-import { buildRoleplayResultFromScoring } from '../data/scoringMapper';
 import {
   callRoleplayAI,
-  callScoringAI,
   type RoleplayLevelInput,
   type RoleplayPersonaInput,
   type RoleplayProductInput,
   type RoleplayTurn,
 } from '../lib/ai';
-import { applySkillScores, recordActivity, recordLevelProgress, saveRoleplayHistory } from '../lib/authData';
+import { saveRoleplayHistory } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
+import { startScoringJob, subscribeToJob } from '../lib/scoringJobs';
 import { getVoiceProfile } from '../lib/voiceProfiles';
-import { useAppNavigation, type NavigationParams } from '../navigation/NavigationContext';
+import { useAppNavigation, type NavigationParams, type ScreenName } from '../navigation/NavigationContext';
 
 // Level chưa có field thời lượng cuộc gọi riêng trong data model — dùng
-// hằng số chung, khớp giá trị mặc định roleplayDurationSec=150 ở backend
+// hằng số chung, khớp giá trị mặc định roleplayDurationSec=180 ở backend
 // (agent/main.py, xem SPEC.md). Nếu sau này cần thời lượng riêng theo
 // từng level, thêm field vào Level (data/types.ts) và dùng ở đây.
-const CALL_DURATION_SECONDS = 150;
+// Riêng luồng "Tạo khách hàng theo tiêu chí" cho tự chọn 3p/5p/10p/15p
+// (CreateCustomerScreen.tsx) — truyền qua prop durationSec, không đổi mặc
+// định của Map/Practice.
+const CALL_DURATION_SECONDS = 180;
 
 type CallPhase = 'connecting' | 'speaking' | 'idle' | 'recording' | 'thinking' | 'ending';
 
@@ -82,32 +83,51 @@ interface RoleplaySetup {
   product: RoleplayProductInput;
   level: RoleplayLevelInput;
   customer: RoleplayCustomer;
+  /** Dòng phụ nhỏ hiển thị dưới tên khách (dưới RolePlayCustomerAvatar) —
+   * tách riêng khỏi persona.name vì persona.name còn được dùng nguyên vẹn
+   * trong prompt gọi AI (không được rút gọn/sửa ở đó). */
+  personaDisplayLabel: string;
   titleLine: string;
   tip: string;
   resultParams: NavigationParams;
-  bottomNavActive: 'map' | 'practice';
   /** Khớp key trong voiceProfiles.RATE_BY_PERSONA_ID nếu có (persona cố định
    * trong Map) — nếu không, dùng voiceDifficultyFallback để suy tốc độ nói. */
   voicePersonaKey: string;
   voiceDifficultyFallback?: CustomerDifficulty;
+  /** Ai nói lượt đầu tiên — mặc định 'customer' (khách tự mở lời, xem
+   * Level.openerRole). Practice/generated customer luôn 'customer' vì
+   * không có trainingScript để biết chắc thứ tự. */
+  openerRole: 'customer' | 'seller';
+}
+
+/** persona.name trong data/personas.ts có dạng "Tên ngắn, mô tả vai trò"
+ * (vd "Bác Lan, nội trợ tiết kiệm") — tách ra để hiển thị tên ngắn ở dòng
+ * lớn (thay cho tên khách hàng cũ đã lỗi thời trong roleplayCustomers.ts)
+ * và mô tả vai trò ở dòng phụ nhỏ, tránh lặp lại nguyên văn cả 2 dòng. */
+function splitPersonaName(fullName: string): { shortName: string; description: string } {
+  const commaIndex = fullName.indexOf(',');
+  if (commaIndex === -1) return { shortName: fullName, description: '' };
+  return { shortName: fullName.slice(0, commaIndex).trim(), description: fullName.slice(commaIndex + 1).trim() };
 }
 
 function buildMapSetup(levelId: string): RoleplaySetup | undefined {
   const level = getLevelById(levelId);
   const persona = level ? getPersonaById(level.personaId) : undefined;
   const product = level ? getProductById(level.productId) : undefined;
-  const customer = getRoleplayCustomerByLevelId(levelId);
-  if (!level || !persona || !product || !customer) return undefined;
+  const rawCustomer = getRoleplayCustomerByLevelId(levelId);
+  if (!level || !persona || !product || !rawCustomer) return undefined;
+  const { shortName, description } = splitPersonaName(persona.name);
   return {
     persona,
     product,
     level,
-    customer,
+    customer: { name: shortName, avatarKey: rawCustomer.avatarKey },
+    personaDisplayLabel: description || persona.name,
     titleLine: `Chặng ${level.chapterNumber} • Level ${getPositionInChapter(level.id)}`,
     tip: level.sampleFlow[0],
     resultParams: { levelId },
-    bottomNavActive: 'map',
     voicePersonaKey: persona.id,
+    openerRole: level.openerRole ?? 'customer',
   };
 }
 
@@ -141,12 +161,13 @@ function buildGeneratedSetup(g: GeneratedCustomerPersona): RoleplaySetup {
     product: g.product,
     level: { winCriteria: g.winCriteria, objectionBank: g.objectionBank },
     customer: { name: displayNameForGenerated(g.name, g.age, g.gender), avatarKey: avatarKeyForGenerated(g.age, g.gender) },
+    personaDisplayLabel: g.name,
     titleLine: 'Luyện tập',
     tip: `Khách kỳ vọng: ${g.expectations}`,
     resultParams: { generatedCustomer: g },
-    bottomNavActive: 'practice',
     voicePersonaKey: `generated-${g.name}`,
     voiceDifficultyFallback: g.difficulty,
+    openerRole: 'customer',
   };
 }
 
@@ -171,14 +192,15 @@ function buildPracticeSetup(customerId: string): RoleplaySetup | undefined {
     product: config.product,
     level: { winCriteria: config.winCriteria, objectionBank: config.objectionBank },
     customer: { name: profile.displayName, avatarKey: profile.avatarKey },
+    personaDisplayLabel: profile.name,
     titleLine: 'Luyện tập',
     tip: `Khách kỳ vọng: ${profile.expectations}`,
     resultParams: { practiceCustomerId: customerId },
-    bottomNavActive: 'practice',
     // Không khớp bất kỳ persona.id cố định nào trong voiceProfiles.ts —
     // luôn rơi vào nhánh fallback theo độ khó, xem getVoiceProfile.
     voicePersonaKey: `practice-${profile.id}`,
     voiceDifficultyFallback: profile.difficulty,
+    openerRole: 'customer',
   };
 }
 
@@ -230,13 +252,21 @@ export function RolePlayScreen({
   levelId,
   practiceCustomerId,
   generatedCustomer,
+  durationSec,
   isSkipAhead,
+  backTo,
 }: {
   levelId?: string;
   practiceCustomerId?: string;
   generatedCustomer?: GeneratedCustomerPersona;
+  /** Thời lượng cuộc gọi (giây) tự chọn ở CreateCustomerScreen — không có
+   * (Map/Practice) thì dùng mặc định CALL_DURATION_SECONDS. */
+  durationSec?: number;
   /** true nếu vào level này qua nút "Học vượt" ở Map — xem finishCall. */
   isSkipAhead?: boolean;
+  /** Màn quay về khi bấm nút đóng (X) — truyền tiếp nguyên vẹn sang màn Kết
+   * quả (resultParams) để bấm đóng ở đó cũng về đúng chỗ, xem NavigationContext.tsx. */
+  backTo?: ScreenName;
 }) {
   const { navigate } = useAppNavigation();
   const { profile: authProfile, refreshProfile } = useAuth();
@@ -247,11 +277,20 @@ export function RolePlayScreen({
       : generatedCustomer
         ? buildGeneratedSetup(generatedCustomer)
         : undefined;
+  // Cố định giá trị lúc mount — không đổi giữa chừng cuộc gọi dù prop có
+  // đổi (không xảy ra trong thực tế vì mỗi lượt role-play là 1 lượt mount
+  // màn hình mới, nhưng useState/useRef bên dưới chỉ đọc giá trị khởi tạo
+  // đúng 1 lần nên khai báo tường minh ở đây cho rõ ràng).
+  const callDurationSeconds = durationSec ?? CALL_DURATION_SECONDS;
 
   const [phase, setPhase] = useState<CallPhase>('connecting');
   const [history, setHistory] = useState<RoleplayTurn[]>([]);
-  const [secondsLeft, setSecondsLeft] = useState(CALL_DURATION_SECONDS);
+  const [secondsLeft, setSecondsLeft] = useState(callDurationSeconds);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // Job chấm điểm chạy NGẦM (xem lib/scoringJobs.ts) — khác 0 khi cuộc gọi đã
+  // kết thúc, điều khiển popup "Đang đánh giá kết quả" (EvaluatingResultModal).
+  const [scoringJobId, setScoringJobId] = useState<string | null>(null);
+  const [waitingForScoring, setWaitingForScoring] = useState(false);
   // Trên web di động (Safari/Chrome Android), speechSynthesis chỉ được phép
   // phát nếu lần gọi ĐẦU TIÊN nằm trong đúng thao tác chạm của người dùng —
   // cuộc gọi trước đây tự bắt đầu qua useEffect (không phải thao tác chạm)
@@ -266,7 +305,7 @@ export function RolePlayScreen({
   // Refs mirror state đang đổi liên tục — cần cho callback của event
   // listener native (expo-speech-recognition) và timer, tránh stale closure.
   const historyRef = useRef<RoleplayTurn[]>([]);
-  const secondsLeftRef = useRef(CALL_DURATION_SECONDS);
+  const secondsLeftRef = useRef(callDurationSeconds);
   const callEndedRef = useRef(false);
   const hasStartedRef = useRef(false);
   // continuous:true chia lời nói thành nhiều "segment" — mỗi 'result'
@@ -360,7 +399,16 @@ export function RolePlayScreen({
     }, 80);
   };
 
-  const finishCall = async (finalHistory: RoleplayTurn[]) => {
+  // Chấm điểm giờ chạy NGẦM qua lib/scoringJobs.ts thay vì await tại đây —
+  // trước đây finishCall async, chặn cả màn hình tới khi /score trả về (có
+  // thể mất cả phút); giờ chỉ khởi job rồi hiện popup "Đang đánh giá" ngay,
+  // không chặn gì cả (xem phản hồi người dùng). "Đợi" hay chưa bấm gì: vẫn
+  // đang subscribe job (useEffect bên dưới) nên xong là tự sang màn Kết quả.
+  // "Xem sau": navigate('practiceHistory') unmount màn này NGAY, effect
+  // cleanup tự huỷ subscribe — job vẫn chạy tiếp trong lib/scoringJobs.ts,
+  // chỉ là không còn ai lắng nghe để tự điều hướng nữa; kết quả sẽ tự hiện ở
+  // đúng màn Ôn tập đó ngay khi xong (xem lib/scoringJobs.ts#usePendingHistoryJobs).
+  const finishCall = (finalHistory: RoleplayTurn[]) => {
     if (callEndedRef.current) return;
     callEndedRef.current = true;
     Speech.stop();
@@ -369,44 +417,43 @@ export function RolePlayScreen({
     setPhase('ending');
 
     if (!setup) {
-      navigate('result', {});
+      navigate('result', { backTo });
       return;
     }
-    try {
-      const scoring = await callScoringAI({ product: setup.product, transcript: finalHistory });
-      const roleplayResult = buildRoleplayResultFromScoring(
-        levelId ?? practiceCustomerId ?? generatedCustomer?.name ?? '',
-        scoring,
-        finalHistory
-      );
 
-      // Ghi lại streak + trộn điểm kỹ năng/XP thật + tiến độ Map (nếu đây là
-      // 1 level Map, không áp dụng cho Practice/generated) cho user hiện tại
-      // — lỗi ở đây (mạng, chưa đăng nhập...) không được chặn màn Kết quả,
-      // chỉ đơn giản là Home/Xếp hạng/Team/Map sẽ chưa cập nhật lần luyện này.
-      try {
-        const tasks = [recordActivity(), applySkillScores(scoring, roleplayResult.totalScore)];
-        if (levelId) tasks.push(recordLevelProgress(levelId, roleplayResult.totalScore, isSkipAhead ?? false));
-        const historyEntry = buildHistoryEntry(levelId, practiceCustomerId, roleplayResult);
-        if (historyEntry) tasks.push(saveRoleplayHistory(historyEntry));
-        await Promise.all(tasks);
-        await refreshProfile();
-      } catch {
-        // im lặng bỏ qua — không phải lỗi người dùng cần xử lý ngay.
-      }
-
-      // Học vượt đạt >=60% -> ngưỡng khớp đúng RPC record_level_progress (xem
-      // migration) -> tự tính ở client để hiện banner chúc mừng ở màn Kết
-      // quả, không cần đợi RPC trả về gì.
-      const unlockedChaptersUpTo =
-        isSkipAhead && levelId && roleplayResult.totalScore >= 60 ? Number(levelId.split('.')[0]) : undefined;
-
-      navigate('result', { ...setup.resultParams, roleplayResult, unlockedChaptersUpTo });
-    } catch {
-      // Chấm điểm lỗi mạng — vẫn cho qua màn Kết quả (fallback mock) thay vì kẹt lại đây.
-      navigate('result', setup.resultParams);
-    }
+    const jobId = startScoringJob({
+      product: setup.product,
+      transcript: finalHistory,
+      globalRules: GLOBAL_ROLEPLAY_RULES,
+      level: setup.level,
+      resultId: levelId ?? practiceCustomerId ?? generatedCustomer?.name ?? '',
+      levelId,
+      isSkipAhead: isSkipAhead ?? false,
+      hasHistoryTarget: Boolean(levelId || practiceCustomerId),
+      resultParams: { ...setup.resultParams, backTo },
+      titleLine: setup.titleLine,
+      subtitleLine: setup.customer.name,
+      buildHistoryEntry: (result) => buildHistoryEntry(levelId, practiceCustomerId, result),
+      refreshProfile,
+    });
+    setScoringJobId(jobId);
   };
+
+  // Tự điều hướng sang màn Kết quả ngay khi job xong — CHỈ có tác dụng khi
+  // màn này còn đang mở (bấm "Xem sau" unmount trước đó thì cleanup đã huỷ
+  // subscribe, xem finishCall).
+  useEffect(() => {
+    if (!scoringJobId) return;
+    return subscribeToJob(scoringJobId, (job) => {
+      if (job.status === 'done') {
+        navigate('result', { ...job.resultParams, roleplayResult: job.roleplayResult, unlockedChaptersUpTo: job.unlockedChaptersUpTo });
+      } else if (job.status === 'error') {
+        // Chấm điểm lỗi mạng — vẫn cho qua màn Kết quả (fallback mock) thay vì kẹt lại đây.
+        navigate('result', job.resultParams);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoringJobId]);
 
   const submitTurn = async (sellerText: string) => {
     if (callEndedRef.current || !setup) return;
@@ -420,10 +467,11 @@ export function RolePlayScreen({
         persona: setup.persona,
         product: setup.product,
         level: setup.level,
-        roleplayDurationSec: CALL_DURATION_SECONDS,
-        secondsElapsed: CALL_DURATION_SECONDS - secondsLeftRef.current,
+        roleplayDurationSec: callDurationSeconds,
+        secondsElapsed: callDurationSeconds - secondsLeftRef.current,
         history: historyRef.current,
         sellerUtterance: sellerText,
+        globalRules: GLOBAL_ROLEPLAY_RULES,
       });
 
       // Cuộc gọi có thể đã kết thúc (hết giờ, hoặc khách cúp máy ở lượt
@@ -459,14 +507,24 @@ export function RolePlayScreen({
     }
   };
 
-  // Mở đầu cuộc gọi — gọi 1 lần khi vào màn (hoặc khi người dùng chạm nút
-  // "Bắt đầu" trên web, xem startCallOnWeb), sellerUtterance rỗng để AI tự
-  // mở lời (xem SPEC.md). Guard bằng ref để tránh double-call do
-  // StrictMode double-invoke effect ở dev.
+  // Mở đầu cuộc gọi — chạy 1 lần khi vào màn (hoặc khi người dùng chạm nút
+  // "Bắt đầu" trên web, xem startCallOnWeb). Guard bằng ref để tránh
+  // double-call do StrictMode double-invoke effect ở dev.
+  // openerRole='customer' (mặc định, đa số kịch bản): sellerUtterance rỗng
+  // để AI tự mở lời trước (xem SPEC.md).
+  // openerRole='seller' (kịch bản ghi rõ Sale chủ động mở lời): KHÔNG gọi
+  // AI trước — chuyển thẳng sang 'idle' để Sale bấm mic nói trước, lượt gọi
+  // AI đầu tiên chỉ diễn ra sau khi có sellerUtterance thật (submitTurn ở
+  // handleMicPress/consumeRecordingResult), lúc đó is_opening_turn ở backend
+  // tự động = false vì sellerUtterance không rỗng nên vẫn đúng logic.
   useEffect(() => {
     if (hasStartedRef.current || !setup || awaitingTapToStart) return;
     hasStartedRef.current = true;
-    submitTurn('');
+    if (setup.openerRole === 'seller') {
+      setPhase('idle');
+    } else {
+      submitTurn('');
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setup, awaitingTapToStart]);
 
@@ -596,26 +654,20 @@ export function RolePlayScreen({
 
   return (
     <SafeAreaView style={styles.safe}>
-      <RolePlayHeader
-        titleLine={setup.titleLine}
-        objective={`Chốt ${setup.product.name.toLowerCase()}`}
-        streakDays={authProfile.currentStreak}
-        hasUnreadNotification={authProfile.hasUnreadNotification}
-        onBack={() => navigate('home')}
-      />
+      <Image source={require('../assets/decor/roleplay-flag-bg.png')} style={styles.flagBg} resizeMode="stretch" />
+      <QuizTopBar title={setup.product.name} subtitle={setup.titleLine} onClose={() => navigate(backTo ?? 'home')} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.timerRow}>
-          <CountdownRing secondsLeft={secondsLeft} totalSeconds={CALL_DURATION_SECONDS} />
+          <CountdownRing secondsLeft={secondsLeft} totalSeconds={callDurationSeconds} />
         </View>
 
         <View style={styles.centerArea}>
           <RolePlayCustomerAvatar
             avatarSource={getRoleplayAvatarSource(setup.customer.avatarKey as any)}
             name={setup.customer.name}
-            personaLabel={setup.persona.name}
+            personaLabel={setup.personaDisplayLabel}
             statusText={STATUS_TEXT[phase]}
-            statusIcon={phase === 'recording' ? 'mic' : phase === 'speaking' ? 'volume-high' : 'mic-outline'}
           />
         </View>
 
@@ -627,16 +679,10 @@ export function RolePlayScreen({
 
         {awaitingTapToStart ? (
           <Pressable onPress={startCallOnWeb} style={styles.startCallWrap}>
-            <LinearGradient
-              colors={primaryGradient.colors}
-              start={primaryGradient.start}
-              end={primaryGradient.end}
-              style={styles.startCallBtn}
-            >
-              <Ionicons name="call" size={30} color={colors.white} />
-            </LinearGradient>
+            <View style={styles.startCallBtn}>
+              <PhoneCallIcon size={30} />
+            </View>
             <Text style={styles.startCallText}>Chạm để bắt đầu cuộc gọi</Text>
-            <Text style={styles.startCallHint}>Cần chạm 1 lần để điện thoại phát được tiếng khách</Text>
           </Pressable>
         ) : (
           <RolePlayControls
@@ -653,61 +699,72 @@ export function RolePlayScreen({
         {showTip && <RolePlayTipCard tip={setup.tip} />}
       </ScrollView>
 
-      <BottomNavBar
-        active={setup.bottomNavActive}
-        onPressItem={(key) => {
-          if (key === 'home') navigate('home');
-          if (key === 'map') navigate('map');
-          if (key === 'practice') navigate('practice');
-          if (key === 'xephang') navigate('leaderboard');
-          if (key === 'ontap') navigate('practiceHistory');
-          if (key === 'toi') navigate('profile');
-        }}
+      <EvaluatingResultModal
+        visible={scoringJobId != null}
+        waiting={waitingForScoring}
+        onPressWait={() => setWaitingForScoring(true)}
+        onPressViewLater={() => navigate('practiceHistory')}
       />
     </SafeAreaView>
   );
 }
 
+// Hoạ tiết cờ đua kẻ ô caro ở nền (node-id=76:3536, con "Flag" 114:5789) —
+// cùng graphic xám/trắng dùng ở QuizScreen (xem comment ở đó), nhưng nền tối
+// #222 thay vì cam nên bake blend "screen" riêng với màu nền này. Kích
+// thước gốc theo CSS Figma là 600px rộng — GIỮ NGUYÊN, nhưng vị trí top đã
+// chỉnh lại (thay vì đúng số Figma 191) để tâm hoạ tiết trùng tâm avatar
+// khách hàng (đo trực tiếp qua getBoundingClientRect trên bản chạy thật:
+// avatar tâm y≈256, hoạ tiết cao 300 -> top = 256 - 150 = 106) theo phản hồi
+// người dùng — Figma gốc không canh theo avatar mà canh theo layout khác.
+// Sau đó dịch cả khối avatar+cờ xuống thêm 30px (top: 106->136, gap
+// timerRow/centerArea: spacing2.xl->62) để không chạm vòng đếm ngược ở góc
+// trên — 2 khối này phải dịch CÙNG lúc, CÙNG khoảng để giữ nguyên việc tâm
+// cờ trùng tâm avatar đã canh ở trên.
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
+  safe: { flex: 1, backgroundColor: colors2.black, overflow: 'hidden' },
+  flagBg: {
+    position: 'absolute',
+    width: 600,
+    height: 300,
+    left: '50%',
+    marginLeft: -300,
+    top: 136,
+    pointerEvents: 'none',
+  },
   scroll: { flex: 1 },
   content: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-    gap: spacing.xxl,
+    paddingHorizontal: spacing2.md,
+    paddingBottom: spacing2.xl,
+    gap: 62,
   },
   timerRow: { alignItems: 'flex-end' },
   centerArea: { alignItems: 'center' },
   errorBanner: {
-    backgroundColor: colors.errorLight,
+    backgroundColor: colors2.red800,
     borderRadius: 12,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
+    paddingVertical: spacing2.sm,
+    paddingHorizontal: spacing2.md,
   },
-  errorText: { fontFamily: fontFamily.semiBold, fontSize: 12.5, color: colors.error, textAlign: 'center' },
-  startCallWrap: { alignItems: 'center', gap: spacing.sm },
+  errorText: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.red500, textAlign: 'center' },
+  startCallWrap: { alignItems: 'center', gap: spacing2.sm },
   startCallBtn: {
     width: 76,
     height: 76,
     borderRadius: 38,
+    backgroundColor: colors2.orange,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#C4460F',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
-    elevation: 8,
   },
-  startCallText: { fontFamily: fontFamily.extraBold, fontSize: 14, color: colors.textPrimary },
-  startCallHint: { fontFamily: fontFamily.semiBold, fontSize: 12, color: colors.textMuted, textAlign: 'center' },
-  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing.lg, padding: spacing.xl },
-  emptyText: { fontFamily: fontFamily.semiBold, fontSize: 14, color: colors.textMuted },
+  startCallText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
+  empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing2.lg, padding: spacing2.xl },
+  emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   emptyButton: {
     borderRadius: 999,
     borderWidth: 1.5,
-    borderColor: colors.primary,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
+    borderColor: colors2.white,
+    paddingHorizontal: spacing2.lg,
+    paddingVertical: spacing2.sm,
   },
-  emptyButtonText: { fontFamily: fontFamily.extraBold, fontSize: 13, color: colors.primary },
+  emptyButtonText: { fontFamily: fontFamily2.semiBold, fontSize: 13, color: colors2.white },
 });

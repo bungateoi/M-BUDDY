@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { QuizHeader, Card, LeaderboardEntryRow, BottomNavBar, colors, spacing } from '../components';
+import { QuizHeader, LeaderboardEntryRow, HomeBottomNavBar, colors2, radii2, spacing2 } from '../components';
 import { fetchLeaderboard } from '../lib/authData';
 import { useAuth } from '../lib/AuthContext';
 import type { LeaderboardEntry } from '../data/types';
@@ -23,29 +23,29 @@ export function LeaderboardFullScreen() {
     <SafeAreaView style={styles.safe}>
       <QuizHeader
         title="Bảng xếp hạng đầy đủ"
-        subtitle={`${entries?.length ?? 0} học viên`}
+        subtitle={`${entries?.length ?? 0} tay đua`}
         streakDays={profile.currentStreak}
         onBack={() => navigate('leaderboard')}
       />
 
       {!entries ? (
         <View style={styles.loadingWrap}>
-          <ActivityIndicator color={colors.primary} />
+          <ActivityIndicator color={colors2.white} />
         </View>
       ) : (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <Card style={styles.card}>
+          <View style={styles.card}>
             {entries.map((entry, index) => (
               <View key={entry.rank}>
                 <LeaderboardEntryRow entry={entry} highlighted={entry.rank === 1} />
                 {index < entries.length - 1 && <View style={styles.divider} />}
               </View>
             ))}
-          </Card>
+          </View>
         </ScrollView>
       )}
 
-      <BottomNavBar
+      <HomeBottomNavBar
         active="xephang"
         onPressItem={(key) => {
           if (key === 'home') navigate('home');
@@ -60,9 +60,9 @@ export function LeaderboardFullScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.xl, paddingBottom: spacing.xxl },
-  card: { padding: spacing.md },
-  divider: { height: 1, backgroundColor: '#F5EBE3', marginVertical: 2 },
+  safe: { flex: 1, backgroundColor: colors2.black },
+  content: { padding: spacing2.md, paddingBottom: spacing2.xl },
+  card: { backgroundColor: colors2.cardOptionIdle, borderRadius: radii2.card, padding: spacing2.md },
+  divider: { height: 1, backgroundColor: colors2.black, marginVertical: 2 },
   loadingWrap: { flex: 1, alignItems: 'center', justifyContent: 'center' },
 });

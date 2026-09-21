@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 function barColorFor(value: number): string {
-  if (value >= 70) return colors.success;
-  if (value >= 50) return colors.warning;
-  return colors.error;
+  if (value >= 70) return colors2.green500;
+  if (value >= 50) return colors2.orange;
+  return colors2.red500;
 }
 
 export function KnowledgeTopicRow({ icon, label, value }: { icon: string; label: string; value: number }) {
@@ -28,11 +28,11 @@ export function KnowledgeTopicRow({ icon, label, value }: { icon: string; label:
 }
 
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  row: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
   iconCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   body: { flex: 1, gap: 5 },
-  label: { fontFamily: fontFamily.bold, fontSize: 12.5, color: colors.textPrimary },
-  track: { height: 7, borderRadius: radii.pill, backgroundColor: colors.chipTrack, overflow: 'hidden' },
-  fill: { height: '100%', borderRadius: radii.pill },
-  valueText: { fontFamily: fontFamily.extraBold, fontSize: 13, width: 36, textAlign: 'right' },
+  label: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  track: { height: 7, borderRadius: radii2.pill, backgroundColor: colors2.black, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: radii2.pill },
+  valueText: { fontFamily: fontFamily2.semiBold, fontSize: 13, width: 36, textAlign: 'right' },
 });

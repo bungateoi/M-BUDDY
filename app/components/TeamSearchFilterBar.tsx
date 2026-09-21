@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { cardShadow, colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function TeamSearchFilterBar({
   query,
@@ -20,25 +20,25 @@ export function TeamSearchFilterBar({
   return (
     <View style={styles.wrap}>
       <View style={styles.searchWrap}>
-        <Ionicons name="search" size={17} color={colors.textMuted} />
+        <Ionicons name="search" size={17} color={colors2.whiteMuted} />
         <TextInput
           value={query}
           onChangeText={onChangeQuery}
           placeholder="Tìm kiếm theo tên..."
-          placeholderTextColor={colors.textMuted}
+          placeholderTextColor={colors2.whiteMuted}
           style={styles.input}
         />
       </View>
 
       <Pressable onPress={onPressFilter} style={styles.actionBtn}>
-        <Ionicons name="filter" size={15} color={colors.textPrimary} />
+        <Ionicons name="filter" size={15} color={colors2.white} />
         <Text style={styles.actionText} numberOfLines={1} ellipsizeMode="tail">
           {filterLabel}
         </Text>
       </Pressable>
 
       <Pressable onPress={onToggleSortDirection} style={styles.actionBtn}>
-        <Ionicons name={sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'} size={15} color={colors.textPrimary} />
+        <Ionicons name={sortDirection === 'asc' ? 'arrow-up' : 'arrow-down'} size={15} color={colors2.white} />
         <Text style={styles.actionText} numberOfLines={1}>
           Sắp xếp
         </Text>
@@ -48,29 +48,27 @@ export function TeamSearchFilterBar({
 }
 
 const styles = StyleSheet.create({
-  wrap: { flexDirection: 'row', gap: spacing.sm },
+  wrap: { flexDirection: 'row', gap: spacing2.xs },
   searchWrap: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 10,
-    ...cardShadow,
   },
-  input: { flex: 1, fontFamily: fontFamily.semiBold, fontSize: 13, color: colors.textPrimary, padding: 0 },
+  input: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 13, color: colors2.white, padding: 0 },
   actionBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     maxWidth: 96,
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.xs,
     paddingVertical: 10,
-    ...cardShadow,
   },
-  actionText: { flexShrink: 1, fontFamily: fontFamily.bold, fontSize: 11.5, color: colors.textPrimary },
+  actionText: { flexShrink: 1, fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.white },
 });

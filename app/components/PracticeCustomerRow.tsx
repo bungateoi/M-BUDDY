@@ -1,20 +1,15 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Avatar } from './Avatar';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 import type { CustomerProfile, CustomerSegment } from '../data/types';
 
-const SEGMENT_STYLE: Record<CustomerSegment, { bg: string; text: string; label: string }> = {
-  Mass: { bg: '#E7F8ED', text: '#2ECC71', label: 'Mass' },
-  Affluent: { bg: '#FFF3E0', text: '#F5A623', label: 'Affluent' },
-  Priority: { bg: '#FDEAF0', text: '#E6398F', label: 'Priority' },
+// Màu tag theo đúng Figma (Secondary/Green, Secondary/Yellow) — "Priority"
+// không xuất hiện trong frame này (chỉ có ví dụ Mass/Affluent) nên dùng màu
+// trung tính (trắng/chữ xanh đậm) thay vì bịa 1 màu mới không có nguồn.
+const SEGMENT_BG: Record<CustomerSegment, string> = {
+  Mass: colors2.tagGreen,
+  Affluent: colors2.tagYellow,
+  Priority: colors2.white,
 };
-
-function initialsOf(name: string): string {
-  const words = name.trim().split(/\s+/);
-  const givenName = words.slice(-2);
-  return givenName.map((w) => w[0]).join('').toUpperCase();
-}
 
 export function PracticeCustomerRow({
   customer,
@@ -25,32 +20,33 @@ export function PracticeCustomerRow({
   onPress?: () => void;
   onPressPractice?: () => void;
 }) {
-  const segment = SEGMENT_STYLE[customer.segment];
   return (
     <Pressable onPress={onPress} style={styles.row}>
-      <Avatar initials={initialsOf(customer.name)} size={44} />
       <View style={styles.info}>
         <Text style={styles.name} numberOfLines={1}>
           {customer.name}
         </Text>
-        <Text style={styles.phone}>{customer.phone}</Text>
         <View style={styles.metaRow}>
+          <Text style={styles.metaText}>{customer.age} tuổi</Text>
+          <View style={styles.dot} />
           <Text style={styles.metaText} numberOfLines={1}>
-            {customer.age} tuổi · {customer.occupation}
+            {customer.occupation}
           </Text>
         </View>
-        <View style={styles.metaRow}>
-          <View style={[styles.segmentBadge, { backgroundColor: segment.bg }]}>
-            <Text style={[styles.segmentText, { color: segment.text }]}>{segment.label}</Text>
+        <View style={styles.tagRow}>
+          <View style={[styles.segmentBadge, { backgroundColor: SEGMENT_BG[customer.segment] }]}>
+            <Text style={styles.segmentText}>{customer.segment}</Text>
           </View>
           <Text style={styles.needsText} numberOfLines={1}>
             {customer.needsShort}
           </Text>
         </View>
       </View>
-      <Pressable onPress={onPressPractice} style={styles.practiceButton} hitSlop={6}>
-        <Text style={styles.practiceButtonText}>Luyện tập</Text>
-        <Ionicons name="arrow-forward" size={13} color={colors.white} />
+
+      <Pressable onPress={onPressPractice} style={styles.ctaShadow} hitSlop={6}>
+        <View style={styles.cta}>
+          <Text style={styles.ctaText}>Chinh phục</Text>
+        </View>
       </Pressable>
     </Pressable>
   );
@@ -60,28 +56,28 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5EBE3',
+    gap: spacing2.md,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.md,
   },
-  info: { flex: 1, gap: 3 },
-  name: { fontFamily: fontFamily.extraBold, fontSize: 13.5, color: colors.textPrimary },
-  phone: { fontFamily: fontFamily.semiBold, fontSize: 11, color: colors.textMuted },
-  metaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
-  metaText: { fontFamily: fontFamily.semiBold, fontSize: 11, color: colors.textMuted, flexShrink: 1 },
-  segmentBadge: { borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },
-  segmentText: { fontFamily: fontFamily.extraBold, fontSize: 9.5 },
-  needsText: { fontFamily: fontFamily.semiBold, fontSize: 11, color: colors.textPrimary, flexShrink: 1 },
-  practiceButton: {
-    flexDirection: 'row',
+  info: { flex: 1, gap: spacing2.xs },
+  name: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.white },
+  metaRow: { flexDirection: 'row', alignItems: 'center', gap: spacing2.xs },
+  metaText: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.whiteMuted, flexShrink: 1 },
+  dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors2.whiteMuted },
+  tagRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  segmentBadge: { borderRadius: 2, paddingHorizontal: 4 },
+  segmentText: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.black },
+  needsText: { flex: 1, fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.white },
+  ctaShadow: { backgroundColor: colors2.shadowOrange, borderRadius: radii2.button, paddingBottom: 6 },
+  cta: {
     alignItems: 'center',
-    gap: 4,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 8,
+    justifyContent: 'center',
+    borderRadius: radii2.button,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.xs,
+    backgroundColor: colors2.yellow,
   },
-  practiceButtonText: { fontFamily: fontFamily.extraBold, fontSize: 11, color: colors.white },
+  ctaText: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.black },
 });

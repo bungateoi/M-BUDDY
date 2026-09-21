@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { cardShadow, colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function StreakBadge({ days }: { days: number }) {
   return (
@@ -14,13 +14,12 @@ const styles = StyleSheet.create({
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.white,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
+    paddingVertical: spacing2.xs,
     gap: 6,
-    ...cardShadow,
   },
   fire: { fontSize: 15 },
-  count: { fontFamily: fontFamily.extraBold, fontSize: 15, color: colors.textPrimary },
+  count: { fontFamily: fontFamily2.semiBold, fontSize: 15, color: colors2.white },
 });

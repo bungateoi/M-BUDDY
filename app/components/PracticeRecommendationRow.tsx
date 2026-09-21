@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, fontFamily, radii, spacing } from './theme';
+import { colors2, fontFamily2, radii2, spacing2 } from './theme';
 
 export function PracticeRecommendationRow({
   icon,
@@ -16,7 +16,7 @@ export function PracticeRecommendationRow({
   return (
     <View style={styles.row}>
       <View style={styles.iconCircle}>
-        <Ionicons name={icon as any} size={17} color="#D6336C" />
+        <Ionicons name={icon as any} size={17} color={colors2.orange} />
       </View>
       <View style={styles.body}>
         <Text style={styles.title} numberOfLines={1}>
@@ -37,27 +37,27 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.white,
-    borderRadius: radii.lg,
-    padding: spacing.sm,
+    gap: spacing2.xs,
+    backgroundColor: colors2.cardOptionIdle,
+    borderRadius: radii2.card,
+    padding: spacing2.xs,
   },
   iconCircle: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#FCE4EC',
+    backgroundColor: colors2.black,
     alignItems: 'center',
     justifyContent: 'center',
   },
   body: { flex: 1, gap: 1 },
-  title: { fontFamily: fontFamily.extraBold, fontSize: 12.5, color: colors.textPrimary },
-  subtitle: { fontFamily: fontFamily.semiBold, fontSize: 10.5, color: colors.textMuted },
+  title: { fontFamily: fontFamily2.semiBold, fontSize: 12.5, color: colors2.white },
+  subtitle: { fontFamily: fontFamily2.regular, fontSize: 10.5, color: colors2.whiteMuted },
   retryBtn: {
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
+    backgroundColor: colors2.orange,
+    borderRadius: radii2.pill,
+    paddingHorizontal: spacing2.md,
     paddingVertical: 8,
   },
-  retryText: { fontFamily: fontFamily.extraBold, fontSize: 11.5, color: colors.white },
+  retryText: { fontFamily: fontFamily2.semiBold, fontSize: 11.5, color: colors2.white },
 });
