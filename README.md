@@ -43,10 +43,6 @@ cp .env.example .env   # điền LLM_API_KEY/LLM_BASE_URL/LLM_MODEL (xem /agentb
 python3 main.py         # chạy ở http://127.0.0.1:8080
 ```
 
-Chi tiết hợp đồng API (`/roleplay`, `/score`, `/generate-persona`,
-`/admin/*`) xem [`agent/SPEC.md`](agent/SPEC.md); hướng dẫn deploy lên
-GreenNode AgentBase xem [`agent/README.md`](agent/README.md).
-
 ### 2. App (`app/`)
 
 ```bash
