@@ -70,17 +70,13 @@ export function QuizScreen({ levelId = '2.3', backTo }: { levelId?: string; back
         />
       </ScrollView>
 
-      {answered ? (
+      {answered && (
         <QuizBottomSheet
           isCorrect={isCorrect}
           explanation={currentQuestion.explanation}
           buttonLabel={isLastQuestion ? 'Gặp Khách hàng' : 'Câu tiếp theo'}
           onPressNext={handleNext}
         />
-      ) : (
-        <View style={styles.homeIndicatorArea}>
-          <View style={styles.homeIndicator} />
-        </View>
       )}
     </SafeAreaView>
   );
@@ -119,8 +115,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing2.md,
     paddingBottom: spacing2.lg,
   },
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing2.xl, gap: spacing2.lg },
   emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   emptyBackButton: {

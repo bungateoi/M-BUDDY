@@ -38,9 +38,6 @@ export function HomeBottomNavBar({
           );
         })}
       </View>
-      <View style={styles.homeIndicatorArea}>
-        <View style={styles.homeIndicator} />
-      </View>
     </View>
   );
 }
@@ -61,6 +58,4 @@ const styles = StyleSheet.create({
   item: { flex: 1, alignItems: 'center', gap: 5, paddingBottom: 4 },
   label: { fontFamily: fontFamily2.regular, fontSize: 12, lineHeight: 16, color: colors2.blackMuted, textAlign: 'center' },
   labelActive: { color: colors2.orange },
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.cardOutline },
 });

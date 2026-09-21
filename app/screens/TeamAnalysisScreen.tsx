@@ -131,10 +131,6 @@ export function TeamAnalysisScreen() {
         </ScrollView>
       )}
 
-      <View style={styles.homeIndicatorArea}>
-        <View style={styles.homeIndicator} />
-      </View>
-
       <TeamSortModal
         visible={sortModalOpen}
         criteriaOptions={CRITERIA_OPTIONS}
@@ -170,6 +166,4 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: radii2.card,
     overflow: 'hidden',
   },
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
 });

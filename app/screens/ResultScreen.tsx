@@ -107,10 +107,6 @@ export function ResultScreen({
         </View>
       </ScrollView>
 
-      <View style={styles.homeIndicatorArea}>
-        <View style={styles.homeIndicator} />
-      </View>
-
       <ConversationHistoryModal
         visible={showHistory}
         transcript={result.transcript ?? []}
@@ -185,6 +181,4 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   continueText: { fontFamily: fontFamily2.semiBold, fontSize: 14, lineHeight: 20, color: colors2.black },
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
 });

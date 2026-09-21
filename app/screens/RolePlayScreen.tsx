@@ -699,10 +699,6 @@ export function RolePlayScreen({
         {showTip && <RolePlayTipCard tip={setup.tip} />}
       </ScrollView>
 
-      <View style={styles.homeIndicatorArea}>
-        <View style={styles.homeIndicator} />
-      </View>
-
       <EvaluatingResultModal
         visible={scoringJobId != null}
         waiting={waitingForScoring}
@@ -761,8 +757,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   startCallText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing2.lg, padding: spacing2.xl },
   emptyText: { fontFamily: fontFamily2.semiBold, fontSize: 14, color: colors2.white },
   emptyButton: {

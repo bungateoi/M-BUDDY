@@ -108,9 +108,6 @@ export function PersonalAnalysisScreen() {
         </View>
       </ScrollView>
 
-      <View style={styles.homeIndicatorArea}>
-        <View style={styles.homeIndicator} />
-      </View>
     </SafeAreaView>
   );
 }
@@ -167,6 +164,4 @@ const styles = StyleSheet.create({
   track: { height: 8, borderRadius: 99, backgroundColor: colors2.black, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: 99, backgroundColor: colors2.orange },
 
-  homeIndicatorArea: { height: 34, alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 8 },
-  homeIndicator: { width: 134, height: 5, borderRadius: 100, backgroundColor: colors2.white },
 });
